@@ -2,10 +2,11 @@
   <div class="product-grid">
     <div>
       {% if product.featured_image %}
-        <img src="{{ product.featured_image | img_url: '800x800' }}" alt="{{ product.title }}">
-      {% endif %}
-      {% if product.images.size > 1 %}
-        <div class="thumbs">
+      {% if product.featured_image %}
+  <div class="image-wrap">
+    <img src="{{ product.featured_image | img_url: '700x700' }}" alt="{{ product.title }}">
+  </div>
+{% endif %}
           {% for image in product.images %}
             <img src="{{ image | img_url: '200x200' }}" alt="{{ product.title }} Bild {{ forloop.index }}">
           {% endfor %}
@@ -56,4 +57,20 @@
 .desc { margin-top:20px; line-height:1.6; }
 .thumbs { display:flex; gap:10px; margin-top: 10px; }
 @media (max-width: 900px){ .product-grid{ grid-template-columns: 1fr; } }
+.image-wrap {
+  background: var(--border);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+.image-wrap img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: contain;
+}
+.btn {
+  margin-top: 15px;
+  display: inline-block;
+}
 </style>
