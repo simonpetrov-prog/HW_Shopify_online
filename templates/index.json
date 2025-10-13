@@ -1,6 +1,9 @@
 {
   "sections": {
-    "main": { "type": "home", "settings": {} }
+    "header": { "type": "header", "settings": {} },
+    "main":   { "type": "home",   "settings": {} },
+    "cart":   { "type": "cart-drawer", "settings": {} },
+    "footer": { "type": "footer", "settings": {} }
   },
-  "order": ["main"]
+  "order": ["header", "main", "cart", "footer"]
 }
