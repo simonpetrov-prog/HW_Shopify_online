@@ -36,6 +36,11 @@
 .product h3 { margin-top: 10px; font-size: 1rem; color: var(--text); }
 .product p { color:#333; font-weight: 500; }
 .pagination { display:flex; gap:16px; align-items:center; justify-content:center; }
+.product{
+  text-align:center; border:1px solid var(--border); padding:12px; border-radius:10px; background:#fff;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.product:hover{ transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.06); }
 </style>
 
 {% schema %}
