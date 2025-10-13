@@ -1,0 +1,10 @@
+{
+  "sections": {
+    "header":    { "type": "header", "settings": {} },
+    "filters":   { "type": "collection-filters", "settings": {} },
+    "grid":      { "type": "product-grid", "settings": {} },
+    "cart":      { "type": "cart-drawer", "settings": {} },
+    "footer":    { "type": "footer", "settings": {} }
+  },
+  "order": ["header", "filters", "grid", "cart", "footer"]
+}
