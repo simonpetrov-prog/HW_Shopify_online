@@ -1,9 +1,18 @@
 {%- assign is_sale = false -%}
-{%- if product.compare_at_price > product.price -%}{%- assign is_sale = true -%}{%- endif -%}
+{%- if product.compare_at_price > product.price -%}
+  {%- assign is_sale = true -%}
+{%- endif -%}
 
-{%- comment %} "Neu" nur über Tag steuern, Datum raus (Liquid kann das nicht so vergleichen) {%- endcomment -%}
-{%- assign is_new = product.tags contains 'Neu' -%}
-{%- assign is_limited = product.tags contains 'Limited' or product.tags contains 'Limitiert' -%}
+/* "Neu" und "Limited" über Tags steuern */
+{%- assign is_new = false -%}
+{%- if product.tags contains 'Neu' -%}
+  {%- assign is_new = true -%}
+{%- endif -%}
+
+{%- assign is_limited = false -%}
+{%- if product.tags contains 'Limited' or product.tags contains 'Limitiert' -%}
+  {%- assign is_limited = true -%}
+{%- endif -%}
 
 <div class="badges">
   {%- if is_new -%}<span class="badge badge--new">Neu</span>{%- endif -%}
