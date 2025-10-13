@@ -1,0 +1,59 @@
+{% assign per_page = section.settings.per_page %}
+{% paginate collection.products by per_page %}
+  <div class="grid">
+    {% for product in collection.products %}
+      <article class="product">
+        <a href="{{ product.url }}">
+          <img src="{{ product.featured_image | img_url: '400x400' }}" alt="{{ product.title }}">
+          <h3>{{ product.title }}</h3>
+          <p>{{ product.price | money }}</p>
+        </a>
+      </article>
+    {% else %}
+      <p>Keine Produkte in dieser Kollektion.</p>
+    {% endfor %}
+  </div>
+
+  {% if paginate.pages > 1 %}
+    <nav class="pagination" role="navigation" aria-label="Pagination">
+      {% if paginate.previous %}
+        <a class="btn" href="{{ paginate.previous.url }}">Zurück</a>
+      {% endif %}
+      <span>Seite {{ paginate.current_page }} / {{ paginate.pages }}</span>
+      {% if paginate.next %}
+        <a class="btn" href="{{ paginate.next.url }}">Weiter</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endpaginate %}
+
+<style>
+.grid {
+  display:grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin: 20px 0 40px;
+}
+.product { text-align: center; }
+.product img { width: 100%; border-radius: 8px; }
+.product h3 { margin-top: 10px; font-size: 1rem; }
+.product p { color:#333; font-weight: 500; }
+.pagination {
+  display:flex; gap:16px; align-items:center; justify-content:center;
+}
+</style>
+
+{% schema %}
+{
+  "name": "Produkt-Grid",
+  "settings": [
+    {
+      "type": "range",
+      "id": "per_page",
+      "label": "Produkte pro Seite",
+      "min": 4, "max": 48, "step": 4,
+      "default": 12
+    }
+  ]
+}
+{% endschema %}
