@@ -59,6 +59,38 @@
     <main role="main">
       {{ content_for_layout }}
     </main>
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page_title }} – {{ settings.shop_name | default: shop.name }}</title>
+    {{ content_for_header }}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+
+    <style>
+      :root {
+        --primary: {{ settings.primary_color | default: '#0046BE' }};
+        --accent: {{ settings.accent_color | default: '#FF6B00' }};
+        --bg: {{ settings.background_color | default: '#FFFFFF' }};
+        --text: {{ settings.text_color | default: '#333333' }};
+        --border: {{ settings.border_color | default: '#F4F4F4' }};
+      }
+      body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      a, button, .btn { background: var(--primary); color:#fff; border-radius:4px; padding:10px 18px; text-decoration:none; transition:.2s; }
+      a:hover, button:hover, .btn:hover { background: var(--accent); }
+      header, footer { border-color: var(--border); }
+      .btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary); }
+      .btn-outline:hover { border-color:var(--accent); color:var(--accent); }
+    </style>
+  </head>
+  <body>
+    <header>{% section 'header' %}</header>
+    <main role="main">{{ content_for_layout }}</main>
+    {% section 'cart-drawer' %}
+    <footer>{% section 'footer' %}</footer>
+  </body>
+</html>
 
     <footer>
       {% section 'footer' %}
