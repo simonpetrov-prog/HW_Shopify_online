@@ -1,12 +1,14 @@
-
 [
   {
     "name": "Allgemein",
     "settings": [
       { "type": "text", "id": "shop_name", "label": "Shop-Name", "default": "HW Business" },
       { "type": "image_picker", "id": "logo", "label": "Logo" },
-      { "type": "color", "id": "primary_color", "label": "Primärfarbe", "default": "#000000" },
-      { "type": "color", "id": "background_color", "label": "Hintergrundfarbe", "default": "#ffffff" }
+      { "type": "color", "id": "primary_color", "label": "Primärfarbe (Königsblau)", "default": "#0046BE" },
+      { "type": "color", "id": "accent_color", "label": "Akzentfarbe (Orange)", "default": "#FF6B00" },
+      { "type": "color", "id": "background_color", "label": "Hintergrundfarbe", "default": "#FFFFFF" },
+      { "type": "color", "id": "text_color", "label": "Textfarbe", "default": "#333333" },
+      { "type": "color", "id": "border_color", "label": "Rahmenfarbe", "default": "#F4F4F4" }
     ]
   },
   {
