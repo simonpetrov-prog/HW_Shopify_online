@@ -1,0 +1,47 @@
+{% comment %}
+Sortierleiste für Collections – nutzt Shopify's ?sort_by=
+Werte:
+- best-selling
+- price-ascending
+- price-descending
+- created-descending (neueste)
+- created-ascending  (älteste)
+- title-ascending    (A–Z)
+- title-descending   (Z–A)
+{% endcomment %}
+
+<form class="sortbar" method="get" action="{{ collection.url }}">
+  {%- comment -%}
+  Bestehende Tag-Filter (current_tags) erhalten – Shopify erwartet /collections/handle/tag1+tag2
+  Wenn Tags aktiv sind, zeigen wir einen Hinweis und lassen action auf der Collection-URL (die Tag-Kombi bleibt im Pfad).
+  {%- endcomment -%}
+
+  <label for="sort_by">Sortieren nach</label>
+  <select id="sort_by" name="sort_by" onchange="this.form.submit()">
+    {%- assign current = request.params.sort_by | default: collection.sort_by | default: 'best-selling' -%}
+    <option value="best-selling"       {% if current == 'best-selling' %}selected{% endif %}>Beliebteste</option>
+    <option value="created-descending" {% if current == 'created-descending' %}selected{% endif %}>Neueste zuerst</option>
+    <option value="price-ascending"    {% if current == 'price-ascending' %}selected{% endif %}>Preis: niedrig → hoch</option>
+    <option value="price-descending"   {% if current == 'price-descending' %}selected{% endif %}>Preis: hoch → niedrig</option>
+    <option value="title-ascending"    {% if current == 'title-ascending' %}selected{% endif %}>Name: A–Z</option>
+    <option value="title-descending"   {% if current == 'title-descending' %}selected{% endif %}>Name: Z–A</option>
+  </select>
+
+  {%- if current_tags.size > 0 -%}
+    <span class="taghint">Aktive Tags: {{ current_tags | join: ', ' }}</span>
+  {%- endif -%}
+</form>
+
+<style>
+.sortbar{
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  padding: 8px 0 16px; border-bottom:1px solid var(--border); margin-bottom:16px;
+}
+.sorthint, .taghint{ color:#666; font-size: 14px; }
+select#sort_by{
+  border:1px solid var(--border); border-radius:8px; padding:8px 10px; background:#fff;
+}
+label{ font-weight:600; }
+</style>
+
+{% schema %}{ "name": "Sortierleiste", "settings": [] }{% endschema %}
