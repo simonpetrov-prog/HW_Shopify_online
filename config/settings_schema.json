@@ -1,0 +1,41 @@
+[
+  {
+    "name": "Allgemein",
+    "settings": [
+      {
+        "type": "text",
+        "id": "shop_name",
+        "label": "Shop-Name",
+        "default": "HW Business"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo"
+      },
+      {
+        "type": "color",
+        "id": "primary_color",
+        "label": "Primärfarbe",
+        "default": "#000000"
+      },
+      {
+        "type": "color",
+        "id": "background_color",
+        "label": "Hintergrundfarbe",
+        "default": "#ffffff"
+      }
+    ]
+  },
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "text",
+        "id": "footer_text",
+        "label": "Footer-Text",
+        "default": "© 2025 HW Business – Alle Rechte vorbehalten"
+      }
+    ]
+  }
+]
