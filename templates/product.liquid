@@ -22,7 +22,7 @@
         <span class="now">{{ product.price | money }}</span>
       </p>
 
-      {% form 'product', product %}
+      <form data-ajax-add>
         {% if product.variants.size > 1 %}
           <select name="id">
             {% for variant in product.variants %}
@@ -39,7 +39,7 @@
         <input type="number" name="quantity" value="1" min="1" style="width:80px">
 
         <button type="submit" class="btn">In den Warenkorb</button>
-      {% endform %}
+      </form>
 
       {% if product.description != blank %}
         <div class="desc">{{ product.description }}</div>
@@ -49,17 +49,10 @@
 </section>
 
 <style>
-.product-grid {
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: start;
-}
-.price { margin: 10px 0 20px; }
+.product-grid { display:grid; grid-template-columns: 1fr 1fr; gap:32px; align-items:start; }
+.price { margin:10px 0 20px; }
 .price .compare { text-decoration: line-through; color:#999; margin-right:10px; }
-.desc { margin-top: 20px; line-height: 1.6; }
+.desc { margin-top:20px; line-height:1.6; }
 .thumbs { display:flex; gap:10px; margin-top: 10px; }
-@media (max-width: 900px){
-  .product-grid{ grid-template-columns: 1fr; }
-}
+@media (max-width: 900px){ .product-grid{ grid-template-columns: 1fr; } }
 </style>
