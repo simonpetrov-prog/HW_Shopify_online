@@ -6,117 +6,23 @@
     <title>{{ page_title }} – {{ settings.shop_name | default: shop.name }}</title>
     {{ content_for_header }}
     {{ 'base.css' | asset_url | stylesheet_tag }}
-
-   <style>
-  :root {
-    --primary: {{ settings.primary_color | default: '#0046BE' }};
-    --accent:  {{ settings.accent_color  | default: '#FF6B00' }};
-    --bg:      {{ settings.background_color | default: '#FFFFFF' }};
-    --text:    {{ settings.text_color | default: '#333333' }};
-    --border:  {{ settings.border_color | default: '#F4F4F4' }};
-  }
-
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-
-  /* Links neutral lassen (keine Hintergründe mehr) */
-  a { color: inherit; text-decoration: none; background: transparent; }
-
-  /* Buttons gezielt stylen */
-  .btn, button {
-    background: var(--primary);
-    color: #fff;
-    border: 0;
-    border-radius: 4px;
-    padding: 10px 18px;
-    display: inline-block;
-    min-height: 40px;
-    line-height: 1.1;
-    font-weight: 600;
-    transition: .2s ease-in-out;
-    cursor: pointer;
-  }
-  .btn:hover, button:hover { background: var(--accent); }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-  }
-  .btn-outline:hover { color: var(--accent); border-color: var(--accent); }
-
-  header, footer { border-color: var(--border); }
-  .header__nav a { padding: 6px 8px; border-radius: 6px; }
-  .header__nav a:hover { color:#fff; background: var(--primary); }
-</style>
-  </head>
-  <body>
-    <header>
-      {% section 'header' %}
-    </header>
-
-    <main role="main">
-      {{ content_for_layout }}
-    </main>
-<!doctype html>
-<html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page_title }} – {{ settings.shop_name | default: shop.name }}</title>
-    {{ content_for_header }}
-    {{ 'base.css' | asset_url | stylesheet_tag }}
-
     <style>
-  :root {
-    --primary: {{ settings.primary_color | default: '#0046BE' }};
-    --accent:  {{ settings.accent_color  | default: '#FF6B00' }};
-    --bg:      {{ settings.background_color | default: '#FFFFFF' }};
-    --text:    {{ settings.text_color | default: '#333333' }};
-    --border:  {{ settings.border_color | default: '#F4F4F4' }};
-  }
-
-  body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-
-  /* Links normal lassen */
-  a { color: inherit; text-decoration: none; }
-
-  /* Buttons gezielt stylen */
-  .btn, button {
-    background: var(--primary);
-    color: #fff;
-    border: 0;
-    border-radius: 4px;
-    padding: 10px 18px;
-    display: inline-block;
-    font-weight: 600;
-    transition: .2s ease-in-out;
-    cursor: pointer;
-  }
-  .btn:hover, button:hover { background: var(--accent); }
-
-  .btn-outline {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-  }
-  .btn-outline:hover {
-    color: var(--accent);
-    border-color: var(--accent);
-  }
-
-  header, footer { border-color: var(--border); }
-</style>
+      :root {
+        --primary: {{ settings.primary_color | default: '#0046BE' }};
+        --accent:  {{ settings.accent_color  | default: '#FF6B00' }};
+        --bg:      {{ settings.background_color | default: '#FFFFFF' }};
+        --text:    {{ settings.text_color | default: '#333333' }};
+        --border:  {{ settings.border_color | default: '#F4F4F4' }};
+      }
+      body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+      a { color: inherit; text-decoration: none; background: transparent; }
+      .btn, button { background: var(--primary); color:#fff; border:0; border-radius:4px; padding:10px 18px; display:inline-block; font-weight:600; transition:.2s; cursor:pointer; }
+      .btn:hover, button:hover { background: var(--accent); }
+      .btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
+      .btn-outline:hover { color:var(--accent); border-color:var(--accent); }
+    </style>
   </head>
   <body>
-    <header>{% section 'header' %}</header>
-    <main role="main">{{ content_for_layout }}</main>
-    {% section 'cart-drawer' %}
-    <footer>{% section 'footer' %}</footer>
-  </body>
-</html>
-
-    <footer>
-      {% section 'footer' %}
-    </footer>
+    {{ content_for_layout }}
   </body>
 </html>
