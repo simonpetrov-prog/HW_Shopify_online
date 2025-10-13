@@ -1,0 +1,81 @@
+<section class="hero">
+  <div class="hero__inner">
+    <h1>Willkommen bei HW Business</h1>
+    <p>Entdecke exklusive Hot Wheels Modelle, Sammlerstücke und mehr.</p>
+    <a href="/collections/all" class="btn">Zum Shop</a>
+  </div>
+</section>
+
+<section class="featured">
+  <h2>Unsere neuesten Produkte</h2>
+  <div class="grid">
+    {% for product in collections.all.products limit:4 %}
+      <div class="product">
+        <a href="{{ product.url }}">
+          <img src="{{ product.featured_image | img_url: '400x400' }}" alt="{{ product.title }}">
+          <h3>{{ product.title }}</h3>
+          <p>{{ product.price | money }}</p>
+        </a>
+      </div>
+    {% else %}
+      <p>Keine Produkte gefunden.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+.hero {
+  background: #f5f5f5;
+  text-align: center;
+  padding: 60px 20px;
+}
+.hero__inner h1 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+.hero__inner p {
+  font-size: 1.1rem;
+  color: #555;
+}
+.btn {
+  display: inline-block;
+  margin-top: 15px;
+  background: #000;
+  color: #fff;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+.btn:hover { opacity: 0.8; }
+
+.featured {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+.featured h2 {
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.product {
+  text-align: center;
+}
+.product img {
+  width: 100%;
+  border-radius: 8px;
+}
+.product h3 {
+  margin-top: 10px;
+  font-size: 1rem;
+}
+.product p {
+  color: #333;
+  font-weight: 500;
+}
+</style>
