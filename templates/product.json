@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "header":  { "type": "header", "settings": {} },
+    "product": { "type": "main-product", "settings": {} },
+    "cart":    { "type": "cart-drawer", "settings": {} },
+    "footer":  { "type": "footer", "settings": {} }
+  },
+  "order": ["header", "product", "cart", "footer"]
+}
