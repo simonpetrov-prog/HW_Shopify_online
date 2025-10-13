@@ -3,9 +3,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page_title }} – HW Business</title>
+    <title>{{ page_title }} – {{ settings.shop_name | default: shop.name }}</title>
     {{ content_for_header }}
     {{ 'base.css' | asset_url | stylesheet_tag }}
+
+    <style>
+      :root{
+        --primary: {{ settings.primary_color | default: '#000000' }};
+        --bg: {{ settings.background_color | default: '#ffffff' }};
+      }
+      body{ background: var(--bg); }
+      .btn, button{ background: var(--primary); }
+      a.btn{ color:#fff; }
+    </style>
   </head>
   <body>
     <header>
@@ -16,8 +26,8 @@
       {{ content_for_layout }}
     </main>
 
-    <footer style="text-align:center; padding:20px; font-size:14px; color:#777;">
-      © {{ 'now' | date: "%Y" }} HW Business – powered by Shopify
+    <footer>
+      {% section 'footer' %}
     </footer>
   </body>
 </html>
