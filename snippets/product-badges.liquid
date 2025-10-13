@@ -1,16 +1,8 @@
 {%- assign is_sale = false -%}
-{%- if product.compare_at_price > product.price -%}
-  {%- assign is_sale = true -%}
-{%- endif -%}
+{%- if product.compare_at_price > product.price -%}{%- assign is_sale = true -%}{%- endif -%}
 
-{%- assign is_new = false -%}
-{%- comment %} Neu-Logik: Tag "Neu" oder in den letzten 21 Tagen erstellt {%- endcomment -%}
-{%- if product.tags contains 'Neu' -%}
-  {%- assign is_new = true -%}
-{%- elsif product.created_at and product.created_at > 21 | days_ago -%}
-  {%- assign is_new = true -%}
-{%- endif -%}
-
+{%- comment %} "Neu" nur über Tag steuern, Datum raus (Liquid kann das nicht so vergleichen) {%- endcomment -%}
+{%- assign is_new = product.tags contains 'Neu' -%}
 {%- assign is_limited = product.tags contains 'Limited' or product.tags contains 'Limitiert' -%}
 
 <div class="badges">
