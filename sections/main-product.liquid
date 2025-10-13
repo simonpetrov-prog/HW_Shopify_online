@@ -1,0 +1,69 @@
+{% comment %} Inhalt aus templates/product.liquid hierher verschoben {% endcomment %}
+<section class="container product-page">
+  <div class="product-grid">
+    <div>
+      {% if product.featured_image %}
+        <div class="image-wrap">
+          <img src="{{ product.featured_image | img_url: '700x700' }}" alt="{{ product.title }}">
+        </div>
+      {% endif %}
+      {% if product.images.size > 1 %}
+        <div class="thumbs">
+          {% for image in product.images %}
+            <img src="{{ image | img_url: '200x200' }}" alt="{{ product.title }} Bild {{ forloop.index }}">
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div>
+      <h1>{{ product.title }}</h1>
+      {% render 'product-badges', product: product %}
+
+      <p class="price">
+        {% if product.compare_at_price > product.price %}
+          <span class="compare">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+        <span class="now">{{ product.price | money }}</span>
+      </p>
+
+      {% form 'product', product %}
+        {% if product.variants.size > 1 %}
+          <label for="variant">Variante</label>
+          <select id="variant" name="id">
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %}>
+                {{ variant.title }} – {{ variant.price | money }}
+              </option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+        {% endif %}
+
+        <label for="qty">Menge</label>
+        <input id="qty" type="number" name="quantity" value="1" min="1" style="width:90px">
+
+        <button type="submit" class="btn">In den Warenkorb</button>
+      {% endform %}
+
+      {% if product.description != blank %}
+        <div class="desc">{{ product.description }}</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<style>
+.product-grid { display:grid; grid-template-columns: 1fr 1fr; gap:32px; align-items:start; }
+@media (max-width: 900px){ .product-grid{ grid-template-columns: 1fr; } }
+.image-wrap { background: var(--border); border-radius: 10px; padding: 10px; text-align: center; }
+.image-wrap img { max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; }
+.price { margin:12px 0 18px; }
+.price .compare { text-decoration: line-through; color:#999; margin-right:10px; }
+.thumbs { display:flex; gap:10px; margin-top: 10px; }
+.desc { margin-top: 20px; line-height: 1.6; }
+.product-page .btn { margin-top: 12px; }
+</style>
+
+{% schema %}{ "name": "Produkt – HW Business", "settings": [] }{% endschema %}
