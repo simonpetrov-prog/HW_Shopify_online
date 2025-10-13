@@ -1,0 +1,50 @@
+<section class="cart-drawer" aria-hidden="true">
+  <div class="cart-backdrop" data-close-cart></div>
+  <aside class="cart-panel" role="dialog" aria-label="Warenkorb">
+    <div class="cart-head">
+      <h3>Warenkorb <span data-cart-count></span></h3>
+      <button class="btn-outline" data-close-cart>Schließen</button>
+    </div>
+
+    <div class="cart-body" data-cart-items>
+      <p>Lade Warenkorb…</p>
+    </div>
+
+    <div class="cart-foot">
+      <div class="cart-sub">
+        <span>Zwischensumme</span>
+        <strong data-cart-subtotal>€0,00</strong>
+      </div>
+      <a href="/cart" class="btn-outline">Warenkorb ansehen</a>
+      <a href="/checkout" class="btn">Zur Kasse</a>
+    </div>
+  </aside>
+</section>
+
+<style>
+.cart-drawer { position: fixed; inset: 0; pointer-events: none; z-index: 1000; }
+.cart-drawer[aria-hidden="false"] { pointer-events: auto; }
+.cart-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.35); opacity: 0; transition: .2s; }
+.cart-panel {
+  position: absolute; right: 0; top: 0; bottom: 0; width: min(420px, 100%);
+  background: var(--bg); border-left: 1px solid var(--border);
+  transform: translateX(100%); transition: transform .25s ease;
+  display: flex; flex-direction: column;
+}
+.cart-drawer[aria-hidden="false"] .cart-backdrop { opacity: 1; }
+.cart-drawer[aria-hidden="false"] .cart-panel { transform: translateX(0); }
+
+.cart-head { display:flex; align-items:center; justify-content:space-between; padding:16px; border-bottom:1px solid var(--border); }
+.cart-body { padding:16px; flex:1; overflow:auto; display:grid; gap:12px; }
+.cart-foot { border-top:1px solid var(--border); padding:16px; display:grid; gap:10px; }
+.cart-sub { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+
+.cart-line { display:flex; gap:12px; border:1px solid var(--border); padding:10px; border-radius:8px; align-items:center; }
+.cart-line img { width:72px; height:72px; object-fit:cover; border-radius:6px; }
+.cart-line__title { font-weight:600; }
+.cart-line__price { margin-top:4px; }
+.cart-line__qty { display:flex; gap:8px; align-items:center; margin-top:8px; }
+.cart-line__qty button { padding:6px 10px; }
+.cart-line__qty input { width:48px; text-align:center; }
+.cart-line__qty .rm { background: transparent; color: var(--accent); border:1px solid var(--accent); }
+</style>
