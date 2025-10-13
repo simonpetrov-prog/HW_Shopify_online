@@ -15,6 +15,7 @@
 
     <div>
       <h1>{{ product.title }}</h1>
+{% render 'product-badges', product: product %}
       <p class="price">
         {% if product.compare_at_price > product.price %}
           <span class="compare">{{ product.compare_at_price | money }}</span>
