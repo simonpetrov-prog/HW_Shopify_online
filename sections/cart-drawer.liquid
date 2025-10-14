@@ -42,51 +42,76 @@
 </style>
 
 <script>
-async function loadCartDrawer(){
-  const res = await fetch('/cart.js');
-  const cart = await res.json();
-  const body = document.getElementById('cart-body');
-  const total = document.getElementById('cart-total');
-
-  if (!body || !total) return;
-
-  if (cart.item_count === 0){
-    body.innerHTML = '<p>Dein Warenkorb ist leer.</p>';
-    total.textContent = '€0,00';
-    return;
+function money(cents){
+  try {
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format((cents||0)/100);
+  } catch(e){
+    // Fallback
+    return (cents/100).toFixed(2).replace('.', ',') + ' €';
   }
+}
 
-  body.innerHTML = cart.items.map(item => `
-    <div class="cart-item">
-      <img src="${item.image}" alt="${item.title}">
-      <div>
-        <p>${item.title}</p>
-        <p>${item.quantity} × ${Shopify.formatMoney(item.price)}</p>
-      </div>
-    </div>
-  `).join('');
+async function loadCartDrawer(){
+  try{
+    const res = await fetch('/cart.js', { credentials: 'same-origin' });
+    const cart = await res.json();
+    const body = document.getElementById('cart-body');
+    const total = document.getElementById('cart-total');
+    if (!body || !total) return;
 
-  total.textContent = Shopify.formatMoney(cart.total_price);
+    if (!cart || cart.item_count === 0){
+      body.innerHTML = '<p>Dein Warenkorb ist leer.</p>';
+      total.textContent = money(0);
+      return;
+    }
+
+    body.innerHTML = cart.items.map(item => {
+      const img = item.image ? `<img src="${item.image}" alt="${item.title}">` : '';
+      return `
+        <div class="cart-item">
+          ${img}
+          <div>
+            <p>${item.product_title || item.title}</p>
+            <p>${item.quantity} × ${money(item.price)}</p>
+          </div>
+        </div>`;
+    }).join('');
+
+    total.textContent = money(cart.total_price);
+
+    // Badge aktualisieren (falls Header vorhanden)
+    const badge = document.querySelector('[data-cart-count]');
+    if (badge){
+      badge.textContent = cart.item_count;
+      badge.classList.toggle('is-hidden', cart.item_count === 0);
+    }
+  } catch(e){
+    console.error('Cart load error', e);
+    const body = document.getElementById('cart-body');
+    if (body) body.innerHTML = '<p>Ups, konnte den Warenkorb nicht laden.</p>';
+  }
 }
 
 function closeCartDrawer(){
-  document.getElementById('cart-drawer').classList.remove('open');
+  const d = document.getElementById('cart-drawer');
+  if (d){ d.classList.remove('open'); }
   document.documentElement.classList.remove('cart-open');
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
   const drawer = document.getElementById('cart-drawer');
 
-  // Laden beim Öffnen
+  // Öffnen & laden
   document.querySelectorAll('[data-cart-toggle]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
+      if (!drawer) return;
       drawer.classList.add('open');
       document.documentElement.classList.add('cart-open');
       loadCartDrawer();
     });
   });
 
-  // Update nach Ajax-Add
+  // Aktualisieren nach Quick-Add
   document.addEventListener('hw:cart-updated', ()=>{
     loadCartDrawer();
   });
