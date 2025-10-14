@@ -1,50 +1,110 @@
-<section class="hero">
-  <div class="hero__inner">
-    <h1>{{ settings.shop_name | default: shop.name }}</h1>
-    <p>Entdecke exklusive Hot Wheels Modelle, Sammlerstücke und mehr.</p>
-    <a href="/collections/all" class="btn">Zum Shop</a>
+<section class="hero-banner" style="--overlay: {{ section.settings.overlay | divided_by: 100.0 }}; --height: {{ section.settings.height }}vh;">
+  <div class="hero-banner__bg">
+    {% if section.settings.hero_image != blank %}
+      <img src="{{ section.settings.hero_image | image_url: width: 2000 }}" alt="Hero" loading="eager">
+    {% endif %}
+    <div class="hero-banner__overlay"></div>
+  </div>
+
+  <div class="hero-banner__content">
+    <h1>{{ section.settings.heading | default: 'Willkommen zu HW Central Seller' }}</h1>
+    {% if section.settings.subheading != blank %}
+      <p class="sub">{{ section.settings.subheading }}</p>
+    {% endif %}
+    <div class="cta">
+      <a class="btn btn--primary" href="{{ section.settings.btn_link | default: '/collections/all' }}">{{ section.settings.btn_label | default: 'Zum Shop' }}</a>
+      {% if section.settings.btn2_label != blank %}
+        <a class="btn btn--outline" href="{{ section.settings.btn2_link | default: '/collections/all' }}">{{ section.settings.btn2_label }}</a>
+      {% endif %}
+    </div>
   </div>
 </section>
 
-<section class="container featured">
-  <h2>Unsere neuesten Produkte</h2>
-  {% assign collection = collections['all'] %}
-  {% if collection and collection.products_count > 0 %}
-    <div class="grid">
-      {% for product in collection.products limit: 4 %}
-        <article class="product product-card">
-          <a href="{{ product.url }}">
-            {% render 'product-badges', product: product %}
-            <img src="{{ product.featured_image | img_url: '400x400' }}" alt="{{ product.title }}">
-            <h3>{{ product.title }}</h3>
-            <p>{{ product.price | money }}</p>
-          </a>
-        </article>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p>Keine Produkte gefunden.</p>
-  {% endif %}
+<section class="container top-deals">
+  <div class="td-head">
+    <h2>{{ section.settings.deals_title | default: 'Top Deals' }}</h2>
+    <a class="btn btn--outline" href="{{ section.settings.more_link | default: '/collections/all' }}">Alle Produkte</a>
+  </div>
+
+  <div class="grid">
+    {%- assign col = collections[section.settings.collection_handle] | default: collections['all'] -%}
+    {%- assign shown = 0 -%}
+    {%- for product in col.products -%}
+      {%- if section.settings.only_discounted and product.compare_at_price <= product.price -%}{% continue %}{%- endif -%}
+      {%- if section.settings.tag_filter != blank and product.tags contains section.settings.tag_filter == false -%}{% continue %}{%- endif -%}
+      <article class="product product-card">
+        <a href="{{ product.url }}" class="product-link">
+          {% if product.compare_at_price > product.price %}<span class="deal-badge">Deal</span>{% endif %}
+          <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title }}">
+          <h3>{{ product.title }}</h3>
+        </a>
+        <p class="price">
+          {% if product.compare_at_price > product.price %}
+            <span class="compare">{{ product.compare_at_price | money }}</span>
+          {% endif %}
+          <strong>{{ product.price | money }}</strong>
+        </p>
+        <form data-ajax-add class="quick-add">
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="btn" {% unless product.available %}disabled{% endunless %}>In den Warenkorb</button>
+        </form>
+      </article>
+      {%- assign shown = shown | plus: 1 -%}
+      {%- if shown >= section.settings.limit -%}{% break %}{%- endif -%}
+    {%- endfor -%}
+  </div>
 </section>
 
 <style>
-.hero { background: var(--bg); text-align: center; padding: 60px 20px 40px; border-bottom: 2px solid var(--accent); }
-.hero__inner h1 { font-size: 2rem; margin-bottom: 10px; color: var(--primary); }
-.hero__inner p { font-size: 1.1rem; color: var(--text); margin-bottom: 20px; }
-.btn { display:inline-block; margin-top:5px; padding:10px 20px; border-radius:4px; text-decoration:none; }
+/* HERO */
+.hero-banner{ position:relative; height:var(--height, 60vh); min-height:320px; display:grid; place-items:center; overflow:hidden; margin-bottom: 24px; }
+.hero-banner__bg img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.hero-banner__overlay{ position:absolute; inset:0; background:#000; opacity:var(--overlay, .45); }
+.hero-banner__content{ position:relative; text-align:center; color:#fff; padding:0 18px; max-width: 900px; }
+.hero-banner h1{ font-size: clamp(28px, 4.5vw, 48px); margin:0 0 10px; color:#fff; }
+.hero-banner .sub{ font-size: clamp(14px, 2vw, 18px); opacity:.92; margin:0 0 18px; }
+.hero-banner .cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.btn{ padding:10px 18px; border-radius:8px; font-weight:700; text-decoration:none; display:inline-block; }
+.btn--primary{ background: var(--accent, #FF6B00); color:#fff; }   /* Orange als Kontrast */
+.btn--primary:hover{ filter:brightness(.92); }
+.btn--outline{ border:2px solid #fff; color:#fff; }
+.btn--outline:hover{ background:#fff; color:#111; }
 
-.featured { padding: 40px 0 60px; }
-.featured h2 { text-align:center; margin-bottom:30px; color: var(--text); }
-.grid { display:grid; gap:24px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-.product { border:1px solid var(--border); border-radius:10px; background:#fff; text-align:center; padding:12px; }
-.product img { width:100%; height:200px; object-fit:contain; border-radius:6px; }
-.product h3 { font-size:1rem; color:var(--text); margin:8px 0 4px; }
-.product p { color:var(--primary); font-weight:600; }
+/* TOP DEALS */
+.top-deals .td-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin: 10px 0 8px; }
+.top-deals h2{ margin:0; color:var(--primary,#0046BE); }
+.grid{ display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+.product{ text-align:center; border:1px solid var(--border); padding:14px; border-radius:12px; background:#fff; transition:transform .12s ease, box-shadow .12s ease; position:relative; }
+.product:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.06); }
+.product img{ width:100%; height:200px; object-fit:contain; border-radius:8px; background:#fff; }
+.product h3{ margin:10px 0 6px; font-size:1rem; color:var(--text); }
+.price{ margin:0 0 10px; }
+.price .compare{ text-decoration:line-through; color:#999; margin-right:6px; }
+.deal-badge{ position:absolute; left:10px; top:10px; background:#FF6B00; color:#fff; font-weight:700; padding:4px 8px; border-radius:999px; font-size:12px; }
+.quick-add{ display:flex; justify-content:center; }
 </style>
 
 {% schema %}
 {
   "name": "Startseite – HW Business",
-  "settings": []
+  "settings": [
+    { "type":"image_picker", "id":"hero_image", "label":"Hero Hintergrundbild" },
+    { "type":"text", "id":"heading", "label":"Hero Überschrift", "default":"Willkommen zu HW Central Seller" },
+    { "type":"text", "id":"subheading", "label":"Hero Untertitel", "default":"Exklusive Hot Wheels, Sammlerstücke & mehr" },
+    { "type":"text", "id":"btn_label", "label":"Hero Button 1 Text", "default":"Zum Shop" },
+    { "type":"url",  "id":"btn_link",  "label":"Hero Button 1 Link", "default":"/collections/all" },
+    { "type":"text", "id":"btn2_label", "label":"Hero Button 2 Text (optional)" },
+    { "type":"url",  "id":"btn2_link",  "label":"Hero Button 2 Link (optional)" },
+    { "type":"range", "id":"overlay", "min":0, "max":90, "step":5, "unit":"%", "label":"Dunkel-Overlay", "default":45 },
+    { "type":"range", "id":"height", "min":40, "max":90, "step":5, "unit":"vh", "label":"Hero Höhe", "default":60 },
+
+    { "type":"text", "id":"deals_title", "label":"Top Deals Titel", "default":"Top Deals" },
+    { "type":"text", "id":"collection_handle", "label":"Collection Handle", "default":"all" },
+    { "type":"range", "id":"limit", "min":3, "max":12, "step":1, "label":"Anzahl Top Deals", "default":6 },
+    { "type":"checkbox", "id":"only_discounted", "label":"Nur reduzierte anzeigen", "default":true },
+    { "type":"text", "id":"tag_filter", "label":"Nur Produkte mit Tag (optional)" },
+    { "type":"url", "id":"more_link", "label":"Link „Alle Produkte“", "default":"/collections/all" }
+  ]
 }
 {% endschema %}
