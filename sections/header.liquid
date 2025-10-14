@@ -1,33 +1,65 @@
 <header class="header">
   <div class="header__inner">
-    <a href="/" class="header__logo" aria-label="{{ settings.shop_name | default: shop.name }}">
-      {% if settings.logo != blank %}
-        <img src="{{ settings.logo | image_url: width: 200 }}" alt="{{ settings.shop_name | default: shop.name }}" height="50" loading="eager">
-      {% else %}
-        <strong>{{ settings.shop_name | default: shop.name }}</strong>
-      {% endif %}
+    <a class="header__logo" href="/">
+      <img src="{{ 'logo.png' | asset_url }}" alt="{{ shop.name }}" height="36">
     </a>
 
-    <nav class="header__nav" aria-label="Hauptnavigation">
+    <nav class="header__nav">
       <ul>
         <li><a href="/">Startseite</a></li>
-        <li><a href="/collections/all">Shop</a></li>
-        <li><a href="/pages/about">Über uns</a></li>
-        <li><a href="/pages/contact">Kontakt</a></li>
-        <li><a href="/cart" aria-label="Warenkorb Seite">Warenkorb (<span data-cart-count>{{ cart.item_count }}</span>)</a></li>
-        <li><a href="#" data-open-cart aria-label="Schnell-Warenkorb öffnen">Schnell-Warenkorb</a></li>
+        <li><a href="/collections/all">Produkte</a></li>
       </ul>
     </nav>
-  </div>
 
-  {{ 'theme.js' | asset_url | script_tag }}
+    <!-- EIN Cart-Button: öffnet den Drawer und zeigt Badge nur bei >0 -->
+    <button class="cart-btn" data-cart-toggle aria-label="Warenkorb öffnen">
+      Warenkorb
+      <span class="cart-badge{% if cart.item_count == 0 %} is-hidden{% endif %}" data-cart-count>{{ cart.item_count }}</span>
+    </button>
+  </div>
 </header>
 
 <style>
-.header { width:100%; border-bottom:1px solid var(--border); padding:12px 0; background:#fff; }
-.header__inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:0 20px; }
-.header__logo img { display:block; }
-.header__nav ul { display:flex; list-style:none; gap:20px; margin:0; padding:0; }
-.header__nav a{ text-decoration:none; color:#111; font-weight:500; padding:6px 8px; border-radius:6px; }
-.header__nav a:hover{ color:#fff; background: var(--primary); }
+.header{ width:100%; border-bottom:1px solid var(--border); background:#fff; position:sticky; top:0; z-index:20; }
+.header__inner{ max-width:1200px; margin:0 auto; padding:10px 20px; display:flex; align-items:center; gap:16px; justify-content:space-between; }
+.header__logo img{ display:block; }
+.header__nav ul{ display:flex; gap:18px; list-style:none; margin:0; padding:0; }
+.header__nav a{ text-decoration:none; color:#111; font-weight:600; padding:6px 10px; border-radius:8px; }
+.header__nav a:hover{ background:var(--primary); color:#fff; }
+
+.cart-btn{ display:flex; align-items:center; gap:8px; background:var(--primary); color:#fff; border:0; border-radius:8px; padding:8px 14px; font-weight:700; cursor:pointer; }
+.cart-btn:hover{ background:var(--accent); }
+.cart-badge{ min-width:20px; height:20px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; font-size:12px; background:#000; color:#fff; padding:0 6px; }
+.cart-badge.is-hidden{ display:none; }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const badge = document.querySelector('[data-cart-count]');
+  const toggleBtn = document.querySelector('[data-cart-toggle]');
+
+  // Count initialisieren/auffrischen
+  fetch('/cart.js').then(r => r.json()).then(cart => {
+    if (!badge) return;
+    badge.textContent = cart.item_count;
+    badge.classList.toggle('is-hidden', cart.item_count === 0);
+  }).catch(()=>{});
+
+  // Drawer öffnen (Cart-Drawer Section muss ein Element mit id="cart-drawer" haben)
+  if (toggleBtn){
+    toggleBtn.addEventListener('click', () => {
+      const drawer = document.getElementById('cart-drawer');
+      if (drawer){ drawer.classList.add('open'); }
+      document.documentElement.classList.add('cart-open');
+    });
+  }
+
+  // Wenn per Ajax was hinzugefügt wurde, Zähler updaten (einfaches Event)
+  document.addEventListener('hw:cart-updated', (e) => {
+    if (!badge) return;
+    const count = (e.detail && e.detail.item_count) || 0;
+    badge.textContent = count;
+    badge.classList.toggle('is-hidden', count === 0);
+  });
+});
+</script>
