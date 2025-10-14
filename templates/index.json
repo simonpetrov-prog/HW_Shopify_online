@@ -3,9 +3,8 @@
     "header": { "type": "header", "settings": {} },
     "hero":   { "type": "hero-banner", "settings": {} },
     "deals":  { "type": "top-deals", "settings": {} },
-    "main":   { "type": "home", "settings": {} },
     "cart":   { "type": "cart-drawer", "settings": {} },
     "footer": { "type": "footer", "settings": {} }
   },
-  "order": ["header", "hero", "deals", "main", "cart", "footer"]
+  "order": ["header", "hero", "deals", "cart", "footer"]
 }
