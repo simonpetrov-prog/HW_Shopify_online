@@ -1,45 +1,73 @@
-{% comment %}
-Preisfilter per URL: ?min_price=3&max_price=15 (Euro)
-- Bewahrt aktuelle Sortierung (?sort_by=…) automatisch
-- Bewahrt aktive Tags, weil action="{{ collection.url }}" (Tags liegen im Pfad)
-{% endcomment %}
+{%- assign current_min = request.params.min_price -%}
+{%- assign current_max = request.params.max_price -%}
+{%- assign current_sort = request.params.sort_by | default: collection.sort_by -%}
+{%- assign has_active = current_min or current_max -%}
 
-{% assign current_min = request.params.min_price %}
-{% assign current_max = request.params.max_price %}
-{% assign current_sort = request.params.sort_by | default: collection.sort_by %}
+<details class="pricebar" {% if has_active %}open{% endif %}>
+  <summary class="pricebar__toggle">
+    Preisfilter
+    {% if has_active %}
+      – aktiv: {% if current_min %}ab {{ current_min | replace: '.', ',' }}€{% endif %}
+      {% if current_min and current_max %} bis {% endif %}
+      {% if current_max %}{{ current_max | replace: '.', ',' }}€{% endif %}
+    {% endif %}
+  </summary>
 
-<form class="pricebar" method="get" action="{{ collection.url }}">
-  <div class="pricebar__group">
-    <label for="min_price">Preis von</label>
-    <input id="min_price" name="min_price" type="number" step="0.01" min="0" inputmode="decimal" placeholder="z. B. 3"
-           value="{{ current_min }}">
-  </div>
+  <form class="pricebar__form" method="get" action="{{ collection.url }}">
+    <label class="switch">
+      <input id="price_enable" type="checkbox" {% if has_active %}checked{% endif %}>
+      <span>Preisfilter aktivieren</span>
+    </label>
 
-  <div class="pricebar__group">
-    <label for="max_price">bis</label>
-    <input id="max_price" name="max_price" type="number" step="0.01" min="0" inputmode="decimal" placeholder="z. B. 20"
-           value="{{ current_max }}">
-  </div>
+    <div class="pricebar__group">
+      <label for="min_price">von (€)</label>
+      <input id="min_price" name="min_price" type="number" step="0.01" min="0" inputmode="decimal"
+             placeholder="z. B. 3" value="{{ current_min }}" {% unless has_active %}disabled{% endunless %}>
+    </div>
 
-  {% if current_sort %}
-    <input type="hidden" name="sort_by" value="{{ current_sort }}">
-  {% endif %}
+    <div class="pricebar__group">
+      <label for="max_price">bis (€)</label>
+      <input id="max_price" name="max_price" type="number" step="0.01" min="0" inputmode="decimal"
+             placeholder="z. B. 20" value="{{ current_max }}" {% unless has_active %}disabled{% endunless %}>
+    </div>
 
-  <button class="btn" type="submit">Filter anwenden</button>
-  {% if current_min or current_max %}
-    <a class="btn-outline" href="{{ collection.url }}{% if current_sort %}?sort_by={{ current_sort }}{% endif %}">Zurücksetzen</a>
-  {% endif %}
-</form>
+    {% if current_sort %}
+      <input type="hidden" name="sort_by" value="{{ current_sort }}">
+    {% endif %}
+
+    <button class="btn" type="submit" {% unless has_active %}disabled{% endunless %}>Filter anwenden</button>
+    {% if has_active %}
+      <a class="btn-outline" href="{{ collection.url }}{% if current_sort %}?sort_by={{ current_sort }}{% endif %}">Zurücksetzen</a>
+    {% endif %}
+  </form>
+</details>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(){
+    const enable = document.getElementById('price_enable');
+    const minI = document.getElementById('min_price');
+    const maxI = document.getElementById('max_price');
+    const btn  = document.querySelector('.pricebar .btn');
+
+    if (!enable || !minI || !maxI || !btn) return;
+
+    function sync(){
+      const on = enable.checked;
+      minI.disabled = maxI.disabled = btn.disabled = !on;
+      if (!on){ minI.value = ''; maxI.value=''; }
+    }
+    enable.addEventListener('change', sync);
+  });
+</script>
 
 <style>
-.pricebar{
-  display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;
-  padding: 8px 0 16px; border-bottom:1px solid var(--border); margin-bottom:16px;
-}
+.pricebar{ margin:10px 0 18px; border:1px solid var(--border); border-radius:10px; background:#fff; }
+.pricebar__toggle{ cursor:pointer; font-weight:600; padding:10px 12px; display:block; }
+.pricebar[open] .pricebar__toggle{ border-bottom:1px solid var(--border); }
+.pricebar__form{ display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; padding:12px; }
 .pricebar__group{ display:flex; flex-direction:column; gap:6px; }
-.pricebar input{
-  border:1px solid var(--border); border-radius:8px; padding:8px 10px; background:#fff; width:130px;
-}
+.pricebar input[type="number"]{ border:1px solid var(--border); border-radius:8px; padding:8px 10px; background:#fff; width:130px; }
+.switch{ display:flex; align-items:center; gap:8px; margin-right:8px; }
 </style>
 
-{% schema %}{ "name":"Preisfilter (min/max)", "settings":[] }{% endschema %}
+{% schema %}{ "name":"Preisfilter (aktiv bei Toggle)", "settings":[] }{% endschema %}
