@@ -1,69 +1,69 @@
-{% comment %} Inhalt aus templates/product.liquid hierher verschoben {% endcomment %}
-<section class="container product-page">
-  <div class="product-grid">
-    <div>
+<section class="product-page container">
+  <div class="product-wrapper">
+    <div class="product-media">
       {% if product.featured_image %}
-        <div class="image-wrap">
-          <img src="{{ product.featured_image | img_url: '700x700' }}" alt="{{ product.title }}">
-        </div>
-      {% endif %}
-      {% if product.images.size > 1 %}
-        <div class="thumbs">
-          {% for image in product.images %}
-            <img src="{{ image | img_url: '200x200' }}" alt="{{ product.title }} Bild {{ forloop.index }}">
-          {% endfor %}
-        </div>
+        <img src="{{ product.featured_image | img_url: '800x800' }}" alt="{{ product.title }}" class="product-image">
       {% endif %}
     </div>
 
-    <div>
-      <h1>{{ product.title }}</h1>
-      {% render 'product-badges', product: product %}
+    <div class="product-info">
+      <h1 class="product-title">{{ product.title }}</h1>
 
-      <p class="price">
+      {% render 'product-badges' %}
+
+      <p class="product-price">
         {% if product.compare_at_price > product.price %}
-          <span class="compare">{{ product.compare_at_price | money }}</span>
+          <span class="price-old">{{ product.compare_at_price | money }}</span>
         {% endif %}
-        <span class="now">{{ product.price | money }}</span>
+        <span class="price-current">{{ product.price | money }}</span>
       </p>
 
-      {% form 'product', product %}
-        {% if product.variants.size > 1 %}
-          <label for="variant">Variante</label>
-          <select id="variant" name="id">
-            {% for variant in product.variants %}
-              <option value="{{ variant.id }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %}>
-                {{ variant.title }} – {{ variant.price | money }}
-              </option>
-            {% endfor %}
-          </select>
+      {% if product.available %}
+        {% assign stock = product.variants.first.inventory_quantity %}
+        {% if stock <= 3 %}
+          <p class="product-stock low">⚠️ Nur {{ stock }} Stück verfügbar!</p>
+        {% elsif stock <= 10 %}
+          <p class="product-stock medium">🔸 Noch {{ stock }} auf Lager</p>
         {% else %}
-          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+          <p class="product-stock high">✅ Auf Lager</p>
         {% endif %}
-
-        <label for="qty">Menge</label>
-        <input id="qty" type="number" name="quantity" value="1" min="1" style="width:90px">
-
-        <button type="submit" class="btn">In den Warenkorb</button>
-      {% endform %}
-
-      {% if product.description != blank %}
-        <div class="desc">{{ product.description }}</div>
+      {% else %}
+        <p class="product-stock out">❌ Ausverkauft</p>
       {% endif %}
+
+      <form action="/cart/add" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+        <button type="submit" class="btn-add">In den Warenkorb</button>
+        <button type="button" onclick="window.location='/checkout';" class="btn-buy">Sofort kaufen</button>
+      </form>
     </div>
   </div>
 </section>
 
 <style>
-.product-grid { display:grid; grid-template-columns: 1fr 1fr; gap:32px; align-items:start; }
-@media (max-width: 900px){ .product-grid{ grid-template-columns: 1fr; } }
-.image-wrap { background: var(--border); border-radius: 10px; padding: 10px; text-align: center; }
-.image-wrap img { max-width: 100%; height: auto; object-fit: contain; border-radius: 8px; }
-.price { margin:12px 0 18px; }
-.price .compare { text-decoration: line-through; color:#999; margin-right:10px; }
-.thumbs { display:flex; gap:10px; margin-top: 10px; }
-.desc { margin-top: 20px; line-height: 1.6; }
-.product-page .btn { margin-top: 12px; }
+.product-page { display:flex; justify-content:center; padding:40px 20px; }
+.product-wrapper { display:flex; flex-wrap:wrap; gap:40px; max-width:900px; width:100%; }
+.product-media img { width:100%; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
+.product-info { flex:1; }
+.product-title { font-size:26px; font-weight:700; margin-bottom:10px; }
+.product-price { font-size:20px; margin-bottom:12px; }
+.price-old { text-decoration:line-through; color:#888; margin-right:6px; }
+.product-stock { margin:8px 0 18px; font-weight:600; }
+.product-stock.low { color:#e60000; }
+.product-stock.medium { color:#ff9900; }
+.product-stock.high { color:#009900; }
+.product-stock.out { color:#555; }
+form { display:flex; gap:12px; flex-wrap:wrap; }
+.btn-add, .btn-buy {
+  padding:10px 20px;
+  border:none;
+  cursor:pointer;
+  border-radius:6px;
+  font-weight:600;
+  font-size:15px;
+}
+.btn-add { background:#0056d2; color:#fff; }
+.btn-buy { background:#ff9900; color:#fff; }
+.btn-add:hover { background:#003c9e; }
+.btn-buy:hover { background:#e67e00; }
 </style>
-
-{% schema %}{ "name": "Produkt – HW Business", "settings": [] }{% endschema %}
