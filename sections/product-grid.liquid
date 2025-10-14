@@ -42,6 +42,23 @@
       </article>
     {% endfor %}
   </div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('form[data-ajax-add]').forEach(form => {
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const fd = new FormData(form);
+      await fetch('/cart/add.js', { method:'POST', headers:{'Accept':'application/json'}, body: fd });
+      const cart = await fetch('/cart.js').then(r => r.json());
+      // Badge aktualisieren & Drawer kurz zeigen
+      document.dispatchEvent(new CustomEvent('hw:cart-updated', { detail: { item_count: cart.item_count }}));
+      const drawer = document.getElementById('cart-drawer');
+      if (drawer){ drawer.classList.add('open'); }
+      document.documentElement.classList.add('cart-open');
+    });
+  });
+});
+</script>
 
   {% if shown == 0 %}
     <p>Keine Produkte im gewählten Preisbereich.</p>
