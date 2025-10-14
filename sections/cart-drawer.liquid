@@ -1,3 +1,13 @@
+<div id="cart-drawer" class="cart-drawer">
+  <!-- … dein bisheriger Drawer-Inhalt … -->
+</div>
+
+<style>
+.cart-drawer{ position:fixed; right:-420px; top:0; width:420px; max-width:92vw; height:100%; background:#fff; box-shadow: -8px 0 24px rgba(0,0,0,.12); transition:right .25s ease; z-index:999; }
+.cart-drawer.open{ right:0; }
+.cart-open body{ overflow:hidden; }
+</style>
+
 <section class="cart-drawer" aria-hidden="true">
   <div class="cart-backdrop" data-close-cart></div>
   <aside class="cart-panel" role="dialog" aria-label="Warenkorb">
