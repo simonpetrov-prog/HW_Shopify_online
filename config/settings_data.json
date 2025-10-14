@@ -10,6 +10,8 @@
 {
   "current": {
     "logo": "shopify://shop_images/D8A46464-BB4A-4D30-AB9D-D6601123BE91.png",
+    "checkout_header_image": "shopify://shop_images/IMG_3575.jpg",
+    "checkout_logo_image": "shopify://shop_images/C8DC74AA-6D8E-417E-AC49-8341E04992FF.png",
     "sections": {
       "header": {
         "type": "header",
