@@ -1,21 +1,25 @@
-{%- assign is_sale = false -%}
-{%- if product.compare_at_price > product.price -%}{%- assign is_sale = true -%}{%- endif -%}
+{% if product.tags contains 'Neu' %}
+  <span class="badge new">Neu</span>
+{% endif %}
 
-{%- comment -%} "Neu" und "Limited" über Tags steuern {%- endcomment -%}
-{%- assign is_new = product.tags contains 'Neu' -%}
-{%- assign is_limited = product.tags contains 'Limited' or product.tags contains 'Limitiert' -%}
+{% if product.tags contains 'Limited' %}
+  <span class="badge limited">Limited</span>
+{% endif %}
 
-<div class="badges">
-  {%- if is_new -%}<span class="badge badge--new">Neu</span>{%- endif -%}
-  {%- if is_sale -%}<span class="badge badge--sale">Sale</span>{%- endif -%}
-  {%- if is_limited -%}<span class="badge badge--limited">Limited</span>{%- endif -%}
-</div>
+{% if product.compare_at_price > product.price %}
+  <span class="badge sale">Sale</span>
+{% endif %}
 
 <style>
-.badges{ position:absolute; top:8px; left:8px; display:flex; gap:6px; z-index:2; }
-.badge{ padding:4px 8px; border-radius:999px; font-size:12px; color:#fff; font-weight:600; }
-.badge--new{ background:var(--primary); }
-.badge--sale{ background:var(--accent); }
-.badge--limited{ background:#111; }
-.product-card{ position:relative; }
+.badge {
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:6px;
+  font-size:12px;
+  color:#fff;
+  margin-right:5px;
+}
+.badge.new { background:#007bff; }        /* Königsblau */
+.badge.limited { background:#ff9900; }    /* Orange */
+.badge.sale { background:#e60000; }       /* Rot */
 </style>
