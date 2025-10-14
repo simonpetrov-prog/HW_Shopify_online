@@ -1,8 +1,7 @@
-<section class="container">
-  <h1 style="margin:20px 0;">{{ collection.title }}</h1>
-  {% if collection.description != blank %}
-    <p style="color:#555;">{{ collection.description }}</p>
-  {% endif %}
-
-  {% section 'product-grid' %}
-</section>
+{% section 'header' %}
+{% section 'collection-filters' %}
+{% section 'collection-sort' %}
+{% section 'collection-price-filter' %}
+{% section 'product-grid' %}
+{% section 'cart-drawer' %}
+{% section 'footer' %}
