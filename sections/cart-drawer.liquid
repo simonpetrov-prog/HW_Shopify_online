@@ -30,8 +30,18 @@
 .cart-drawer.open{ right:0; }
 .cart-header{ display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid #ddd; background:var(--primary); color:#fff; }
 .cart-body{ flex:1; overflow-y:auto; padding:20px; }
-.cart-item{ display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-.cart-item img{ width:64px; height:64px; object-fit:contain; border-radius:6px; }
+.cart-item{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.cart-item img{ width:64px; height:64px; object-fit:contain; border-radius:6px; background:#fff; }
+.cart-info p{ margin:0; }
+.cart-controls{ display:flex; align-items:center; gap:8px; margin-top:6px; }
+.qty-btn{
+  width:30px; height:30px; border:1px solid var(--border); background:#fff; color:#111;
+  border-radius:6px; font-size:18px; line-height:1; display:flex; align-items:center; justify-content:center; cursor:pointer;
+}
+.remove-btn{
+  border:0; background:transparent; color:#999; font-size:20px; padding:0 6px; cursor:pointer;
+}
+.remove-btn:hover{ color:#e60000; }
 .cart-footer{ padding:16px 20px; border-top:1px solid #ddd; }
 .cart-subtotal{ display:flex; justify-content:space-between; margin-bottom:10px; font-size:16px; font-weight:600; }
 .cart-buttons a{ display:inline-block; text-align:center; padding:10px 14px; border-radius:6px; text-decoration:none; font-weight:600; }
@@ -41,38 +51,40 @@
 .cart-close{ background:#fff; border:none; color:#000; cursor:pointer; font-weight:700; border-radius:4px; padding:4px 10px; }
 </style>
 
-
 <script>
 function money(cents){
   return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format((cents||0)/100);
 }
 
+async function fetchCart(){
+  const res = await fetch('/cart.js', { credentials:'same-origin' });
+  return res.json();
+}
+
 async function loadCartDrawer(){
-  try {
-    const res = await fetch('/cart.js');
-    const cart = await res.json();
+  try{
+    const cart = await fetchCart();
     const body = document.getElementById('cart-body');
     const total = document.getElementById('cart-total');
+    if (!body || !total) return;
 
-    if (!cart || !cart.items) return;
-
-    if (cart.item_count === 0){
+    if (!cart || cart.item_count === 0){
       body.innerHTML = '<p>Dein Warenkorb ist leer.</p>';
       total.textContent = money(0);
       return;
     }
 
     body.innerHTML = cart.items.map((item, i) => `
-      <div class="cart-item">
-        <img src="${item.image}" alt="${item.title}">
+      <div class="cart-item" data-line="${i+1}">
+        ${item.image ? `<img src="${item.image}" alt="${item.title}">` : ''}
         <div class="cart-info">
-          <p><strong>${item.product_title}</strong></p>
+          <p><strong>${item.product_title || item.title}</strong></p>
           <p>${money(item.price)}</p>
           <div class="cart-controls">
-            <button onclick="updateQty(${i}, ${item.quantity - 1})" class="qty-btn">−</button>
-            <span>${item.quantity}</span>
-            <button onclick="updateQty(${i}, ${item.quantity + 1})" class="qty-btn">+</button>
-            <button onclick="removeItem(${i})" class="remove-btn">✕</button>
+            <button type="button" class="qty-btn" data-action="dec">-</button>
+            <span class="qty" aria-live="polite">${item.quantity}</span>
+            <button type="button" class="qty-btn" data-action="inc">+</button>
+            <button type="button" class="remove-btn" aria-label="Entfernen">×</button>
           </div>
         </div>
       </div>
@@ -80,34 +92,29 @@ async function loadCartDrawer(){
 
     total.textContent = money(cart.total_price);
 
+    // Header-Badge updaten
     const badge = document.querySelector('[data-cart-count]');
-    if (badge) {
+    if (badge){
       badge.textContent = cart.item_count;
       badge.classList.toggle('is-hidden', cart.item_count === 0);
     }
-  } catch (e) {
-    console.error('Cart load error', e);
-    document.getElementById('cart-body').innerHTML = '<p>Fehler beim Laden des Warenkorbs.</p>';
+  } catch(e){
+    console.error(e);
+    const body = document.getElementById('cart-body');
+    if (body) body.innerHTML = '<p>Ups, konnte den Warenkorb nicht laden.</p>';
   }
 }
 
-async function updateQty(index, newQty){
-  if (newQty <= 0) return removeItem(index);
+async function changeLine(line, quantity){
   await fetch('/cart/change.js', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ line: index + 1, quantity: newQty })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ line, quantity })
   });
-  loadCartDrawer();
-}
-
-async function removeItem(index){
-  await fetch('/cart/change.js', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ line: index + 1, quantity: 0 })
-  });
-  loadCartDrawer();
+  await loadCartDrawer();
+  // globales Badge-Event
+  const cart = await fetchCart();
+  document.dispatchEvent(new CustomEvent('hw:cart-updated', { detail: { item_count: cart.item_count }}));
 }
 
 function closeCartDrawer(){
@@ -116,12 +123,35 @@ function closeCartDrawer(){
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
+  const drawer = document.getElementById('cart-drawer');
+
+  // Öffnen + laden
   document.querySelectorAll('[data-cart-toggle]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      document.getElementById('cart-drawer').classList.add('open');
+      drawer.classList.add('open');
       document.documentElement.classList.add('cart-open');
       loadCartDrawer();
     });
   });
+
+  // Click-Delegation für + / − / ×
+  document.getElementById('cart-body').addEventListener('click', (e)=>{
+    const item = e.target.closest('.cart-item');
+    if (!item) return;
+    const line = parseInt(item.dataset.line, 10);
+
+    if (e.target.matches('.qty-btn')){
+      const action = e.target.dataset.action;
+      const current = parseInt(item.querySelector('.qty').textContent, 10);
+      const next = action === 'inc' ? current + 1 : Math.max(0, current - 1);
+      changeLine(line, next);
+    }
+    if (e.target.matches('.remove-btn')){
+      changeLine(line, 0);
+    }
+  });
+
+  // Externe Updates (z. B. Quick-Add im Grid)
+  document.addEventListener('hw:cart-updated', ()=> loadCartDrawer());
 });
 </script>
