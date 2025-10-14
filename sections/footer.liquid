@@ -1,14 +1,40 @@
-<section class="footer">
-  <div class="container">
-    <p>{{ settings.footer_text | default: "© " | append: 'now' | date: "%Y" }}</p>
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="f-col">
+      <h4>HW Business</h4>
+      <p>Königsblau. Orange. Hot Wheels Liebe.</p>
+    </div>
+
+    <div class="f-col">
+      <h4>Rechtliches</h4>
+      <ul>
+        <li><a href="/pages/impressum">Impressum</a></li>
+        <li><a href="/pages/agb">AGB</a></li>
+        <li><a href="/policies/privacy-policy">Datenschutz</a></li>
+        <li><a href="/policies/refund-policy">Widerruf</a></li>
+      </ul>
+    </div>
+
+    <div class="f-col">
+      <h4>Kontakt</h4>
+      <ul>
+        <li><a href="/pages/kontakt">Kontaktformular</a></li>
+        <li><a href="/pages/ueber-uns">Über uns</a></li>
+      </ul>
+    </div>
   </div>
-</section>
+
+  <div class="footer__bottom">
+    <small>© {{ 'now' | date: "%Y" }} {{ shop.name }} – Alle Rechte vorbehalten</small>
+  </div>
+</footer>
 
 <style>
-.footer {
-  border-top: 1px solid #e5e5e5;
-  padding: 24px 0;
-  color: #777;
-  text-align: center;
-}
+.footer{ margin-top:40px; border-top:2px solid var(--border); background:#fff; }
+.footer__inner{ max-width:1200px; margin:0 auto; padding:24px 20px; display:grid; gap:20px; grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); }
+.f-col h4{ margin:0 0 10px; color:var(--primary); }
+.f-col ul{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+.f-col a{ color:#333; text-decoration:none; }
+.f-col a:hover{ color:var(--primary); }
+.footer__bottom{ text-align:center; border-top:1px solid var(--border); padding:14px 20px; color:#666; }
 </style>
