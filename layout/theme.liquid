@@ -144,14 +144,19 @@ document.addEventListener('scroll',()=>{const h=document.querySelector('.header'
   display: inline-block;
   padding-bottom: 6px;
 }
+.nav__link {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 6px;
+}
 
 .nav__link.is-active::after {
   content: "";
   position: absolute;
-  left: 50%;
   bottom: 0;
+  left: 50%;
   transform: translateX(-50%);
-  width: 22px; /* kannst du größer oder kleiner machen */
+  width: 24px; /* Länge des Strichs – kannst anpassen */
   height: 3px;
   border-radius: 2px;
   background: var(--accent, #FF6B00);
