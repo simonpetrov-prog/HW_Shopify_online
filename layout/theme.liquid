@@ -21,6 +21,53 @@
       .btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
       .btn-outline:hover { color:var(--accent); border-color:var(--accent); }
     </style>
+<style id="hw-vars">
+:root{
+  --primary:#0046BE;   /* Königsblau */
+  --accent:#FF6B00;    /* Orange */
+  --text:#111;
+  --border:#e5e5e5;
+  --bg:#fff;
+}
+
+/* Base */
+html,body{background:var(--bg); color:var(--text);}
+a{color:var(--primary); text-decoration:none;}
+a:hover{color:var(--accent);}
+
+/* Buttons */
+.btn,
+button.btn{
+  background:var(--primary); color:#fff; border:0; border-radius:10px;
+  padding:10px 16px; font-weight:800; letter-spacing:.2px; cursor:pointer;
+  transition:transform .06s ease, filter .12s ease, box-shadow .12s ease;
+  box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+.btn:hover{ filter:brightness(.96); transform:translateY(-1px); }
+.btn:active{ transform:translateY(0); box-shadow:none; }
+
+.btn-outline{
+  background:transparent; color:var(--primary); border:2px solid var(--primary);
+  border-radius:10px; padding:8px 14px; font-weight:800;
+}
+.btn-outline:hover{ background:var(--primary); color:#fff; }
+
+/* Kleine Chips (z. B. Filter) */
+.chip{ border:1px solid var(--border); border-radius:999px; padding:6px 10px; }
+.chip.active{ background:var(--primary); color:#fff; border-color:var(--primary); }
+
+/* Divider */
+.hr{height:2px; background:linear-gradient(90deg,var(--accent),transparent); border:0; }
+</style>
+
+<script>
+/* Header Shadow on scroll */
+document.addEventListener('scroll',()=>{
+  const h=document.querySelector('.header');
+  if(!h) return;
+  h.classList.toggle('is-scrolled', window.scrollY>8);
+});
+</script>
   </head>
   <body>
     {{ content_for_layout }}
