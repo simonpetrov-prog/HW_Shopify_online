@@ -1,12 +1,19 @@
-<header class="header">
-  <div class="header__inner">
-    <a class="header__logo" href="/">
-      {% if section.settings.logo != blank %}
-        <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}" height="36">
-      {% else %}
-        <strong>{{ shop.name }}</strong>
-      {% endif %}
-    </a>
+<a class="header__logo" href="/">
+  {% if section.settings.logo != blank %}
+    <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}" height="36">
+  {% else %}
+    <strong>{{ shop.name }}</strong>
+  {% endif %}
+</a>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo" }
+  ]
+}
+{% endschema %}
 
     <nav class="header__nav">
       <ul>
