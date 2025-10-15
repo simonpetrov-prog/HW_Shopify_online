@@ -1,7 +1,7 @@
 <section class="hero-banner" style="--overlay: {{ section.settings.overlay | divided_by: 100.0 }}; --height: {{ section.settings.height }}vh;">
   <div class="hero-banner__bg">
     {% if section.settings.image != blank %}
-      <img src="{{ section.settings.image | img_url: '2000x' }}" alt="Hero" loading="eager">
+      <img src="{{ section.settings.image | image_url: width: 2000 }}" alt="Hero" loading="eager">
     {% endif %}
     <div class="hero-banner__overlay"></div>
   </div>
@@ -13,26 +13,21 @@
     {% endif %}
     <div class="cta">
       <a class="btn btn--primary" href="{{ section.settings.btn_link | default: '/collections/all' }}">{{ section.settings.btn_label | default: 'Zum Shop' }}</a>
-      {% if section.settings.btn2_label != blank %}
-        <a class="btn btn--outline" href="{{ section.settings.btn2_link | default: '/collections/all' }}">{{ section.settings.btn2_label }}</a>
-      {% endif %}
     </div>
   </div>
 </section>
 
 <style>
-.hero-banner{ position:relative; height:var(--height, 60vh); min-height:320px; display:grid; place-items:center; overflow:hidden; }
+.hero-banner{ position:relative; height:var(--height, 60vh); min-height:320px; display:grid; place-items:center; overflow:hidden; margin-bottom:24px; }
 .hero-banner__bg img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-.hero-banner__overlay{ position:absolute; inset:0; background:#000; opacity:var(--overlay, .45); }
-.hero-banner__content{ position:relative; text-align:center; color:#fff; padding:0 18px; max-width: 900px; }
-.hero-banner h1{ font-size: clamp(28px, 4.5vw, 48px); margin:0 0 10px; color:#fff; }
-.hero-banner .sub{ font-size: clamp(14px, 2vw, 18px); opacity:.92; margin:0 0 18px; }
+.hero-banner__overlay{ position:absolute; inset:0; background:#000; opacity:var(--overlay,.45); }
+.hero-banner__content{ position:relative; text-align:center; color:#fff; padding:0 18px; max-width:900px; }
+.hero-banner h1{ font-size:clamp(28px,4.5vw,48px); margin:0 0 10px; color:#fff; }
+.hero-banner .sub{ font-size:clamp(14px,2vw,18px); opacity:.92; margin:0 0 18px; }
 .hero-banner .cta{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
 .btn{ padding:10px 18px; border-radius:8px; font-weight:700; text-decoration:none; display:inline-block; }
-.btn--primary{ background: var(--accent, #FF6B00); color:#fff; }   /* Orange Akzent */
+.btn--primary{ background:var(--accent,#FF6B00); color:#fff; }
 .btn--primary:hover{ filter:brightness(.92); }
-.btn--outline{ border:2px solid #fff; color:#fff; }
-.btn--outline:hover{ background:#fff; color:#111; }
 </style>
 
 {% schema %}
@@ -42,10 +37,8 @@
     { "type":"image_picker", "id":"image", "label":"Hintergrundbild" },
     { "type":"text", "id":"heading", "label":"Überschrift", "default":"Willkommen zu HW Central Seller" },
     { "type":"text", "id":"subheading", "label":"Untertitel", "default":"Exklusive Hot Wheels, Sammlerstücke & mehr" },
-    { "type":"text", "id":"btn_label", "label":"Button 1 Text", "default":"Zum Shop" },
-    { "type":"url",  "id":"btn_link",  "label":"Button 1 Link", "default":"/collections/all" },
-    { "type":"text", "id":"btn2_label", "label":"Button 2 Text (optional)" },
-    { "type":"url",  "id":"btn2_link",  "label":"Button 2 Link (optional)" },
+    { "type":"text", "id":"btn_label", "label":"Button Text", "default":"Zum Shop" },
+    { "type":"url",  "id":"btn_link",  "label":"Button Link", "default":"/collections/all" },
     { "type":"range", "id":"overlay", "min":0, "max":90, "step":5, "unit":"%", "label":"Dunkel-Overlay", "default":45 },
     { "type":"range", "id":"height", "min":40, "max":90, "step":5, "unit":"vh", "label":"Höhe (Viewport)", "default":60 }
   ]
