@@ -23,6 +23,10 @@
     </style>
   </head>
   <body>
+{% if template.name == 'index' %}
+  {% section 'hero-banner' %}
+  {% section 'top-deals' %}
+{% endif %}
     {{ content_for_layout }}
   </body>
 </html>
