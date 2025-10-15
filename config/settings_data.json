@@ -21,6 +21,28 @@
       "footer": {
         "type": "footer",
         "settings": {}
+      },
+      "hero-banner": {
+        "type": "hero-banner",
+        "settings": {
+          "image": "shopify://shop_images/IMG_3575.jpg",
+          "heading": "Willkommen zu HW Central Seller",
+          "subheading": "Exklusive Hot Wheels, Sammlerstücke & mehr",
+          "btn_label": "Zum Shop",
+          "btn_link": "shopify://collections/all",
+          "overlay": 45,
+          "height": 60
+        }
+      },
+      "top-deals": {
+        "type": "top-deals",
+        "settings": {
+          "title": "Top Deals",
+          "collection_handle": "all",
+          "only_discounted": true,
+          "limit": 6,
+          "more_link": "shopify://collections/all"
+        }
       }
     },
     "content_for_index": []
