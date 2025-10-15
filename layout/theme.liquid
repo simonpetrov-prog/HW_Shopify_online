@@ -134,21 +134,25 @@ document.addEventListener('scroll',()=>{const h=document.querySelector('.header'
 @media (max-width: 900px){ .hero-banner{ height:56vh; } }
 @media (max-width: 640px){ .hero-banner{ height:52vh; } }
 
-.nav__link {
+/* Zentrierter Mini-Strich unter aktivem Menüpunkt (erzwingt Mitte) */
+.header .header__nav a.nav__link{
   position: relative;
   display: inline-flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   padding-bottom: 6px;
 }
 
-.nav__link.is-active::after {
+/* stärkere Spezifität + !important, damit alte Regeln überstimmt werden */
+.header .header__nav a.nav__link.is-active::after{
   content: "";
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 24px; /* Länge bleibt schön kurz */
+  bottom: -6px;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 auto !important;    /* zentriert horizontal */
+  transform: none !important;   /* alte translate-Regeln aushebeln */
+  width: 24px;                  /* kleiner, eleganter Strich */
   height: 3px;
   border-radius: 2px;
   background: var(--accent, #FF6B00);
