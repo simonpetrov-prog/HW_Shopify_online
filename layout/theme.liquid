@@ -124,7 +124,23 @@ document.addEventListener('scroll',()=>{
 </style>
 <script>
 document.addEventListener('scroll',()=>{const h=document.querySelector('.header');if(h){h.classList.toggle('is-scrolled',window.scrollY>8)}})
-</script> </head>
+</script> 
+<style>
+/* Top Deals Bühne etwas hervorheben */
+.top-deals{ padding:16px 0 28px; background:#F7F9FF; border-top:2px solid rgba(0,70,190,.08); }
+.top-deals .td-head{ margin: 6px 0 12px; }
+
+/* Hero auf Tablets/Phones etwas niedriger */
+@media (max-width: 900px){ .hero-banner{ height:56vh; } }
+@media (max-width: 640px){ .hero-banner{ height:52vh; } }
+
+/* (optional) Active-Underline im Menü zentral & kleiner */
+.nav__link.is-active::after{
+  left:50%; transform:translateX(-50%);
+  width:28px; height:3px; bottom:-6px; border-radius:2px; background:var(--accent);
+}
+</style>
+</head>
   <body>
     {{ content_for_layout }}
   </body>
