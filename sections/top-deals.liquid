@@ -10,7 +10,11 @@
     {%- if section.settings.only_discounted and product.compare_at_price <= product.price -%}{% continue %}{%- endif -%}
     <article class="product">
       <a href="{{ product.url }}">
-        {% if product.compare_at_price > product.price %}<span class="deal-badge">Deal</span>{% endif %}
+        {% assign save = product.compare_at_price | minus: product.price %}
+{% if product.compare_at_price > product.price and save > 0 %}
+  {% assign pct = save | times: 100.0 | divided_by: product.compare_at_price | round %}
+  <span class="deal-badge">-{{ pct }}%</span>
+{% endif %}
         <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title }}">
         <h3>{{ product.title }}</h3>
       </a>
