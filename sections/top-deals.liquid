@@ -3,30 +3,21 @@
     <h2>{{ section.settings.title | default: 'Top Deals' }}</h2>
     <a class="btn btn--outline" href="{{ section.settings.more_link | default: '/collections/all' }}">Alle Produkte</a>
   </div>
-
   <div class="grid">
   {%- assign col = collections[section.settings.collection_handle] | default: collections['all'] -%}
   {%- assign shown = 0 -%}
   {%- for product in col.products -%}
     {%- if section.settings.only_discounted and product.compare_at_price <= product.price -%}{% continue %}{%- endif -%}
-    {%- if section.settings.tag_filter != blank and product.tags contains section.settings.tag_filter == false -%}{% continue %}{%- endif -%}
-    <article class="product product-card">
-      <a href="{{ product.url }}" class="product-link">
+    <article class="product">
+      <a href="{{ product.url }}">
         {% if product.compare_at_price > product.price %}<span class="deal-badge">Deal</span>{% endif %}
-        <img src="{{ product.featured_image | img_url: '400x400' }}" alt="{{ product.title }}">
+        <img src="{{ product.featured_image | image_url: width: 500 }}" alt="{{ product.title }}">
         <h3>{{ product.title }}</h3>
       </a>
       <p class="price">
-        {% if product.compare_at_price > product.price %}
-          <span class="compare">{{ product.compare_at_price | money }}</span>
-        {% endif %}
+        {% if product.compare_at_price > product.price %}<span class="compare">{{ product.compare_at_price | money }}</span>{% endif %}
         <strong>{{ product.price | money }}</strong>
       </p>
-      <form data-ajax-add class="quick-add">
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-        <input type="hidden" name="quantity" value="1">
-        <button type="submit" class="btn" {% unless product.available %}disabled{% endunless %}>In den Warenkorb</button>
-      </form>
     </article>
     {%- assign shown = shown | plus: 1 -%}
     {%- if shown >= section.settings.limit -%}{% break %}{%- endif -%}
@@ -35,19 +26,15 @@
 </section>
 
 <style>
-.top-deals .td-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin: 10px 0 8px; }
+.top-deals .td-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin:10px 0 8px; }
 .top-deals h2{ margin:0; color:var(--primary,#0046BE); }
 .grid{ display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
-.product{ text-align:center; border:1px solid var(--border); padding:14px; border-radius:12px; background:#fff; transition:transform .12s ease, box-shadow .12s ease; position:relative; }
-.product:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.06); }
+.product{ text-align:center; border:1px solid var(--border,#e5e5e5); padding:14px; border-radius:12px; background:#fff; position:relative; }
 .product img{ width:100%; height:200px; object-fit:contain; border-radius:8px; background:#fff; }
-.product h3{ margin:10px 0 6px; font-size:1rem; color:var(--text); }
+.product h3{ margin:10px 0 6px; font-size:1rem; color:#111; }
 .price{ margin:0 0 10px; }
 .price .compare{ text-decoration:line-through; color:#999; margin-right:6px; }
 .deal-badge{ position:absolute; left:10px; top:10px; background:#FF6B00; color:#fff; font-weight:700; padding:4px 8px; border-radius:999px; font-size:12px; }
-.quick-add{ display:flex; justify-content:center; }
-.btn{ background:var(--primary,#0046BE); color:#fff; padding:10px 16px; border-radius:8px; font-weight:700; border:0; }
-.btn:hover{ filter:brightness(.95); }
 .btn--outline{ border:2px solid var(--primary,#0046BE); color:var(--primary,#0046BE); background:transparent; border-radius:8px; padding:8px 14px; font-weight:700; text-decoration:none; }
 .btn--outline:hover{ background:var(--primary,#0046BE); color:#fff; }
 </style>
@@ -58,9 +45,8 @@
   "settings": [
     { "type":"text", "id":"title", "label":"Titel", "default":"Top Deals" },
     { "type":"text", "id":"collection_handle", "label":"Collection Handle", "default":"all" },
-    { "type":"range", "id":"limit", "min":3, "max":12, "step":1, "label":"Anzahl Produkte", "default":6 },
-    { "type":"checkbox", "id":"only_discounted", "label":"Nur reduzierte anzeigen (Vergleichspreis > Preis)", "default":true },
-    { "type":"text", "id":"tag_filter", "label":"Optional: nur Produkte mit Tag", "default":"" },
+    { "type":"checkbox", "id":"only_discounted", "label":"Nur reduzierte anzeigen", "default":true },
+    { "type":"range", "id":"limit", "min":3, "max":12, "step":1, "label":"Anzahl", "default":6 },
     { "type":"url", "id":"more_link", "label":"Link „Alle Produkte“", "default":"/collections/all" }
   ]
 }
