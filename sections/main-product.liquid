@@ -162,14 +162,37 @@
 
 .pdp-meta{ list-style:none; padding:0; margin:14px 0; display:grid; gap:6px; color:#444; }
 
-/* TABS */
+/* TABS – bessere Lesbarkeit */
 .pdp-tabs{ margin-top:14px; }
-.pdp-tabs .tab{ border:1px solid var(--border); background:#fff; border-radius:999px; padding:8px 12px; margin-right:8px; font-weight:800; }
-.pdp-tabs .tab.is-active{ background:var(--primary); color:#fff; border-color:var(--primary); }
+.pdp-tabs .tab{
+  border:1px solid var(--border);
+  background:#fff;
+  color:#111;                 /* immer gut lesbar */
+  border-radius:999px;
+  padding:8px 12px;
+  margin-right:8px;
+  font-weight:800;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.pdp-tabs .tab:hover{
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(0,70,190,.06);
+}
+.pdp-tabs .tab.is-active{
+  background: var(--primary);
+  color:#fff;
+  border-color: var(--primary);
+}
 .tab-panels{ margin-top:12px; }
-.panel{ display:none; border:1px solid var(--border); border-radius:12px; padding:14px; background:#fff; }
+.panel{
+  display:none;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  background:#fff;
+}
 .panel.is-active{ display:block; }
-.bullets{ margin:0; padding-left:18px; }
 
 /* Sticky CTA (mobile) */
 .pdp-sticky{ position:sticky; bottom:0; background:rgba(255,255,255,.98); border-top:1px solid var(--border); display:none; }
