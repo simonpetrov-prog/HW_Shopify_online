@@ -4,40 +4,32 @@
   data-product-id="{{ product.id }}"
   data-limit="{{ section.settings.limit }}"
 >
-  {% if recommendations.performed and recommendations.products_count > 0 %}
-    <div class="pdp-recos__head">
-      <h2>{{ section.settings.heading | default: 'Ähnliche Produkte' }}</h2>
-      <a class="btn-outline" href="/collections/all">Alle ansehen</a>
-    </div>
+  <div class="pdp-recos__head">
+    <h2>{{ section.settings.heading | default: 'Ähnliche Produkte' }}</h2>
+    <a class="btn-outline" href="/collections/all">Alle ansehen</a>
+  </div>
 
-    <div class="grid">
+  {%- comment -%} Serverseitig: Wenn Shopify Empfehlungen hat, zeigen. {%- endcomment -%}
+  {% if recommendations.performed and recommendations.products_count > 0 %}
+    <div class="grid" data-recos-grid>
       {% for rec in recommendations.products limit: section.settings.limit %}
-        <article class="product">
-          <a href="{{ rec.url }}" class="product-link">
-            {% if rec.compare_at_price > rec.price %}
-              {% assign save = rec.compare_at_price | minus: rec.price %}
-              {% if save > 0 %}
-                {% assign pct = save | times: 100.0 | divided_by: rec.compare_at_price | round %}
-                <span class="deal-badge">-{{ pct }}%</span>
-              {% endif %}
-            {% endif %}
-            <img src="{{ rec.featured_image | image_url: width: 600 }}" alt="{{ rec.title }}">
-            <h3>{{ rec.title }}</h3>
-          </a>
-          <p class="price">
-            {% if rec.compare_at_price > rec.price %}
-              <span class="compare">{{ rec.compare_at_price | money }}</span>
-            {% endif %}
-            <strong>{{ rec.price | money }}</strong>
-          </p>
-          <form method="post" action="/cart/add" data-ajax-add class="quick-add">
-            <input type="hidden" name="id" value="{{ rec.selected_or_first_available_variant.id }}">
-            <input type="hidden" name="quantity" value="1">
-            <button class="btn" {% unless rec.available %}disabled{% endunless %}>In den Warenkorb</button>
-          </form>
-        </article>
+        {% render 'rec-card', p: rec %}
       {% endfor %}
     </div>
+  {% else %}
+    {%- comment -%} Fallback: Zeig ein paar andere Produkte aus "all", außer das aktuelle. {%- endcomment -%}
+    {% assign col = collections['all'] %}
+    {% if col.products_count > 1 %}
+      <div class="grid" data-recos-grid>
+        {% assign shown = 0 %}
+        {% for rec in col.products %}
+          {% if rec.id == product.id %}{% continue %}{% endif %}
+          {% render 'rec-card', p: rec %}
+          {% assign shown = shown | plus: 1 %}
+          {% if shown >= section.settings.limit %}{% break %}{% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
   {% endif %}
 </section>
 
@@ -57,21 +49,28 @@
 </style>
 
 <script>
-/* Lazy-load Recommendations via Shopify endpoint */
+/* Clientseitig nachladen (falls Server nichts geliefert hat) */
 (function(){
   const wrap = document.querySelector('[data-product-recommendations]');
-  if(!wrap) return;
-  if (wrap.dataset.loaded) return;
-  const url = `${window.routes?.product_recommendations_url || '/recommendations/products'}?section_id={{ section.id }}&product_id=${wrap.dataset.productId}&limit=${wrap.dataset.limit}`;
+  if(!wrap || wrap.dataset.loaded) return;
+
+  const limit = wrap.dataset.limit || 4;
+  const pid   = wrap.dataset.productId;
+  const url   = `${window.routes?.product_recommendations_url || '/recommendations/products'}?section_id={{ section.id }}&product_id=${pid}&limit=${limit}`;
+
   fetch(url)
     .then(r => r.text())
     .then(html => {
       const doc = new DOMParser().parseFromString(html, 'text/html');
-      const inner = doc.querySelector('[data-product-recommendations]');
-      if (inner) wrap.innerHTML = inner.innerHTML;
-      wrap.dataset.loaded = 'true';
+      const inner = doc.querySelector('[data-recommendations], [data-product-recommendations]'); // deckt beide Varianten
+      if (inner) {
+        const grid = inner.querySelector('[data-recos-grid]');
+        if (grid) wrap.querySelector('[data-recos-grid]')?.replaceWith(grid);
+        else wrap.innerHTML = inner.innerHTML;
+        wrap.dataset.loaded = 'true';
+      }
     })
-    .catch(()=>{ /* fail silent */ });
+    .catch(()=>{ /* silent */ });
 })();
 </script>
 
