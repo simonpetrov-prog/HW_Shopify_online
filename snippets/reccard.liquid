@@ -1,0 +1,25 @@
+{%- assign rec = p -%}
+<article class="product">
+  <a href="{{ rec.url }}" class="product-link">
+    {% if rec.compare_at_price > rec.price %}
+      {% assign save = rec.compare_at_price | minus: rec.price %}
+      {% if save > 0 %}
+        {% assign pct = save | times: 100.0 | divided_by: rec.compare_at_price | round %}
+        <span class="deal-badge">-{{ pct }}%</span>
+      {% endif %}
+    {% endif %}
+    <img src="{{ rec.featured_image | image_url: width: 600 }}" alt="{{ rec.title }}">
+    <h3>{{ rec.title }}</h3>
+  </a>
+  <p class="price">
+    {% if rec.compare_at_price > rec.price %}
+      <span class="compare">{{ rec.compare_at_price | money }}</span>
+    {% endif %}
+    <strong>{{ rec.price | money }}</strong>
+  </p>
+  <form method="post" action="/cart/add" data-ajax-add class="quick-add">
+    <input type="hidden" name="id" value="{{ rec.selected_or_first_available_variant.id }}">
+    <input type="hidden" name="quantity" value="1">
+    <button class="btn" {% unless rec.available %}disabled{% endunless %}>In den Warenkorb</button>
+  </form>
+</article>
