@@ -159,6 +159,18 @@ document.addEventListener('scroll',()=>{const h=document.querySelector('.header'
 }
 }
 </style>
+<style>
+:root{
+  --primary:#0046BE;
+  --accent:#FF6B00;
+  --text:#111;
+  --border:#e5e5e5;
+}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+.btn{background:var(--primary);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800}
+.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary);border-radius:10px;padding:8px 14px;font-weight:800}
+</style>
+
 </head>
   <body>
     {{ content_for_layout }}
