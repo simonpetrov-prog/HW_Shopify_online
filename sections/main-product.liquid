@@ -1,69 +1,236 @@
-<section class="product-page container">
-  <div class="product-wrapper">
-    <div class="product-media">
-      {% if product.featured_image %}
-        <img src="{{ product.featured_image | img_url: '800x800' }}" alt="{{ product.title }}" class="product-image">
+{% assign product = product | default: all_products[request.path] %}
+
+<section class="container pdp">
+  <div class="pdp-grid">
+    <!-- GALLERY -->
+    <div class="pdp-media">
+      {% if product.images.size > 0 %}
+        <div class="pdp-media__main">
+          <img id="pdp-main-img" src="{{ product.featured_image | image_url: width: 1200 }}" alt="{{ product.title }}" loading="eager">
+          {% assign save = product.compare_at_price | minus: product.price %}
+          {% if product.compare_at_price > product.price and save > 0 %}
+            {% assign pct = save | times: 100.0 | divided_by: product.compare_at_price | round %}
+            <span class="pdp-badge pct">-{{ pct }}%</span>
+          {% endif %}
+          {% if product.tags contains 'Neu' %}
+            <span class="pdp-badge new">Neu</span>
+          {% endif %}
+          {% if product.tags contains 'Limited' %}
+            <span class="pdp-badge limited">Limited</span>
+          {% endif %}
+        </div>
+        {% if product.images.size > 1 %}
+        <div class="pdp-thumbs">
+          {% for image in product.images %}
+            <button class="thumb" data-src="{{ image | image_url: width: 1200 }}">
+              <img src="{{ image | image_url: width: 220 }}" alt="{{ product.title }} {{ forloop.index }}">
+            </button>
+          {% endfor %}
+        </div>
+        {% endif %}
       {% endif %}
     </div>
 
-    <div class="product-info">
-      <h1 class="product-title">{{ product.title }}</h1>
-
-      {% render 'product-badges' %}
-
-      <p class="product-price">
+    <!-- INFO -->
+    <div class="pdp-info">
+      <h1 class="pdp-title">{{ product.title }}</h1>
+      <div class="pdp-pricing">
         {% if product.compare_at_price > product.price %}
-          <span class="price-old">{{ product.compare_at_price | money }}</span>
+          <span class="compare">{{ product.compare_at_price | money }}</span>
         {% endif %}
-        <span class="price-current">{{ product.price | money }}</span>
-      </p>
+        <span class="price">{{ product.price | money }}</span>
+        {% unless product.available %}<span class="soldout">Ausverkauft</span>{% endunless %}
+      </div>
 
-      {% if product.available %}
-        {% assign stock = product.variants.first.inventory_quantity %}
-        {% if stock <= 3 %}
-          <p class="product-stock low">⚠️ Nur {{ stock }} Stück verfügbar!</p>
-        {% elsif stock <= 10 %}
-          <p class="product-stock medium">🔸 Noch {{ stock }} auf Lager</p>
-        {% else %}
-          <p class="product-stock high">✅ Auf Lager</p>
-        {% endif %}
-      {% else %}
-        <p class="product-stock out">❌ Ausverkauft</p>
+      {% if product.variants.size > 1 %}
+        <div class="pdp-variants">
+          <label for="pdp-variant">Variante</label>
+          <select id="pdp-variant" name="id">
+            {% for v in product.variants %}
+              <option value="{{ v.id }}" {% if v.id == product.selected_or_first_available_variant.id %}selected{% endif %} {% unless v.available %}disabled{% endunless %}>
+                {{ v.title }} {% unless v.available %}(ausverkauft){% endunless %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
       {% endif %}
 
-      <form action="/cart/add" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-        <button type="submit" class="btn-add">In den Warenkorb</button>
-        <button type="button" onclick="window.location='/checkout';" class="btn-buy">Sofort kaufen</button>
+      <div class="pdp-qty">
+        <label for="pdp-qty">Menge</label>
+        <div class="qty">
+          <button type="button" class="qty-btn" data-d="-1">–</button>
+          <input id="pdp-qty" type="number" name="quantity" value="1" min="1" step="1" inputmode="numeric">
+          <button type="button" class="qty-btn" data-d="1">+</button>
+        </div>
+      </div>
+
+      <form class="pdp-actions" method="post" action="/cart/add" data-ajax-add>
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button class="btn add" type="submit" {% unless product.available %}disabled{% endunless %}>In den Warenkorb</button>
+        <a class="btn-outline buy" href="/checkout" {% unless product.available %}aria-disabled="true" tabindex="-1"{% endunless %}>Direkt kaufen</a>
       </form>
+
+      {% if product.inventory_policy == 'deny' and product.selected_or_first_available_variant.inventory_quantity <= 5 and product.selected_or_first_available_variant.inventory_management %}
+        <p class="lowstock">Nur noch {{ product.selected_or_first_available_variant.inventory_quantity }} auf Lager – schnell sichern!</p>
+      {% endif %}
+
+      <ul class="pdp-meta">
+        <li>🚚 Versand: 2–4 Werktage (DE)</li>
+        <li>🔁 14 Tage Rückgabe</li>
+        <li>✅ Sichere Zahlung</li>
+      </ul>
+
+      <!-- TABS -->
+      <div class="pdp-tabs">
+        <button class="tab is-active" data-tab="desc">Beschreibung</button>
+        <button class="tab" data-tab="details">Details</button>
+        <button class="tab" data-tab="ship">Versand & Rückgabe</button>
+
+        <div class="tab-panels">
+          <div class="panel is-active" id="tab-desc">
+            {{ product.description | default: 'Detailliertes Sammlermodell. Perfekt für Fans & Sammler.' }}
+          </div>
+          <div class="panel" id="tab-details">
+            <ul class="bullets">
+              <li>Marke: Hot Wheels</li>
+              <li>Zustand: Neu & OVP</li>
+              <li>Skala: 1:64</li>
+            </ul>
+          </div>
+          <div class="panel" id="tab-ship">
+            <p>Versand mit Sendungsverfolgung. Rückgabe innerhalb 14 Tagen möglich (ungeöffnet).</p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- Sticky CTA (nur mobil) -->
+<div class="pdp-sticky">
+  <div class="pdp-sticky__inner container">
+    <div class="title">{{ product.title }}</div>
+    <div class="right">
+      <div class="s-price">
+        {% if product.compare_at_price > product.price %}
+          <span class="compare">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+        <strong>{{ product.price | money }}</strong>
+      </div>
+      <form method="post" action="/cart/add" data-ajax-add>
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button class="btn small" {% unless product.available %}disabled{% endunless %}>In den Warenkorb</button>
+      </form>
+    </div>
+  </div>
+</div>
+
 <style>
-.product-page { display:flex; justify-content:center; padding:40px 20px; }
-.product-wrapper { display:flex; flex-wrap:wrap; gap:40px; max-width:900px; width:100%; }
-.product-media img { width:100%; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); }
-.product-info { flex:1; }
-.product-title { font-size:26px; font-weight:700; margin-bottom:10px; }
-.product-price { font-size:20px; margin-bottom:12px; }
-.price-old { text-decoration:line-through; color:#888; margin-right:6px; }
-.product-stock { margin:8px 0 18px; font-weight:600; }
-.product-stock.low { color:#e60000; }
-.product-stock.medium { color:#ff9900; }
-.product-stock.high { color:#009900; }
-.product-stock.out { color:#555; }
-form { display:flex; gap:12px; flex-wrap:wrap; }
-.btn-add, .btn-buy {
-  padding:10px 20px;
-  border:none;
-  cursor:pointer;
-  border-radius:6px;
-  font-weight:600;
-  font-size:15px;
-}
-.btn-add { background:#0056d2; color:#fff; }
-.btn-buy { background:#ff9900; color:#fff; }
-.btn-add:hover { background:#003c9e; }
-.btn-buy:hover { background:#e67e00; }
+.pdp{ padding:20px 0 50px; }
+.pdp-grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap:28px; }
+@media(max-width: 900px){ .pdp-grid{ grid-template-columns: 1fr; } }
+
+.pdp-media__main{ position:relative; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#fff; }
+.pdp-media__main img{ width:100%; height:520px; object-fit:contain; background:#fff; }
+.pdp-thumbs{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+.pdp-thumbs .thumb{ border:1px solid var(--border); background:#fff; border-radius:10px; padding:4px; cursor:pointer; }
+.pdp-thumbs img{ width:90px; height:90px; object-fit:contain; display:block; }
+
+.pdp-badge{ position:absolute; top:12px; left:12px; padding:5px 9px; border-radius:999px; font-weight:800; color:#fff; font-size:12px; }
+.pdp-badge.pct{ background:var(--accent,#FF6B00); }
+.pdp-badge.new{ background:#2ecc71; left:auto; right:12px; }
+.pdp-badge.limited{ background:#8e44ad; top:auto; bottom:12px; left:12px; }
+
+.pdp-title{ margin:0 0 6px; font-size: clamp(22px, 3.2vw, 34px); }
+.pdp-pricing{ display:flex; align-items:baseline; gap:10px; margin:6px 0 14px; }
+.pdp-pricing .compare{ text-decoration:line-through; color:#999; }
+.pdp-pricing .soldout{ background:#eee; color:#666; padding:4px 8px; border-radius:6px; font-weight:700; }
+
+.pdp-variants label, .pdp-qty label{ font-weight:700; display:block; margin-bottom:6px; }
+.pdp-variants select{ width:100%; padding:10px; border-radius:10px; border:1px solid var(--border); }
+.qty{ display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:10px; padding:6px; }
+.qty-btn{ background:#f5f5f5; border:0; border-radius:8px; width:34px; height:34px; font-weight:900; }
+#pdp-qty{ width:56px; text-align:center; border:0; outline:0; font-weight:800; }
+
+.pdp-actions{ display:flex; gap:10px; margin:16px 0 8px; }
+.pdp-actions .btn.add{ background:var(--primary,#0046BE); }
+.pdp-actions .buy{ display:inline-flex; align-items:center; }
+
+.lowstock{ color:#C0392B; font-weight:700; }
+
+.pdp-meta{ list-style:none; padding:0; margin:14px 0; display:grid; gap:6px; color:#444; }
+
+/* TABS */
+.pdp-tabs{ margin-top:14px; }
+.pdp-tabs .tab{ border:1px solid var(--border); background:#fff; border-radius:999px; padding:8px 12px; margin-right:8px; font-weight:800; }
+.pdp-tabs .tab.is-active{ background:var(--primary); color:#fff; border-color:var(--primary); }
+.tab-panels{ margin-top:12px; }
+.panel{ display:none; border:1px solid var(--border); border-radius:12px; padding:14px; background:#fff; }
+.panel.is-active{ display:block; }
+.bullets{ margin:0; padding-left:18px; }
+
+/* Sticky CTA (mobile) */
+.pdp-sticky{ position:sticky; bottom:0; background:rgba(255,255,255,.98); border-top:1px solid var(--border); display:none; }
+.pdp-sticky__inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; }
+.pdp-sticky .title{ font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60vw; }
+.s-price .compare{ text-decoration:line-through; color:#999; margin-right:6px; }
+@media(max-width: 900px){ .pdp-sticky{ display:block; } }
+.btn.small{ padding:8px 12px; border-radius:10px; font-weight:800; }
 </style>
+
+<script>
+/* Thumbnails -> Main image */
+document.addEventListener('click', e=>{
+  const t=e.target.closest('.thumb');
+  if(!t) return;
+  const img=document.getElementById('pdp-main-img');
+  if(img) img.src=t.dataset.src;
+});
+
+/* Qty stepper + form sync */
+(function(){
+  const qtyInput=document.getElementById('pdp-qty');
+  const form=document.querySelector('.pdp-actions');
+  if(!qtyInput||!form) return;
+  const hiddenQty=form.querySelector('input[name="quantity"]');
+  const update=(d)=>{ const v=Math.max(1, parseInt(qtyInput.value||'1') + d); qtyInput.value=v; hiddenQty.value=v; };
+  document.querySelectorAll('.qty-btn').forEach(b=>{
+    b.addEventListener('click', ()=>update(parseInt(b.dataset.d,10)));
+  });
+  qtyInput.addEventListener('input', ()=>{ hiddenQty.value = Math.max(1, parseInt(qtyInput.value||'1')); });
+})();
+
+/* Tabs */
+document.addEventListener('click', e=>{
+  const btn=e.target.closest('.pdp-tabs .tab');
+  if(!btn) return;
+  const wrap=btn.closest('.pdp-tabs');
+  wrap.querySelectorAll('.tab').forEach(t=>t.classList.remove('is-active'));
+  btn.classList.add('is-active');
+  const id=btn.dataset.tab;
+  wrap.querySelectorAll('.panel').forEach(p=>p.classList.remove('is-active'));
+  wrap.querySelector('#tab-'+id)?.classList.add('is-active');
+});
+
+/* Variant -> hidden input in forms aktualisieren */
+(function(){
+  const select=document.getElementById('pdp-variant');
+  if(!select) return;
+  const mainForm=document.querySelector('.pdp-actions');
+  const stickyForm=document.querySelector('.pdp-sticky form');
+  const update=(id)=>{
+    mainForm?.querySelector('input[name="id"]').setAttribute('value', id);
+    stickyForm?.querySelector('input[name="id"]').setAttribute('value', id);
+  };
+  select.addEventListener('change', ()=> update(select.value));
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Produkt – HW",
+  "settings": []
+}
+{% endschema %}
