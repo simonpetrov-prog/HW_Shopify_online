@@ -1,0 +1,86 @@
+<section
+  class="container pdp-recos"
+  data-product-recommendations
+  data-product-id="{{ product.id }}"
+  data-limit="{{ section.settings.limit }}"
+>
+  {% if recommendations.performed and recommendations.products_count > 0 %}
+    <div class="pdp-recos__head">
+      <h2>{{ section.settings.heading | default: 'Ähnliche Produkte' }}</h2>
+      <a class="btn-outline" href="/collections/all">Alle ansehen</a>
+    </div>
+
+    <div class="grid">
+      {% for rec in recommendations.products limit: section.settings.limit %}
+        <article class="product">
+          <a href="{{ rec.url }}" class="product-link">
+            {% if rec.compare_at_price > rec.price %}
+              {% assign save = rec.compare_at_price | minus: rec.price %}
+              {% if save > 0 %}
+                {% assign pct = save | times: 100.0 | divided_by: rec.compare_at_price | round %}
+                <span class="deal-badge">-{{ pct }}%</span>
+              {% endif %}
+            {% endif %}
+            <img src="{{ rec.featured_image | image_url: width: 600 }}" alt="{{ rec.title }}">
+            <h3>{{ rec.title }}</h3>
+          </a>
+          <p class="price">
+            {% if rec.compare_at_price > rec.price %}
+              <span class="compare">{{ rec.compare_at_price | money }}</span>
+            {% endif %}
+            <strong>{{ rec.price | money }}</strong>
+          </p>
+          <form method="post" action="/cart/add" data-ajax-add class="quick-add">
+            <input type="hidden" name="id" value="{{ rec.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button class="btn" {% unless rec.available %}disabled{% endunless %}>In den Warenkorb</button>
+          </form>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+<style>
+.pdp-recos{ padding:26px 0 40px; }
+.pdp-recos__head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; }
+.pdp-recos h2{ margin:0; color:var(--primary,#0046BE); }
+.grid{ display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+.product{ text-align:center; border:1px solid var(--border,#e5e5e5); padding:14px; border-radius:12px; background:#fff; position:relative; transition:transform .12s, box-shadow .12s; }
+.product:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.06); }
+.product img{ width:100%; height:200px; object-fit:contain; border-radius:8px; background:#fff; }
+.product h3{ margin:10px 0 6px; font-size:1rem; color:var(--text,#111); }
+.price{ margin:0 0 10px; }
+.price .compare{ text-decoration:line-through; color:#999; margin-right:6px; }
+.deal-badge{ position:absolute; left:10px; top:10px; background:var(--accent,#FF6B00); color:#fff; font-weight:700; padding:4px 8px; border-radius:999px; font-size:12px; }
+.quick-add{ display:flex; justify-content:center; }
+</style>
+
+<script>
+/* Lazy-load Recommendations via Shopify endpoint */
+(function(){
+  const wrap = document.querySelector('[data-product-recommendations]');
+  if(!wrap) return;
+  if (wrap.dataset.loaded) return;
+  const url = `${window.routes?.product_recommendations_url || '/recommendations/products'}?section_id={{ section.id }}&product_id=${wrap.dataset.productId}&limit=${wrap.dataset.limit}`;
+  fetch(url)
+    .then(r => r.text())
+    .then(html => {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const inner = doc.querySelector('[data-product-recommendations]');
+      if (inner) wrap.innerHTML = inner.innerHTML;
+      wrap.dataset.loaded = 'true';
+    })
+    .catch(()=>{ /* fail silent */ });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Ähnliche Produkte",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Ähnliche Produkte" },
+    { "type": "range", "id": "limit", "label": "Anzahl", "min": 2, "max": 12, "step": 1, "default": 4 }
+  ]
+}
+{% endschema %}
