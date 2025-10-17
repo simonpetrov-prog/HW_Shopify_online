@@ -28,7 +28,7 @@
       <button class="hw-filter__btn" data-toggle="color">Farbe</button>
       <div class="hw-filter__panel" data-panel="color">
         <div class="hw-list">
-          {% assign colors = (section.settings.colors | default: 'Türkis, Blau, Rot, Weiß, Schwarz, Grau, Orange') | split: ',' %}
+          {% assign colors = (section.settings.colors | default: "Türkis, Blau, Rot, Weiß, Schwarz, Grau, Orange") | split: "," %}
           {% for c in colors %}
             {% assign label = c | strip %}
             {% if label != '' %}
@@ -47,7 +47,7 @@
       <button class="hw-filter__btn" data-toggle="brand">Marke</button>
       <div class="hw-filter__panel" data-panel="brand">
         <div class="hw-list">
-          {% assign auto_brands = (section.settings.auto_brands | default: 'Ferrari, Porsche, Lamborghini, BMW, Mercedes-Benz, Koenigsegg, Toyota, Nissan, Mazda, McLaren') | split: ',' %}
+          {% assign auto_brands = (section.settings.auto_brands | default: "Ferrari, Porsche, Lamborghini, BMW, Mercedes-Benz, Koenigsegg, Toyota, Nissan, Mazda, McLaren") | split: "," %}
           {% for b in auto_brands %}
             {% assign label = b | strip %}
             {% if label != '' %}
