@@ -24,59 +24,40 @@
       </div>
     </div>
 
-    <!-- Farbe (Tags: "Farbe: Blau") -->
+    <!-- Farbe (ohne Liquid – nur feste Optionen) -->
     <div class="hw-filter">
       <button class="hw-filter__btn" data-toggle="color">Farbe</button>
       <div class="hw-filter__panel" data-panel="color">
         <div class="hw-list">
-          {% assign colors = section.settings.colors | default: "Türkis, Blau, Rot, Weiß, Schwarz, Grau, Orange" | split: "," %}
-          {% for c in colors %}
-            {% assign label = c | strip %}
-            {% if label != "" %}
-              <label class="hw-check">
-                <input type="checkbox" value="{{ label | escape }}" data-color>
-                <span>{{ label }}</span>
-              </label>
-            {% endif %}
-          {% endfor %}
+          <label class="hw-check"><input type="checkbox" value="Türkis" data-color><span>Türkis</span></label>
+          <label class="hw-check"><input type="checkbox" value="Blau"   data-color><span>Blau</span></label>
+          <label class="hw-check"><input type="checkbox" value="Rot"    data-color><span>Rot</span></label>
+          <label class="hw-check"><input type="checkbox" value="Orange" data-color><span>Orange</span></label>
         </div>
       </div>
     </div>
 
-    <!-- Marke (Tags: "Marke: Ferrari") -->
+    <!-- Marke (ohne Liquid – nur feste Optionen) -->
     <div class="hw-filter">
       <button class="hw-filter__btn" data-toggle="brand">Marke</button>
       <div class="hw-filter__panel" data-panel="brand">
         <div class="hw-list">
-          {% assign auto_brands = section.settings.auto_brands | default: "Ferrari, Porsche, Lamborghini, BMW, Mercedes-Benz, Koenigsegg, Toyota, Nissan, Mazda, McLaren" | split: "," %}
-          {% for b in auto_brands %}
-            {% assign label = b | strip %}
-            {% if label != "" %}
-              <label class="hw-check">
-                <input type="checkbox" value="{{ label | escape }}" data-brand>
-                <span>{{ label }}</span>
-              </label>
-            {% endif %}
-          {% endfor %}
+          <label class="hw-check"><input type="checkbox" value="Ferrari"      data-brand><span>Ferrari</span></label>
+          <label class="hw-check"><input type="checkbox" value="Porsche"      data-brand><span>Porsche</span></label>
+          <label class="hw-check"><input type="checkbox" value="Lamborghini"  data-brand><span>Lamborghini</span></label>
+          <label class="hw-check"><input type="checkbox" value="Koenigsegg"   data-brand><span>Koenigsegg</span></label>
         </div>
       </div>
     </div>
 
-    <!-- Serie (Tags: "Serie: Mainline") -->
+    <!-- Serie (ohne Liquid – nur feste Optionen) -->
     <div class="hw-filter">
       <button class="hw-filter__btn" data-toggle="series">Serie</button>
       <div class="hw-filter__panel" data-panel="series">
         <div class="hw-list">
-          {% assign series = section.settings.series | default: "Mainline, Premium, ID" | split: "," %}
-          {% for s in series %}
-            {% assign label = s | strip %}
-            {% if label != "" %}
-              <label class="hw-check">
-                <input type="checkbox" value="{{ label | escape }}" data-series>
-                <span>{{ label }}</span>
-              </label>
-            {% endif %}
-          {% endfor %}
+          <label class="hw-check"><input type="checkbox" value="Mainline" data-series><span>Mainline</span></label>
+          <label class="hw-check"><input type="checkbox" value="Premium"  data-series><span>Premium</span></label>
+          <label class="hw-check"><input type="checkbox" value="ID"       data-series><span>ID</span></label>
         </div>
       </div>
     </div>
@@ -96,19 +77,14 @@
 .hw-filter{ position:relative; }
 .hw-filter__btn{ background:#fff; color:#0046BE; border:2px solid #0046BE; border-radius:8px; padding:8px 16px; font-weight:700; cursor:pointer; transition:.2s; }
 .hw-filter__btn:hover, .hw-filter.open .hw-filter__btn{ background:#0046BE; color:#fff; }
-
 .hw-filter__panel{ position:absolute; z-index:20; top:44px; left:0; min-width:220px; background:#fff; border:1px solid #e5e5e5; border-radius:12px; padding:12px; box-shadow:0 10px 24px rgba(0,0,0,.08); display:none; }
 .hw-filter.open .hw-filter__panel{ display:block; }
 .hw-list{ display:grid; gap:8px; max-height:240px; overflow:auto; padding-right:4px; }
 .hw-check{ display:flex; align-items:center; gap:8px; font-weight:700; }
 .hw-check input{ width:18px; height:18px; accent-color:#0046BE; }
-
 .hw-price{ display:grid; grid-template-columns:auto 1fr auto 1fr; gap:8px; align-items:center; }
 .hw-price input{ border:1px solid #e5e5e5; border-radius:10px; padding:8px 10px; }
-
-@media (max-width: 720px){
-  .hw-filter__panel{ position:fixed; left:12px; right:12px; bottom:12px; top:auto; }
-}
+@media (max-width: 720px){ .hw-filter__panel{ position:fixed; left:12px; right:12px; bottom:12px; top:auto; } }
 </style>
 
 <script>
@@ -116,9 +92,10 @@
   const root = document.querySelector('[data-hw-filters]');
   if(!root) return;
 
-  const PREFIX_COLOR  = "{{ section.settings.color_tag_prefix  | default: 'Farbe:' }}";
-  const PREFIX_BRAND  = "{{ section.settings.brand_tag_prefix  | default: 'Marke:' }}";
-  const PREFIX_SERIES = "{{ section.settings.series_tag_prefix | default: 'Serie:' }}";
+  // Präfixe müssen zu deinen Produkt-Tags passen
+  const PREFIX_COLOR  = "Farbe:";
+  const PREFIX_BRAND  = "Marke:";
+  const PREFIX_SERIES = "Serie:";
 
   document.addEventListener('click', (e)=>{
     const btn = e.target.closest('.hw-filter__btn');
@@ -175,9 +152,9 @@
         if(hit) inp.checked = true;
       });
     };
-    setChecks('[data-color]',  PREFIX_COLOR);
-    setChecks('[data-brand]',  PREFIX_BRAND);
-    setChecks('[data-series]', PREFIX_SERIES);
+    setChecks('[data-color]',  "Farbe:");
+    setChecks('[data-brand]',  "Marke:");
+    setChecks('[data-series]', "Serie:");
   }
 
   root.querySelector('[data-apply]')?.addEventListener('click', (e)=>{
@@ -197,15 +174,5 @@
 </script>
 
 {% schema %}
-{
-  "name": "Collection Filters (HW Box)",
-  "settings": [
-    { "type": "text", "id": "colors", "label": "Farben (kommagetrennt)", "default": "Türkis, Blau, Rot, Weiß, Schwarz, Grau, Orange" },
-    { "type": "text", "id": "auto_brands", "label": "Automarken (kommagetrennt)", "default": "Ferrari, Porsche, Lamborghini, BMW, Mercedes-Benz, Koenigsegg, Toyota, Nissan, Mazda, McLaren" },
-    { "type": "text", "id": "series", "label": "Serien (kommagetrennt)", "default": "Mainline, Premium, ID" },
-    { "type": "text", "id": "color_tag_prefix",  "label": "Tag-Präfix Farbe", "default": "Farbe:" },
-    { "type": "text", "id": "brand_tag_prefix",  "label": "Tag-Präfix Marke", "default": "Marke:" },
-    { "type": "text", "id": "series_tag_prefix", "label": "Tag-Präfix Serie", "default": "Serie:" }
-  ]
-}
+{ "name": "Collection Filters – MINI (no Liquid lists)" }
 {% endschema %}
