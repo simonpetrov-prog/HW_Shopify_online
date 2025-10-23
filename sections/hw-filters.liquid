@@ -1,0 +1,146 @@
+<!-- HW FILTERS ONLINE ✅ -->
+
+<section class="filters-container" data-hw-filters>
+  <h2 class="filters-title">🔍 Filter</h2>
+
+  <form id="filters-form" class="filters-form">
+    <!-- Preis -->
+    <div class="filter-block">
+      <button type="button" class="filter-toggle" data-target="price">Preis</button>
+      <div id="filter-price" class="filter-panel">
+        <label>von</label>
+        <input type="number" name="min_price" step="0.01" placeholder="z. B. 2.99" data-min>
+        <label>bis</label>
+        <input type="number" name="max_price" step="0.01" placeholder="z. B. 9.99" data-max>
+      </div>
+    </div>
+
+    <!-- Farbe -->
+    <div class="filter-block">
+      <button type="button" class="filter-toggle" data-target="color">Farbe</button>
+      <div id="filter-color" class="filter-panel">
+        <label><input type="checkbox" data-color value="Türkis">Türkis</label>
+        <label><input type="checkbox" data-color value="Blau">Blau</label>
+        <label><input type="checkbox" data-color value="Rot">Rot</label>
+        <label><input type="checkbox" data-color value="Orange">Orange</label>
+      </div>
+    </div>
+
+    <!-- Marke -->
+    <div class="filter-block">
+      <button type="button" class="filter-toggle" data-target="brand">Marke</button>
+      <div id="filter-brand" class="filter-panel">
+        <label><input type="checkbox" data-brand value="Ferrari">Ferrari</label>
+        <label><input type="checkbox" data-brand value="Porsche">Porsche</label>
+        <label><input type="checkbox" data-brand value="Lamborghini">Lamborghini</label>
+        <label><input type="checkbox" data-brand value="Koenigsegg">Koenigsegg</label>
+        <label><input type="checkbox" data-brand value="BMW">BMW</label>
+        <label><input type="checkbox" data-brand value="Toyota">Toyota</label>
+      </div>
+    </div>
+
+    <!-- Serie -->
+    <div class="filter-block">
+      <button type="button" class="filter-toggle" data-target="series">Serie</button>
+      <div id="filter-series" class="filter-panel">
+        <label><input type="checkbox" data-series value="Mainline">Mainline</label>
+        <label><input type="checkbox" data-series value="Premium">Premium</label>
+        <label><input type="checkbox" data-series value="ID">ID</label>
+      </div>
+    </div>
+
+    <!-- Aktionen -->
+    <div class="filter-actions">
+      <button type="submit" class="apply-btn" data-apply>Filter anwenden</button>
+      <button type="button" class="reset-btn" data-reset>Zurücksetzen</button>
+    </div>
+  </form>
+</section>
+
+<style>
+.filters-container{background:#fff;border:2px solid #0046BE;border-radius:10px;padding:16px;margin:16px 0}
+.filters-title{margin:0 0 12px;color:#0046BE;font-weight:700;text-align:center}
+.filter-block{margin-bottom:12px}
+.filter-toggle{width:100%;background:#0046BE;color:#fff;border:0;border-radius:6px;padding:8px;font-weight:700;cursor:pointer}
+.filter-toggle:hover{background:#FF6B00}
+.filter-panel{display:none;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:6px;background:#f9f9f9}
+.filter-panel label{display:block;margin:4px 0}
+.filter-actions{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.apply-btn{background:#FF6B00;color:#fff;padding:8px 16px;border:0;border-radius:6px;font-weight:700;cursor:pointer}
+.reset-btn{background:#ddd;color:#333;padding:8px 16px;border:0;border-radius:6px;font-weight:700;cursor:pointer}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const root = document.querySelector('[data-hw-filters]');
+  if(!root) return;
+
+  // Panels togglen
+  root.querySelectorAll('.filter-toggle').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const panel = document.getElementById('filter-' + btn.dataset.target);
+      panel.style.display = (panel.style.display==='block' ? 'none' : 'block');
+    });
+  });
+
+  // URL bauen (Shopify Filter: price in Cent, tags mit Präfixen)
+  const PREFIX_COLOR  = 'Farbe:';
+  const PREFIX_BRAND  = 'Marke:';
+  const PREFIX_SERIES = 'Serie:';
+  const toCents = v => { const n = Math.round(parseFloat((v||'').replace(',', '.'))*100); return isNaN(n)?null:n; };
+
+  function buildUrl(){
+    const url = new URL(window.location.href);
+    // alte filter.* raus
+    [...url.searchParams.keys()].forEach(k=>{ if(k.startsWith('filter.')) url.searchParams.delete(k); });
+
+    // Preis
+    const min = root.querySelector('[data-min]')?.value;
+    const max = root.querySelector('[data-max]')?.value;
+    const minC = toCents(min), maxC = toCents(max);
+    if(min && minC!==null) url.searchParams.set('filter.p.price.gte', String(minC));
+    if(max && maxC!==null) url.searchParams.set('filter.p.price.lte', String(maxC));
+
+    // Farbe / Marke / Serie -> Tags
+    root.querySelectorAll('[data-color]:checked').forEach(i=> url.searchParams.append('filter.p.tag', `${PREFIX_COLOR} ${i.value}`));
+    root.querySelectorAll('[data-brand]:checked').forEach(i=> url.searchParams.append('filter.p.tag', `${PREFIX_BRAND} ${i.value}`));
+    root.querySelectorAll('[data-series]:checked').forEach(i=> url.searchParams.append('filter.p.tag', `${PREFIX_SERIES} ${i.value}`));
+
+    return url;
+  }
+
+  // Anwenden
+  root.querySelector('[data-apply]')?.addEventListener('click', (e)=>{
+    e.preventDefault();
+    window.location.href = buildUrl().toString();
+  });
+
+  // Reset
+  root.querySelector('[data-reset]')?.addEventListener('click', ()=>{
+    const url = new URL(window.location.href);
+    [...url.searchParams.keys()].forEach(k=>{ if(k.startsWith('filter.')) url.searchParams.delete(k); });
+    window.location.href = url.toString();
+  });
+
+  // Persistenz (aus URL in UI setzen)
+  (function restore(){
+    const url = new URL(window.location.href);
+    const tags = url.searchParams.getAll('filter.p.tag');
+    const gte  = url.searchParams.get('filter.p.price.gte');
+    const lte  = url.searchParams.get('filter.p.price.lte');
+    if(gte){ const v=(parseInt(gte,10)/100).toFixed(2).replace('.',','); const i=root.querySelector('[data-min]'); if(i) i.value=v; }
+    if(lte){ const v=(parseInt(lte,10)/100).toFixed(2).replace('.',','); const i=root.querySelector('[data-max]'); if(i) i.value=v; }
+    const mark = (sel,prefix)=>{
+      root.querySelectorAll(sel).forEach(inp=>{
+        const look = `${prefix} ${inp.value}`.toLowerCase();
+        if(tags.some(t=> decodeURIComponent(t).toLowerCase()===look)) inp.checked = true;
+      });
+    };
+    mark('[data-color]', PREFIX_COLOR);
+    mark('[data-brand]', PREFIX_BRAND);
+    mark('[data-series]', PREFIX_SERIES);
+  })();
+});
+</script>
+
+{% schema %}{ "name": "HW Filters" }{% endschema %}
