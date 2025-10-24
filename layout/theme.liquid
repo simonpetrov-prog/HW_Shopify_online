@@ -189,6 +189,15 @@ document.addEventListener('scroll',()=>{const h=document.querySelector('.header'
 
 /* aktiv = etwas dunkler + feine Outline */
 .hw-chip.is-checked { background:#e0e0e0; border-color:#cfcfcf; }
+
+.hw-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#eee;color:#333;border:1px solid #ddd;border-radius:999px;
+  padding:6px 10px;margin:4px 6px 0 0;font-weight:600;cursor:pointer;user-select:none;
+}
+.hw-chip .dot{display:inline-block}
+.hw-chip.is-checked{background:#e0e0e0;border-color:#cfcfcf}
+
 </style>
 
 <script id="hw-color-chips">
