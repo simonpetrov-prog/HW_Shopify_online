@@ -321,6 +321,53 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 </style>
 
+<style>
+/* Mobile: nur Bild-Logo zeigen, Text verstecken */
+@media (max-width: 768px){
+  .header__heading .header__heading-link { font-size: 0; line-height: 0; }
+  .header__heading .header__heading-link img { height: 32px !important; width: auto; display: inline-block; }
+
+  /* Quick-Buttons sichtbar & starr neben dem Logo */
+  .hw-only-mobile { display: inline-flex !important; }
+  .hw-quick{
+    display: inline-flex;
+    gap: 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .hw-qbtn{
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #eee;
+    color: #1f2937;
+    border: 1px solid #ddd;
+    font-weight: 800;
+    text-decoration: none;
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .hw-qbtn:active { transform: translateY(1px); }
+
+  /* Header kompakter + Icons rechts bleiben */
+  .header__inline-menu { flex: 0 1 auto; }
+  .header__icons { margin-left: auto; gap: 8px; }
+
+  /* Falls die Standard-Navi zu breit ist: horizontal scrollen statt umbrechen */
+  nav.header__inline-menu, .header__inline-menu .list-menu {
+    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  nav.header__inline-menu::-webkit-scrollbar, .header__inline-menu .list-menu::-webkit-scrollbar { display: none; }
+}
+
+/* Desktop: Mobile-only Elemente verstecken */
+@media (min-width: 769px){
+  .hw-only-mobile { display: none !important; }
+}
+</style>
+
 </head>
   <body>
     {{ content_for_layout }}
