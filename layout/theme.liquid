@@ -170,7 +170,70 @@ document.addEventListener('scroll',()=>{const h=document.querySelector('.header'
 .btn{background:var(--primary);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800}
 .btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary);border-radius:10px;padding:8px 14px;font-weight:800}
 </style>
+<style>
+/* Grund-Style für alle Filter-Labels (neutrales Grau, kompakt) */
+.hw-chip { 
+  display:inline-flex; align-items:center; gap:8px;
+  background:#eee; color:#333; 
+  border:1px solid #ddd; border-radius:999px; 
+  padding:6px 10px; margin:4px 6px 0 0; 
+  font-weight:600; cursor:pointer; user-select:none;
+}
+.hw-chip input { display:none; }
+.hw-chip .dot {
+  width:14px; height:14px; border-radius:50%;
+  border:1px solid rgba(0,0,0,.2);
+}
 
+/* aktiv = etwas dunkler + feine Outline */
+.hw-chip.is-checked { background:#e0e0e0; border-color:#cfcfcf; }
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Mapping: Name -> Farbe (kannst du erweitern)
+  const COLOR_MAP = {
+    'Türkis':'#1abc9c','Blau':'#1e3a8a','Rot':'#e11d48','Orange':'#f97316',
+    'Schwarz':'#111827','Weiß':'#ffffff','Grau':'#9ca3af','Gelb':'#f59e0b',
+    'Grün':'#16a34a','Lila':'#7c3aed','Pink':'#db2777'
+  };
+
+  // Ziel: alle Checkboxen im Farbbereich erkennen – funktioniert mit unserer UI,
+  // egal ob Section oder Snippet, solange die Inputs data-color haben.
+  const colorPanels = document.querySelectorAll('#filter-color, [data-panel="color"]');
+  colorPanels.forEach(panel => {
+    panel.querySelectorAll('label').forEach(label => {
+      const input = label.querySelector('input[type="checkbox"]');
+      if(!input) return;
+      // nur einmal aufbereiten
+      if(label.classList.contains('hw-chip')) return;
+
+      const name = (input.value || label.textContent).trim();
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      dot.style.background = COLOR_MAP[name] || '#ddd';
+
+      // Label in Chip verwandeln
+      label.classList.add('hw-chip');
+      // Input nach vorne (für Zugriff), aber verborgen
+      label.prepend(input);
+      // Farbpünktchen rein
+      label.insertBefore(dot, input.nextSibling);
+      // Text nach dem Punkt vereinheitlichen
+      const txt = document.createTextNode(' ' + name);
+      // Alles hinter dem Punkt löschen & ersetzen
+      Array.from(label.childNodes).forEach((n,i)=>{
+        if(i>2 && n.nodeType===3 || n.nodeType===1 && !n.classList?.contains('dot')) n.remove?.();
+      });
+      label.appendChild(txt);
+
+      // aktiven Zustand spiegeln
+      const sync = () => label.classList.toggle('is-checked', input.checked);
+      input.addEventListener('change', sync);
+      sync();
+    });
+  });
+});
+</script>
 </head>
   <body>
     {{ content_for_layout }}
