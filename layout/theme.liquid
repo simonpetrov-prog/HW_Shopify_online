@@ -15,6 +15,13 @@
 
   <!-- Basis-Variablen + Grundstyles (konsolidiert) -->
   <style id="hw-vars">
+
+.hw-bc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;margin:6px 0 10px;border:1px solid #eee;border-radius:10px;background:#fafafa}
+.hw-bc__link{color:#0046BE;text-decoration:none;font-weight:700}
+.hw-bc__link:hover{color:#FF6B00}
+.hw-bc__sep{opacity:.6}
+.hw-bc__current{font-weight:800;color:#1f2937}
+
   :root{
     --font-body: {{ settings.type_body_font.family | default: 'system-ui' }}, {{ settings.type_body_font.fallback_families | default: 'sans-serif' }};
     --font-heading: {{ settings.type_header_font.family | default: 'system-ui' }}, {{ settings.type_header_font.fallback_families | default: 'sans-serif' }};
