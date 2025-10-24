@@ -1,441 +1,230 @@
 <!doctype html>
 <html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ page_title }} – {{ settings.shop_name | default: shop.name }}</title>
-    {{ content_for_header }}
-    {{ 'base.css' | asset_url | stylesheet_tag }}
-    <style>
-.product-grid.loading { opacity:.3; transition:.2s; pointer-events:none; }
 
-      :root {
-        --primary: {{ settings.primary_color | default: '#0046BE' }};
-        --accent:  {{ settings.accent_color  | default: '#FF6B00' }};
-        --bg:      {{ settings.background_color | default: '#FFFFFF' }};
-        --text:    {{ settings.text_color | default: '#333333' }};
-        --border:  {{ settings.border_color | default: '#F4F4F4' }};
-      }
-      body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-      a { color: inherit; text-decoration: none; background: transparent; }
-      .btn, button { background: var(--primary); color:#fff; border:0; border-radius:4px; padding:10px 18px; display:inline-block; font-weight:600; transition:.2s; cursor:pointer; }
-      .btn:hover, button:hover { background: var(--accent); }
-      .btn-outline { background:transparent; color:var(--primary); border:2px solid var(--primary); }
-      .btn-outline:hover { color:var(--accent); border-color:var(--accent); }
-    </style>
-<style id="hw-vars">
-:root{
-  --primary:#0046BE;   /* Königsblau */
-  --accent:#FF6B00;    /* Orange */
-  --text:#111;
-  --border:#e5e5e5;
-  --bg:#fff;
-}
+<head>
+  <meta charset="utf-8">
+  <!-- Viewport: kein Zoom, volle Breite, iOS Safe Areas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 
-/* Base */
-html,body{background:var(--bg); color:var(--text);}
-a{color:var(--primary); text-decoration:none;}
-a:hover{color:var(--accent);}
+  <title>{{ page_title }} – {{ settings.shop_name | default: shop.name }}</title>
 
-/* Buttons */
-.btn,
-button.btn{
-  background:var(--primary); color:#fff; border:0; border-radius:10px;
-  padding:10px 16px; font-weight:800; letter-spacing:.2px; cursor:pointer;
-  transition:transform .06s ease, filter .12s ease, box-shadow .12s ease;
-  box-shadow:0 3px 0 rgba(0,0,0,.12);
-}
-.btn:hover{ filter:brightness(.96); transform:translateY(-1px); }
-.btn:active{ transform:translateY(0); box-shadow:none; }
+  {{ content_for_header }}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
 
-.btn-outline{
-  background:transparent; color:var(--primary); border:2px solid var(--primary);
-  border-radius:10px; padding:8px 14px; font-weight:800;
-}
-.btn-outline:hover{ background:var(--primary); color:#fff; }
-
-/* Kleine Chips (z. B. Filter) */
-.chip{ border:1px solid var(--border); border-radius:999px; padding:6px 10px; }
-.chip.active{ background:var(--primary); color:#fff; border-color:var(--primary); }
-
-/* Divider */
-.hr{height:2px; background:linear-gradient(90deg,var(--accent),transparent); border:0; }
-</style>
-
-<script>
-/* Header Shadow on scroll */
-document.addEventListener('scroll',()=>{
-  const h=document.querySelector('.header');
-  if(!h) return;
-  h.classList.toggle('is-scrolled', window.scrollY>8);
-});
-</script>
-
- <style>
-:root{
-  --primary:#0046BE;  /* Königsblau */
-  --accent:#FF6B00;   /* Orange */
-  --text:#111;
-  --border:#e5e5e5;
-  --bg:#fff;
-}
-
-/* Container Breite */
-.container{max-width:1200px;margin:0 auto;padding:0 20px;}
-
-/* Header Polish */
-.header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:30;transition:box-shadow .2s ease;}
-.header.is-scrolled{box-shadow:0 6px 22px rgba(0,0,0,.06);}
-.header__inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;}
-.header__nav{display:flex;gap:12px}
-.nav__link{padding:8px 12px;border-radius:999px;font-weight:800;color:#111}
-.nav__link:hover{background:rgba(0,70,190,.08);color:var(--primary)}
-.nav__link.is-active{background:var(--primary);color:#fff;position:relative}
-.nav__link.is-active::after{content:'';position:absolute;left:12px;right:12px;bottom:-8px;height:3px;border-radius:2px;background:var(--accent)}
-
-/* Cart Button */
-.cart-btn{display:flex;align-items:center;gap:10px;background:var(--primary);color:#fff;border:0;border-radius:12px;padding:9px 14px;font-weight:800;cursor:pointer}
-.cart-btn:hover{filter:brightness(.96)}
-.cart-badge{min-width:22px;height:22px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:#000;color:#fff;font-size:12px;padding:0 6px}
-
-/* Buttons */
-.btn,button.btn{background:var(--primary);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800;letter-spacing:.2px;cursor:pointer;transition:transform .06s ease,filter .12s ease,box-shadow .12s ease;box-shadow:0 3px 0 rgba(0,0,0,.12)}
-.btn:hover{filter:brightness(.96);transform:translateY(-1px)}
-.btn:active{transform:translateY(0);box-shadow:none}
-.btn--primary{background:var(--accent)} /* Orange CTAs */
-.btn--primary:hover{filter:brightness(.94)}
-.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary);border-radius:10px;padding:8px 14px;font-weight:800}
-.btn-outline:hover{background:var(--primary);color:#fff}
-
-/* Cards / Grid */
-.product-card,.product{border:1px solid var(--border);border-radius:12px;background:#fff;transition:transform .12s ease,box-shadow .12s ease}
-.product-card:hover,.product:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
-.product img{background:#fff;border-radius:8px}
-
-/* Deal Badge */
-.deal-badge{position:absolute;left:10px;top:10px;background:var(--accent);color:#fff;font-weight:800;padding:4px 8px;border-radius:999px;font-size:12px}
-
-/* Hero Feinheiten */
-.hero-banner__overlay{background:#000}
-.hero-banner__content h1{color:#fff}
-.hero-banner .sub{color:#fff;opacity:.92}
-@media (max-width: 640px){
-  .hero-banner{height:56vh}
-  .hero-banner__overlay{opacity:.55} /* auf Mobile etwas dunkler für Lesbarkeit */
-}
-</style>
-<script>
-document.addEventListener('scroll',()=>{const h=document.querySelector('.header');if(h){h.classList.toggle('is-scrolled',window.scrollY>8)}})
-</script> 
-<style>
-/* Top Deals Bühne etwas hervorheben */
-.top-deals{ padding:16px 0 28px; background:#F7F9FF; border-top:2px solid rgba(0,70,190,.08); }
-.top-deals .td-head{ margin: 6px 0 12px; }
-
-/* Hero auf Tablets/Phones etwas niedriger */
-@media (max-width: 900px){ .hero-banner{ height:56vh; } }
-@media (max-width: 640px){ .hero-banner{ height:52vh; } }
-
-/* Zentrierter Mini-Strich unter aktivem Menüpunkt (erzwingt Mitte) */
-.header .header__nav a.nav__link{
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 6px;
-}
-
-/* stärkere Spezifität + !important, damit alte Regeln überstimmt werden */
-.header .header__nav a.nav__link.is-active::after{
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 0 !important;
-  right: 0 !important;
-  margin: 0 auto !important;    /* zentriert horizontal */
-  transform: none !important;   /* alte translate-Regeln aushebeln */
-  width: 24px;                  /* kleiner, eleganter Strich */
-  height: 3px;
-  border-radius: 2px;
-  background: var(--accent, #FF6B00);
-}
-}
-</style>
-<style>
-:root{
-  --primary:#0046BE;
-  --accent:#FF6B00;
-  --text:#111;
-  --border:#e5e5e5;
-}
-.container{max-width:1200px;margin:0 auto;padding:0 20px;}
-.btn{background:var(--primary);color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:800}
-.btn-outline{background:transparent;color:var(--primary);border:2px solid var(--primary);border-radius:10px;padding:8px 14px;font-weight:800}
-</style>
-<style>
-/* Grund-Style für alle Filter-Labels (neutrales Grau, kompakt) */
-.hw-chip { 
-  display:inline-flex; align-items:center; gap:8px;
-  background:#eee; color:#333; 
-  border:1px solid #ddd; border-radius:999px; 
-  padding:6px 10px; margin:4px 6px 0 0; 
-  font-weight:600; cursor:pointer; user-select:none;
-}
-.hw-chip input { display:none; }
-.hw-chip .dot {
-  width:14px; height:14px; border-radius:50%;
-  border:1px solid rgba(0,0,0,.2);
-}
-
-/* aktiv = etwas dunkler + feine Outline */
-.hw-chip.is-checked { background:#e0e0e0; border-color:#cfcfcf; }
-
-.hw-chip{
-  display:inline-flex;align-items:center;gap:8px;
-  background:#eee;color:#333;border:1px solid #ddd;border-radius:999px;
-  padding:6px 10px;margin:4px 6px 0 0;font-weight:600;cursor:pointer;user-select:none;
-}
-.hw-chip .dot{display:inline-block}
-.hw-chip.is-checked{background:#e0e0e0;border-color:#cfcfcf}
-
-</style>
-
-<script id="hw-color-chips">
-(function () {
-  // Defensive: nie die ganze Seite crashen lassen
-  try {
-    // Hilfsfunktion: Sonderzeichen normalisieren (türkis/weiss/grün etc.)
-    function norm(s){
-      if(!s) return '';
-      try {
-        return s.toString()
-          .trim()
-          .toLowerCase()
-          .normalize('NFD')                 // diakritische Zeichen trennen
-          .replace(/[\u0300-\u036f]/g,'')   // diakritische Anteile entfernen
-          .replace(/ß/g,'ss');
-      } catch(e){
-        // Fallback falls normalize nicht verfügbar
-        return s.toString().trim().toLowerCase()
-          .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue')
-          .replace(/ß/g,'ss');
-      }
-    }
-
-    // Farb-Map auf normalisierte Keys
-    var COLOR_MAP = {
-      'tuerkis': '#1abc9c',
-      'blau':    '#1e3a8a',
-      'rot':     '#e11d48',
-      'orange':  '#f97316',
-      'schwarz': '#111827',
-      'weiss':   '#ffffff',
-      'grau':    '#9ca3af',
-      'gelb':    '#f59e0b',
-      'grun':    '#16a34a',
-      'lila':    '#7c3aed',
-      'pink':    '#db2777'
-    };
-
-    // Zielbereiche: unser Farbfeld – beide Varianten abdecken
-    var panels = document.querySelectorAll('#filter-color, [data-panel="color"]');
-    if (!panels || !panels.length) return; // nichts zu tun
-
-    // Jeden Panel-Inhalt zu Chips umbauen
-    for (var p = 0; p < panels.length; p++) {
-      var panel = panels[p];
-      var labels = panel.querySelectorAll('label');
-      for (var i = 0; i < labels.length; i++) {
-        var label = labels[i];
-        // nur einmal konvertieren
-        if (label.classList && label.classList.contains('hw-chip')) continue;
-
-        var input = label.querySelector('input[type="checkbox"]');
-        if (!input) continue;
-
-        var rawName = (input.value || label.textContent || '').trim();
-        var key = norm(rawName)
-          .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue'); // extra Fallback
-        var dotColor = COLOR_MAP[key] || '#ddd';
-
-        // dot erstellen (inline styles = unabhängig vom CSS)
-        var dot = document.createElement('span');
-        dot.className = 'dot';
-        dot.style.width = '14px';
-        dot.style.height = '14px';
-        dot.style.borderRadius = '50%';
-        dot.style.border = '1px solid rgba(0,0,0,.2)';
-        dot.style.display = 'inline-block';
-        dot.style.background = dotColor;
-
-        // Label aufräumen: input behalten, dot einsetzen, restlichen Text ersetzen
-        var keep = [input];
-        var toRemove = [];
-        for (var n = 0; n < label.childNodes.length; n++) {
-          var node = label.childNodes[n];
-          if (keep.indexOf(node) === -1) toRemove.push(node);
-        }
-        for (var r = 0; r < toRemove.length; r++) {
-          if (toRemove[r] && toRemove[r].parentNode === label) label.removeChild(toRemove[r]);
-        }
-
-        // Chip-Klasse + Inhalte zusammensetzen
-        if (label.classList) label.classList.add('hw-chip');
-        label.appendChild(input);                 // input zuerst
-        label.appendChild(dot);                   // dann der farbpunkt
-        label.appendChild(document.createTextNode(' ' + rawName)); // finaler Text
-
-        // Checked-State spiegeln
-        var sync = (function(inp, lab){
-          return function(){
-            if (!lab || !lab.classList) return;
-            if (inp.checked) lab.classList.add('is-checked');
-            else lab.classList.remove('is-checked');
-          };
-        })(input, label);
-        input.addEventListener('change', sync);
-        sync();
-      }
-    }
-  } catch (err) {
-    // Fehler nie durchreichen – nur loggen
-    console && console.warn && console.warn('HW color chips init failed:', err);
-  }
-})();
-</script>
-
-<!-- Viewport: kein Zoom, volle Breite, iOS Safe Areas -->
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-
-<style>
-  /* Verhindert seitliches Scrollen/“rausziehen“ */
-  html, body { overflow-x: hidden; }
-
-  /* Safari iOS: verhindere Auto-Text-Zoom */
-  html { -webkit-text-size-adjust: 100%; }
-
-  /* Doppeltipp-Zoom reduzieren / geste-basierte Zooms blocken (so gut es geht) */
-  html, body {
-    touch-action: manipulation; /* Chrome/Android: verhindert Doppeltipp-Zoom */
-  }
-</style>
-
-<script>
-  // iOS Safari: Pinch-Zoom via Gesten blockieren
-  ['gesturestart','gesturechange','gestureend'].forEach(ev=>{
-    document.addEventListener(ev, function(e){ e.preventDefault(); }, { passive:false });
-  });
-
-  // Doppeltipp-Zoom verhindern (Fallback)
-  (function(){
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function(e) {
-      const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
-        e.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, { passive:false });
-  })();
-</script>
-
-<style>
-  /* Allgemein: Header als Flex-Leiste */
-  header, .site-header, header[role="banner"] {
-    position: sticky; top: 0; z-index: 50; background: #fff;
-  }
-  .header-inner, .site-header__inner, .header__wrapper {
-    display: flex; align-items: center; gap: 12px;
-    padding: 8px 12px; min-width: 0;
+  <!-- Basis-Variablen + Grundstyles (konsolidiert) -->
+  <style id="hw-vars">
+  :root{
+    --primary:#0046BE;   /* Königsblau */
+    --accent:#FF6B00;    /* Orange */
+    --text:#111;
+    --border:#e5e5e5;
+    --bg:#fff;
   }
 
-  /* Logo darf schrumpfen, damit rechts nichts überlappt */
-  .header-logo, .site-header__logo, .logo {
-    max-width: 52vw; /* wichtig für iPhone schmale Breite */
-    display: block;
+  html,body{background:var(--bg); color:var(--text);}
+  a{color:var(--primary); text-decoration:none;}
+  a:hover{color:var(--accent);}
+
+  .container{max-width:1200px;margin:0 auto;padding:0 20px;}
+  .product-grid.loading { opacity:.3; transition:.2s; pointer-events:none; }
+
+  /* Buttons */
+  .btn,button.btn{
+    background:var(--primary); color:#fff; border:0; border-radius:10px;
+    padding:10px 16px; font-weight:800; letter-spacing:.2px; cursor:pointer;
+    transition:transform .06s ease, filter .12s ease, box-shadow .12s ease;
+    box-shadow:0 3px 0 rgba(0,0,0,.12);
   }
-  .header-logo img, .site-header__logo img, .logo img {
-    height: auto; max-height: 42px; width: auto;
+  .btn:hover{ filter:brightness(.96); transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0); box-shadow:none; }
+  .btn--primary{ background:var(--accent); }
+  .btn--primary:hover{ filter:brightness(.94); }
+  .btn-outline{
+    background:transparent; color:var(--primary); border:2px solid var(--primary);
+    border-radius:10px; padding:8px 14px; font-weight:800;
+  }
+  .btn-outline:hover{ background:var(--primary); color:#fff; }
+
+  /* Header / Navigation (polish) */
+  .header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border);z-index:30;transition:box-shadow .2s ease;}
+  .header.is-scrolled{box-shadow:0 6px 22px rgba(0,0,0,.06);}
+  .header__inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;}
+  .header__nav{display:flex;gap:12px}
+  .nav__link{padding:8px 12px;border-radius:999px;font-weight:800;color:#111}
+  .nav__link:hover{background:rgba(0,70,190,.08);color:var(--primary)}
+  .nav__link.is-active{background:var(--primary);color:#fff;position:relative}
+  .nav__link.is-active::after{
+    content:'';
+    position:absolute;left:50%;transform:translateX(-50%);
+    bottom:-8px;height:3px;width:24px;border-radius:2px;background:var(--accent);
   }
 
-  /* Nav darf auf Mobile horizontal scrollen statt alles zu quetschen */
-  .header-nav, .site-nav, nav[role="navigation"] {
-    display: flex; gap: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .header-nav::-webkit-scrollbar, .site-nav::-webkit-scrollbar { display: none; }
+  /* Cart Button */
+  .cart-btn{display:flex;align-items:center;gap:10px;background:var(--primary);color:#fff;border:0;border-radius:12px;padding:9px 14px;font-weight:800;cursor:pointer}
+  .cart-btn:hover{filter:brightness(.96)}
+  .cart-badge{min-width:22px;height:22px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:#000;color:#fff;font-size:12px;padding:0 6px}
 
-  /* Actions (Suche/Warenkorb) fix rechts */
-  .header-actions, .site-header__icons, .header__icons {
-    margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: max-content;
-  }
-  .header-actions .btn, .site-header__icons a, .header__icons a {
-    white-space: nowrap;
+  /* Cards / Grid */
+  .product-card,.product{border:1px solid var(--border);border-radius:12px;background:#fff;transition:transform .12s ease,box-shadow .12s ease}
+  .product-card:hover,.product:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+  .product img{background:#fff;border-radius:8px}
+
+  /* Deal Badge */
+  .deal-badge{position:absolute;left:10px;top:10px;background:var(--accent);color:#fff;font-weight:800;padding:4px 8px;border-radius:999px;font-size:12px}
+
+  /* Hero Feinheiten */
+  .hero-banner__overlay{background:#000}
+  .hero-banner__content h1{color:#fff}
+  .hero-banner .sub{color:#fff;opacity:.92}
+  @media (max-width: 900px){ .hero-banner{ height:56vh; } }
+  @media (max-width: 640px){
+    .hero-banner{ height:52vh; }
+    .hero-banner__overlay{opacity:.55}
   }
 
-  /* Warenkorb-Badge sauber positionieren */
-  .cart-link, a[href*="cart"] { position: relative; display: inline-flex; align-items: center; gap: 6px; }
-  .cart-count, .cart-badge, .header__cart-count {
-    position: absolute; right: -8px; top: -6px;
-    background: #FF6B00; color: #fff; border-radius: 999px; padding: 2px 6px; font-size: 12px; line-height: 1; font-weight: 800;
-  }
-
-  /* Kleinere Abstände + optional Texte ausblenden, damit nichts überlappt */
+  /* Mobile Header Helper (Logo + Quick Buttons) */
   @media (max-width: 768px){
-    .header-inner, .site-header__inner, .header__wrapper { gap: 8px; padding: 8px 10px; }
-    .header-actions .label, .site-header__icons .label { display: none; } /* z.B. "Warenkorb" Text aus */
-    .header-actions { gap: 8px; }
+    .header__heading .header__heading-link { font-size:0; line-height:0; }
+    .header__heading .header__heading-link img { height:32px !important; width:auto; display:inline-block; }
+
+    .hw-only-mobile { display:inline-flex !important; }
+    .hw-quick{
+      display:inline-flex; gap:8px; margin-left:8px; vertical-align:middle;
+      flex:0 0 auto; white-space:nowrap;
+    }
+    .hw-qbtn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:6px 10px; border-radius:999px; background:#eee; color:#1f2937;
+      border:1px solid #ddd; font-weight:800; text-decoration:none; flex:0 0 auto; white-space:nowrap;
+    }
+    .hw-qbtn:active { transform: translateY(1px); }
+    .header__inline-menu { flex:0 1 auto; }
+    .header__icons { margin-left:auto; gap:8px; }
+    nav.header__inline-menu, .header__inline-menu .list-menu {
+      overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+    }
+    nav.header__inline-menu::-webkit-scrollbar, .header__inline-menu .list-menu::-webkit-scrollbar { display:none; }
   }
-</style>
-
-<style>
-/* Mobile: nur Bild-Logo zeigen, Text verstecken */
-@media (max-width: 768px){
-  .header__heading .header__heading-link { font-size: 0; line-height: 0; }
-  .header__heading .header__heading-link img { height: 32px !important; width: auto; display: inline-block; }
-
-  /* Quick-Buttons sichtbar & starr neben dem Logo */
-  .hw-only-mobile { display: inline-flex !important; }
-  .hw-quick{
-    display: inline-flex;
-    gap: 8px;
-    margin-left: 8px;
-    vertical-align: middle;
-    flex: 0 0 auto;
-    white-space: nowrap;
+  @media (min-width: 769px){
+    .hw-only-mobile { display:none !important; }
   }
-  .hw-qbtn{
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: #eee;
-    color: #1f2937;
-    border: 1px solid #ddd;
-    font-weight: 800;
-    text-decoration: none;
-    flex: 0 0 auto;
-    white-space: nowrap;
+
+  /* Filter-Chips (grau) */
+  .hw-chip{
+    display:inline-flex;align-items:center;gap:8px;
+    background:#eee;color:#333;border:1px solid #ddd;border-radius:999px;
+    padding:6px 10px;margin:4px 6px 0 0;font-weight:600;cursor:pointer;user-select:none;
   }
-  .hw-qbtn:active { transform: translateY(1px); }
+  .hw-chip input{ display:none; }
+  .hw-chip .dot{ width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.2);display:inline-block; }
+  .hw-chip.is-checked{background:#e0e0e0;border-color:#cfcfcf;}
+  </style>
 
-  /* Header kompakter + Icons rechts bleiben */
-  .header__inline-menu { flex: 0 1 auto; }
-  .header__icons { margin-left: auto; gap: 8px; }
+  <!-- Header Shadow on scroll (einmalig) -->
+  <script>
+  document.addEventListener('scroll', function(){
+    var h=document.querySelector('.header');
+    if(!h) return;
+    h.classList.toggle('is-scrolled', window.scrollY>8);
+  });
+  </script>
 
-  /* Falls die Standard-Navi zu breit ist: horizontal scrollen statt umbrechen */
-  nav.header__inline-menu, .header__inline-menu .list-menu {
-    overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  }
-  nav.header__inline-menu::-webkit-scrollbar, .header__inline-menu .list-menu::-webkit-scrollbar { display: none; }
-}
+  <!-- Farb-Checkboxen -> Chips (robust, ohne Arrow-Functions) -->
+  <script id="hw-color-chips">
+  (function () {
+    try {
+      function norm(s){
+        if(!s) return '';
+        try {
+          return s.toString().trim().toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+            .replace(/ß/g,'ss');
+        } catch(e){
+          return s.toString().trim().toLowerCase()
+            .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss');
+        }
+      }
+      var COLOR_MAP = {
+        'tuerkis':'#1abc9c','blau':'#1e3a8a','rot':'#e11d48','orange':'#f97316',
+        'schwarz':'#111827','weiss':'#ffffff','grau':'#9ca3af','gelb':'#f59e0b',
+        'grun':'#16a34a','lila':'#7c3aed','pink':'#db2777'
+      };
+      var panels = document.querySelectorAll('#filter-color, [data-panel="color"]');
+      if (!panels || !panels.length) return;
+      for (var p = 0; p < panels.length; p++) {
+        var panel = panels[p];
+        var labels = panel.querySelectorAll('label');
+        for (var i = 0; i < labels.length; i++) {
+          var label = labels[i];
+          if (label.classList && label.classList.contains('hw-chip')) continue;
+          var input = label.querySelector('input[type="checkbox"]');
+          if (!input) continue;
+          var rawName = (input.value || label.textContent || '').trim();
+          var key = norm(rawName).replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue');
+          var dotColor = COLOR_MAP[key] || '#ddd';
 
-/* Desktop: Mobile-only Elemente verstecken */
-@media (min-width: 769px){
-  .hw-only-mobile { display: none !important; }
-}
-</style>
+          var dot = document.createElement('span');
+          dot.className = 'dot';
+          dot.style.width = '14px';
+          dot.style.height = '14px';
+          dot.style.borderRadius = '50%';
+          dot.style.border = '1px solid rgba(0,0,0,.2)';
+          dot.style.display = 'inline-block';
+          dot.style.background = dotColor;
 
+          // alte Knoten außer input entfernen
+          var keep = [input]; var toRemove = [];
+          for (var n = 0; n < label.childNodes.length; n++) {
+            var node = label.childNodes[n];
+            if (keep.indexOf(node) === -1) toRemove.push(node);
+          }
+          for (var r = 0; r < toRemove.length; r++) {
+            if (toRemove[r] && toRemove[r].parentNode === label) label.removeChild(toRemove[r]);
+          }
+          if (label.classList) label.classList.add('hw-chip');
+          label.appendChild(input);
+          label.appendChild(dot);
+          label.appendChild(document.createTextNode(' ' + rawName));
+
+          var sync = (function(inp, lab){
+            return function(){
+              if (!lab || !lab.classList) return;
+              if (inp.checked) lab.classList.add('is-checked');
+              else lab.classList.remove('is-checked');
+            };
+          })(input, label);
+          input.addEventListener('change', sync);
+          sync();
+        }
+      }
+    } catch (err) {
+      if (console && console.warn) console.warn('HW color chips init failed:', err);
+    }
+  })();
+  </script>
+
+  <!-- Zoom-Blocker / iOS Gesten -->
+  <style>
+    html, body { overflow-x: hidden; }
+    html { -webkit-text-size-adjust: 100%; }
+    html, body { touch-action: manipulation; }
+  </style>
+  <script>
+    ['gesturestart','gesturechange','gestureend'].forEach(function(ev){
+      document.addEventListener(ev, function(e){ e.preventDefault(); }, { passive:false });
+    });
+    (function(){
+      var lastTouchEnd = 0;
+      document.addEventListener('touchend', function(e) {
+        var now = Date.now();
+        if (now - lastTouchEnd <= 300) { e.preventDefault(); }
+        lastTouchEnd = now;
+      }, { passive:false });
+    })();
+  </script>
 </head>
+
+
   <body>
     {{ content_for_layout }}
   </body>
