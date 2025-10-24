@@ -9,6 +9,8 @@
   <title>{{ page_title }} – {{ settings.shop_name | default: shop.name }}</title>
 
   {{ content_for_header }}
+  {{ settings.type_body_font | font_face: font_display: 'swap' }}
+{{ settings.type_header_font | font_face: font_display: 'swap' }}
   {{ 'base.css' | asset_url | stylesheet_tag }}
 
   <!-- Basis-Variablen + Grundstyles (konsolidiert) -->
