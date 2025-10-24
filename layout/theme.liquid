@@ -236,6 +236,91 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 </script>
+
+<!-- Viewport: kein Zoom, volle Breite, iOS Safe Areas -->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+
+<style>
+  /* Verhindert seitliches Scrollen/“rausziehen“ */
+  html, body { overflow-x: hidden; }
+
+  /* Safari iOS: verhindere Auto-Text-Zoom */
+  html { -webkit-text-size-adjust: 100%; }
+
+  /* Doppeltipp-Zoom reduzieren / geste-basierte Zooms blocken (so gut es geht) */
+  html, body {
+    touch-action: manipulation; /* Chrome/Android: verhindert Doppeltipp-Zoom */
+  }
+</style>
+
+<script>
+  // iOS Safari: Pinch-Zoom via Gesten blockieren
+  ['gesturestart','gesturechange','gestureend'].forEach(ev=>{
+    document.addEventListener(ev, function(e){ e.preventDefault(); }, { passive:false });
+  });
+
+  // Doppeltipp-Zoom verhindern (Fallback)
+  (function(){
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(e) {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, { passive:false });
+  })();
+</script>
+
+<style>
+  /* Allgemein: Header als Flex-Leiste */
+  header, .site-header, header[role="banner"] {
+    position: sticky; top: 0; z-index: 50; background: #fff;
+  }
+  .header-inner, .site-header__inner, .header__wrapper {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 12px; min-width: 0;
+  }
+
+  /* Logo darf schrumpfen, damit rechts nichts überlappt */
+  .header-logo, .site-header__logo, .logo {
+    max-width: 52vw; /* wichtig für iPhone schmale Breite */
+    display: block;
+  }
+  .header-logo img, .site-header__logo img, .logo img {
+    height: auto; max-height: 42px; width: auto;
+  }
+
+  /* Nav darf auf Mobile horizontal scrollen statt alles zu quetschen */
+  .header-nav, .site-nav, nav[role="navigation"] {
+    display: flex; gap: 10px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .header-nav::-webkit-scrollbar, .site-nav::-webkit-scrollbar { display: none; }
+
+  /* Actions (Suche/Warenkorb) fix rechts */
+  .header-actions, .site-header__icons, .header__icons {
+    margin-left: auto; display: flex; align-items: center; gap: 10px; min-width: max-content;
+  }
+  .header-actions .btn, .site-header__icons a, .header__icons a {
+    white-space: nowrap;
+  }
+
+  /* Warenkorb-Badge sauber positionieren */
+  .cart-link, a[href*="cart"] { position: relative; display: inline-flex; align-items: center; gap: 6px; }
+  .cart-count, .cart-badge, .header__cart-count {
+    position: absolute; right: -8px; top: -6px;
+    background: #FF6B00; color: #fff; border-radius: 999px; padding: 2px 6px; font-size: 12px; line-height: 1; font-weight: 800;
+  }
+
+  /* Kleinere Abstände + optional Texte ausblenden, damit nichts überlappt */
+  @media (max-width: 768px){
+    .header-inner, .site-header__inner, .header__wrapper { gap: 8px; padding: 8px 10px; }
+    .header-actions .label, .site-header__icons .label { display: none; } /* z.B. "Warenkorb" Text aus */
+    .header-actions { gap: 8px; }
+  }
+</style>
+
 </head>
   <body>
     {{ content_for_layout }}
