@@ -190,46 +190,70 @@ document.addEventListener('scroll',()=>{const h=document.querySelector('.header'
 /* aktiv = etwas dunkler + feine Outline */
 .hw-chip.is-checked { background:#e0e0e0; border-color:#cfcfcf; }
 </style>
+
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Mapping: Name -> Farbe (kannst du erweitern)
-  const COLOR_MAP = {
-    'Türkis':'#1abc9c','Blau':'#1e3a8a','Rot':'#e11d48','Orange':'#f97316',
-    'Schwarz':'#111827','Weiß':'#ffffff','Grau':'#9ca3af','Gelb':'#f59e0b',
-    'Grün':'#16a34a','Lila':'#7c3aed','Pink':'#db2777'
+document.addEventListener('DOMContentLoaded', function () {
+  // Map: Anzeigename -> Farbe (Umlaute sicher als Unicode)
+  var COLOR_MAP = {
+    "T\u00FCrkis":"#1abc9c",
+    "Blau":"#1e3a8a",
+    "Rot":"#e11d48",
+    "Orange":"#f97316",
+    "Schwarz":"#111827",
+    "Wei\u00DF":"#ffffff",
+    "Grau":"#9ca3af",
+    "Gelb":"#f59e0b",
+    "Gr\u00FCn":"#16a34a",
+    "Lila":"#7c3aed",
+    "Pink":"#db2777"
   };
 
-  // Ziel: alle Checkboxen im Farbbereich erkennen – funktioniert mit unserer UI,
-  // egal ob Section oder Snippet, solange die Inputs data-color haben.
-  const colorPanels = document.querySelectorAll('#filter-color, [data-panel="color"]');
-  colorPanels.forEach(panel => {
-    panel.querySelectorAll('label').forEach(label => {
-      const input = label.querySelector('input[type="checkbox"]');
-      if(!input) return;
-      // nur einmal aufbereiten
-      if(label.classList.contains('hw-chip')) return;
+  // Ziel: alle Farbbereiche (#filter-color ODER data-panel="color")
+  var panels = document.querySelectorAll('#filter-color, [data-panel="color"]');
+  panels.forEach(function (panel) {
+    panel.querySelectorAll('label').forEach(function (label) {
+      var input = label.querySelector('input[type="checkbox"]');
+      if (!input) return;
+      if (label.classList && label.classList.contains('hw-chip')) return;
 
-      const name = (input.value || label.textContent).trim();
-      const dot = document.createElement('span');
+      var name = (input.value || label.textContent || '').trim();
+
+      // Farbpünktchen
+      var dot = document.createElement('span');
       dot.className = 'dot';
+      dot.style.width = '14px';
+      dot.style.height = '14px';
+      dot.style.borderRadius = '50%';
+      dot.style.border = '1px solid rgba(0,0,0,.2)';
+      dot.style.display = 'inline-block';
       dot.style.background = COLOR_MAP[name] || '#ddd';
 
-      // Label in Chip verwandeln
+      // Label zum Chip umbauen
       label.classList.add('hw-chip');
-      // Input nach vorne (für Zugriff), aber verborgen
+      // Input vorne behalten
       label.prepend(input);
-      // Farbpünktchen rein
+      // Dot hinter das Input
       label.insertBefore(dot, input.nextSibling);
-      // Text nach dem Punkt vereinheitlichen
-      const txt = document.createTextNode(' ' + name);
-      // Alles hinter dem Punkt löschen & ersetzen
-      Array.from(label.childNodes).forEach((n,i)=>{
-        if(i>2 && n.nodeType===3 || n.nodeType===1 && !n.classList?.contains('dot')) n.remove?.();
-      });
-      label.appendChild(txt);
 
-      // aktiven Zustand spiegeln
-      const sync = () => label.classList.toggle('is-checked', input.checked);
+      // Rest-Inhalt auf den reinen Namen reduzieren
+      var toRemove = [];
+      for (var i = 0; i < label.childNodes.length; i++) {
+        var n = label.childNodes[i];
+        // Input und dot behalten, Text später neu setzen
+        if (n === input || n === dot) continue;
+        // vorhandene Texte/Nodes rausnehmen
+        toRemove.push(n);
+      }
+      toRemove.forEach(function (n) { if (n && n.parentNode === label) label.removeChild(n); });
+
+      // Name-Text anhängen
+      label.appendChild(document.createTextNode(' ' + name));
+
+      // Checked-Status spiegeln
+      var sync = function () {
+        if (input.checked) label.classList.add('is-checked');
+        else label.classList.remove('is-checked');
+      };
       input.addEventListener('change', sync);
       sync();
     });
