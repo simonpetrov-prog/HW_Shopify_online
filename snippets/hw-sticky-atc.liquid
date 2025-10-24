@@ -1,0 +1,71 @@
+<!-- HW STICKY ATC (nur mobil sichtbar) -->
+<div class="hw-atc" data-hw-atc hidden>
+  <div class="hw-atc__row">
+    <div class="hw-atc__price">
+      {% if product %}
+        {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+          <span class="old">{{ product.selected_or_first_available_variant.compare_at_price | money }}</span>
+        {% endif %}
+        <strong class="now">{{ product.selected_or_first_available_variant.price | money }}</strong>
+      {% endif %}
+    </div>
+    <button class="hw-atc__btn" type="button" data-hw-atc-btn>In den Warenkorb</button>
+  </div>
+</div>
+
+<style>
+.hw-atc{position:fixed;left:0;right:0;bottom:-120px;background:#fff;border-top:1px solid #eee;box-shadow:0 -8px 30px rgba(0,0,0,.08);transition:bottom .25s;z-index:55;padding:10px 12px}
+.hw-atc__row{display:flex;align-items:center;gap:12px}
+.hw-atc__price{display:flex;align-items:baseline;gap:8px;font-size:16px}
+.hw-atc__price .old{text-decoration:line-through;opacity:.6}
+.hw-atc__price .now{color:#0046BE;font-weight:900}
+.hw-atc__btn{margin-left:auto;background:#FF6B00;color:#fff;border:0;border-radius:10px;padding:10px 16px;font-weight:900}
+@media (min-width: 769px){ .hw-atc{display:none} }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  // nur auf Produktseiten aktivieren
+  if(!document.body.className.includes('template-product')) return;
+
+  const bar = document.querySelector('[data-hw-atc]');
+  const btn = document.querySelector('[data-hw-atc-btn]');
+
+  // Versuche, das vorhandene Produkt-Formular/ATC-Button zu finden
+  const nativeForm = document.querySelector('form[action="/cart/add"]') || document.querySelector('product-form form');
+  const nativeBtn  = nativeForm ? nativeForm.querySelector('[type="submit"]') : null;
+
+  // Leiste einblenden, sobald man etwas runterscrollt
+  let shown = false;
+  function show(){ if(bar && !shown){ bar.hidden=false; bar.style.bottom='0'; shown=true; } }
+  function hide(){ if(bar && shown){ bar.style.bottom='-120px'; shown=false; } }
+
+  window.addEventListener('scroll', ()=>{
+    const y = window.scrollY || document.documentElement.scrollTop;
+    if(y > 280) show(); else hide();
+  }, { passive:true });
+
+  // Klick leitet an nativen Submit weiter
+  btn?.addEventListener('click', ()=>{
+    if(nativeBtn){ nativeBtn.click(); }
+    else if(nativeForm){ nativeForm.submit(); }
+  });
+
+  // Variant-Preis live spiegeln (falls Theme-Event vorhanden)
+  document.addEventListener('variant:changed', (e)=>{
+    const priceEl = document.querySelector('.hw-atc .now');
+    const oldEl   = document.querySelector('.hw-atc .old');
+    const v = e.detail?.variant;
+    if(!v || !priceEl) return;
+    priceEl.textContent = (v.price/100).toLocaleString(undefined,{style:'currency',currency:'EUR'});
+    if(oldEl){
+      if(v.compare_at_price > v.price){
+        oldEl.textContent = (v.compare_at_price/100).toLocaleString(undefined,{style:'currency',currency:'EUR'});
+        oldEl.style.display='inline';
+      } else {
+        oldEl.style.display='none';
+      }
+    }
+  });
+});
+</script>
