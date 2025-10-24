@@ -275,6 +275,33 @@
 
     activeBox.hidden = !(tags.length || gte || lte);
   }
+
+  /* --- CHIP CLICK FIX: toggelt die Checkbox zuverlässig --- */
+  root.addEventListener('click', function(e){
+    var chip = e.target.closest('.hwf-chip');
+    if(!chip || !root.contains(chip)) return;
+
+    var cb = chip.querySelector('input[type="checkbox"]');
+    if(!cb) return;
+
+    // Toggle und visuelles Feedback
+    cb.checked = !cb.checked;
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+
+  // Tastatur: Space/Enter toggeln ebenfalls
+  root.addEventListener('keydown', function(e){
+    if(e.key !== ' ' && e.key !== 'Enter') return;
+    var chip = e.target.closest('.hwf-chip');
+    if(!chip || !root.contains(chip)) return;
+    var cb = chip.querySelector('input[type="checkbox"]');
+    if(!cb) return;
+    cb.checked = !cb.checked;
+    e.preventDefault();
+    e.stopPropagation();
+  }, true);
+
   restore();
 })();
 </script>
