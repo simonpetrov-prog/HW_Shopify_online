@@ -181,6 +181,22 @@ a{color:var(--primary); text-decoration:none;}
   .hw-chip.is-checked{background:#e0e0e0;border-color:#cfcfcf;}
   </style>
 
+<style id="hw-filter-css-fix">
+  /* Panels standardmäßig zu */
+  .filter-panel{ display:none; }
+
+  /* geöffnet per Klasse */
+  .filter-panel.is-open{ display:block; }
+
+  /* Sicherheit: Buttons bleiben klickbar */
+  .filter-toggle{ pointer-events:auto; }
+
+  /* Falls irgendwo noch ein Overlay stört: nur aktiv bei offenem Panel */
+  .hw-filter-overlay[hidden]{ display:none !important; }
+  .hw-filter-overlay{ pointer-events:none; }
+  .filters-container.is-open .hw-filter-overlay{ pointer-events:auto; }
+</style>
+
   <!-- Header Shadow on scroll (einmalig) -->
   <script>
   document.addEventListener('scroll', function(){
