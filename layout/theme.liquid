@@ -191,74 +191,108 @@ document.addEventListener('scroll',()=>{const h=document.querySelector('.header'
 .hw-chip.is-checked { background:#e0e0e0; border-color:#cfcfcf; }
 </style>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  // Map: Anzeigename -> Farbe (Umlaute sicher als Unicode)
-  var COLOR_MAP = {
-    "T\u00FCrkis":"#1abc9c",
-    "Blau":"#1e3a8a",
-    "Rot":"#e11d48",
-    "Orange":"#f97316",
-    "Schwarz":"#111827",
-    "Wei\u00DF":"#ffffff",
-    "Grau":"#9ca3af",
-    "Gelb":"#f59e0b",
-    "Gr\u00FCn":"#16a34a",
-    "Lila":"#7c3aed",
-    "Pink":"#db2777"
-  };
-
-  // Ziel: alle Farbbereiche (#filter-color ODER data-panel="color")
-  var panels = document.querySelectorAll('#filter-color, [data-panel="color"]');
-  panels.forEach(function (panel) {
-    panel.querySelectorAll('label').forEach(function (label) {
-      var input = label.querySelector('input[type="checkbox"]');
-      if (!input) return;
-      if (label.classList && label.classList.contains('hw-chip')) return;
-
-      var name = (input.value || label.textContent || '').trim();
-
-      // Farbpünktchen
-      var dot = document.createElement('span');
-      dot.className = 'dot';
-      dot.style.width = '14px';
-      dot.style.height = '14px';
-      dot.style.borderRadius = '50%';
-      dot.style.border = '1px solid rgba(0,0,0,.2)';
-      dot.style.display = 'inline-block';
-      dot.style.background = COLOR_MAP[name] || '#ddd';
-
-      // Label zum Chip umbauen
-      label.classList.add('hw-chip');
-      // Input vorne behalten
-      label.prepend(input);
-      // Dot hinter das Input
-      label.insertBefore(dot, input.nextSibling);
-
-      // Rest-Inhalt auf den reinen Namen reduzieren
-      var toRemove = [];
-      for (var i = 0; i < label.childNodes.length; i++) {
-        var n = label.childNodes[i];
-        // Input und dot behalten, Text später neu setzen
-        if (n === input || n === dot) continue;
-        // vorhandene Texte/Nodes rausnehmen
-        toRemove.push(n);
+<script id="hw-color-chips">
+(function () {
+  // Defensive: nie die ganze Seite crashen lassen
+  try {
+    // Hilfsfunktion: Sonderzeichen normalisieren (türkis/weiss/grün etc.)
+    function norm(s){
+      if(!s) return '';
+      try {
+        return s.toString()
+          .trim()
+          .toLowerCase()
+          .normalize('NFD')                 // diakritische Zeichen trennen
+          .replace(/[\u0300-\u036f]/g,'')   // diakritische Anteile entfernen
+          .replace(/ß/g,'ss');
+      } catch(e){
+        // Fallback falls normalize nicht verfügbar
+        return s.toString().trim().toLowerCase()
+          .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue')
+          .replace(/ß/g,'ss');
       }
-      toRemove.forEach(function (n) { if (n && n.parentNode === label) label.removeChild(n); });
+    }
 
-      // Name-Text anhängen
-      label.appendChild(document.createTextNode(' ' + name));
+    // Farb-Map auf normalisierte Keys
+    var COLOR_MAP = {
+      'tuerkis': '#1abc9c',
+      'blau':    '#1e3a8a',
+      'rot':     '#e11d48',
+      'orange':  '#f97316',
+      'schwarz': '#111827',
+      'weiss':   '#ffffff',
+      'grau':    '#9ca3af',
+      'gelb':    '#f59e0b',
+      'grun':    '#16a34a',
+      'lila':    '#7c3aed',
+      'pink':    '#db2777'
+    };
 
-      // Checked-Status spiegeln
-      var sync = function () {
-        if (input.checked) label.classList.add('is-checked');
-        else label.classList.remove('is-checked');
-      };
-      input.addEventListener('change', sync);
-      sync();
-    });
-  });
-});
+    // Zielbereiche: unser Farbfeld – beide Varianten abdecken
+    var panels = document.querySelectorAll('#filter-color, [data-panel="color"]');
+    if (!panels || !panels.length) return; // nichts zu tun
+
+    // Jeden Panel-Inhalt zu Chips umbauen
+    for (var p = 0; p < panels.length; p++) {
+      var panel = panels[p];
+      var labels = panel.querySelectorAll('label');
+      for (var i = 0; i < labels.length; i++) {
+        var label = labels[i];
+        // nur einmal konvertieren
+        if (label.classList && label.classList.contains('hw-chip')) continue;
+
+        var input = label.querySelector('input[type="checkbox"]');
+        if (!input) continue;
+
+        var rawName = (input.value || label.textContent || '').trim();
+        var key = norm(rawName)
+          .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue'); // extra Fallback
+        var dotColor = COLOR_MAP[key] || '#ddd';
+
+        // dot erstellen (inline styles = unabhängig vom CSS)
+        var dot = document.createElement('span');
+        dot.className = 'dot';
+        dot.style.width = '14px';
+        dot.style.height = '14px';
+        dot.style.borderRadius = '50%';
+        dot.style.border = '1px solid rgba(0,0,0,.2)';
+        dot.style.display = 'inline-block';
+        dot.style.background = dotColor;
+
+        // Label aufräumen: input behalten, dot einsetzen, restlichen Text ersetzen
+        var keep = [input];
+        var toRemove = [];
+        for (var n = 0; n < label.childNodes.length; n++) {
+          var node = label.childNodes[n];
+          if (keep.indexOf(node) === -1) toRemove.push(node);
+        }
+        for (var r = 0; r < toRemove.length; r++) {
+          if (toRemove[r] && toRemove[r].parentNode === label) label.removeChild(toRemove[r]);
+        }
+
+        // Chip-Klasse + Inhalte zusammensetzen
+        if (label.classList) label.classList.add('hw-chip');
+        label.appendChild(input);                 // input zuerst
+        label.appendChild(dot);                   // dann der farbpunkt
+        label.appendChild(document.createTextNode(' ' + rawName)); // finaler Text
+
+        // Checked-State spiegeln
+        var sync = (function(inp, lab){
+          return function(){
+            if (!lab || !lab.classList) return;
+            if (inp.checked) lab.classList.add('is-checked');
+            else lab.classList.remove('is-checked');
+          };
+        })(input, label);
+        input.addEventListener('change', sync);
+        sync();
+      }
+    }
+  } catch (err) {
+    // Fehler nie durchreichen – nur loggen
+    console && console.warn && console.warn('HW color chips init failed:', err);
+  }
+})();
 </script>
 
 <!-- Viewport: kein Zoom, volle Breite, iOS Safe Areas -->
