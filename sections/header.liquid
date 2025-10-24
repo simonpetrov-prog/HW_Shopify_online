@@ -1,10 +1,17 @@
 <style> .header{ outline:4px solid #FF6B00 !important; } </style>
 <header class="header">
   <div class="header__inner">
+
     <a class="header__logo" href="/">
       {% if section.settings.logo != blank %}
         <img src="{{ section.settings.logo | image_url: width: 220 }}" alt="{{ shop.name }}" height="36">
-      {% else %}
+     <!-- HW Mobile Quick Buttons (NEU) -->
+<nav class="hw-quick hw-only-mobile">
+  <a class="hw-qbtn" href="/">Startseite</a>
+  <a class="hw-qbtn" href="/collections/all">Produkte</a>
+</nav>
+
+{% else %}
         <strong>{{ shop.name }}</strong>
       {% endif %}
     </a>
