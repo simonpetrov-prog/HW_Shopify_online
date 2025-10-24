@@ -1,3 +1,4 @@
+
 <!-- HW FILTERS SNIPPET ✅ {{ 'now' | date: '%Y-%m-%d %H:%M:%S' }} -->
 <section class="filters-container" data-hw-filters>
   <h2 class="filters-title">🔍 Filter</h2>
@@ -159,4 +160,35 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if(tags.length||gte||lte) activeBox.hidden=false;
   })();
 });
+// --- AJAX FILTERING (ohne Reload) ---
+const grid = document.querySelector('[data-section-id="product-grid"]') || document.querySelector('.product-grid');
+if(grid){
+  const applyBtn = root.querySelector('[data-apply]');
+  applyBtn?.addEventListener('click', async (e)=>{
+    e.preventDefault();
+    const url = buildUrl();
+    history.pushState({}, '', url.toString());
+
+    // Ladeindikator
+    grid.style.opacity = '0.3';
+
+    try {
+      // Shopify Section-API: ruft nur den Produkt-Grid neu ab
+      const res = await fetch(url.toString() + '&section_id=product-grid');
+      const text = await res.text();
+      const parser = new DOMParser();
+      const html = parser.parseFromString(text, 'text/html');
+      const newGrid = html.querySelector('[data-section-id="product-grid"]') || html.querySelector('.product-grid');
+      if(newGrid) grid.innerHTML = newGrid.innerHTML;
+    } catch(err){
+      console.error('Filter AJAX Error:', err);
+    } finally {
+      grid.style.opacity = '1';
+    }
+
+    // Aktive Filter sofort aktualisieren (kein Reload)
+    const event = new Event('filters:refresh');
+    document.dispatchEvent(event);
+  });
+}
 </script>
