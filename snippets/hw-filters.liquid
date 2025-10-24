@@ -244,4 +244,37 @@ if(grid){
   .filter-actions.mobile-only{ position:sticky; bottom:0; background:#fff; padding-top:10px; }
 }
 
+// --- Mobile Overlay Controls ---
+(function(){
+  const root = document.querySelector('[data-hw-filters]');
+  if(!root) return;
+  const openBtn  = root.querySelector('[data-mobile-open]');
+  const closeBtn = root.querySelector('[data-mobile-close]');
+  const overlay  = root.querySelector('[data-overlay]');
+  const panel    = root.querySelector('[data-mobile-panel]');
+
+  const open = ()=>{
+    root.classList.add('is-open');
+    overlay?.removeAttribute('hidden');
+    document.documentElement.style.overflow = 'hidden'; // scroll lock
+  };
+  const close = ()=>{
+    root.classList.remove('is-open');
+    overlay?.setAttribute('hidden','');
+    document.documentElement.style.overflow = '';
+  };
+
+  openBtn?.addEventListener('click', open);
+  closeBtn?.addEventListener('click', close);
+  overlay?.addEventListener('click', close);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
+
+  // Nach Anwenden/Zurücksetzen auf Handy Panel schließen
+  const apply = root.querySelector('[data-apply]');
+  apply?.addEventListener('click', ()=>{ if(window.matchMedia('(max-width:768px)').matches) close(); });
+  root.querySelectorAll('[data-reset]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ if(window.matchMedia('(max-width:768px)').matches) close(); });
+  });
+})();
+
 </script>
