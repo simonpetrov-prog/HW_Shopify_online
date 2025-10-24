@@ -13,6 +13,12 @@
     <button type="button" class="reset-btn" data-reset>Alle löschen ✕</button>
   </div>
 
+<div class="hw-filter-panel" data-mobile-panel>
+  <div class="hw-filter-panel-head">
+    <strong>Filter</strong>
+    <button type="button" class="hw-filter-close" data-mobile-close>✕</button>
+  </div>
+
   <form id="filters-form" class="filters-form">
     <!-- Preis -->
     <div class="filter-block">
@@ -66,6 +72,9 @@
     <div class="filter-actions">
       <button type="submit" class="apply-btn" data-apply>Filter anwenden</button>
       <button type="button" class="reset-btn" data-reset>Zurücksetzen</button>
+    </div>
+    <div class="filter-actions mobile-only">
+      <button type="submit" class="apply-btn" data-apply>Übernehmen</button>
     </div>
   </form>
 </section>
