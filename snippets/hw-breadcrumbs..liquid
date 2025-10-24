@@ -1,0 +1,31 @@
+<!-- HW BREADCRUMBS -->
+<nav class="hw-bc" aria-label="Breadcrumbs">
+  <a href="/" class="hw-bc__link">Start</a>
+  {% if collection %}
+    <span class="hw-bc__sep">›</span>
+    <a href="{{ collection.url }}" class="hw-bc__link">{{ collection.title }}</a>
+  {% elsif template.name == 'collection' and collection %}
+    <span class="hw-bc__sep">›</span>
+    <span class="hw-bc__current">{{ collection.title }}</span>
+  {% endif %}
+
+  {% if template.name == 'product' %}
+    {% if product %}
+      {% if collection %}
+        <span class="hw-bc__sep">›</span>
+      {% endif %}
+      <span class="hw-bc__current">{{ product.title }}</span>
+    {% endif %}
+  {% elsif template.name == 'page' %}
+    <span class="hw-bc__sep">›</span>
+    <span class="hw-bc__current">{{ page.title }}</span>
+  {% endif %}
+</nav>
+
+<style>
+.hw-bc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;margin:6px 0 10px;border:1px solid #eee;border-radius:10px;background:#fafafa}
+.hw-bc__link{color:#0046BE;text-decoration:none;font-weight:700}
+.hw-bc__link:hover{color:#FF6B00}
+.hw-bc__sep{opacity:.6}
+.hw-bc__current{font-weight:800;color:#1f2937}
+</style>
