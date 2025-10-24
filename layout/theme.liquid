@@ -343,6 +343,116 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+<script id="hw-ajax-filters">
+document.addEventListener('DOMContentLoaded', function(){
+  var root = document.querySelector('[data-hw-filters]') || document;
+  var applyBtn = root.querySelector('[data-apply]') || document.querySelector('[data-apply]');
+  var form = root.querySelector('#filters-form') || document.querySelector('#filters-form');
+
+  // Finde das Grid robust (versch. Themes)
+  function findGrid(){
+    return document.querySelector('#ProductGridContainer') ||
+           document.querySelector('[data-section-id="product-grid"]') ||
+           document.querySelector('[data-id="product-grid"]') ||
+           document.querySelector('.product-grid');
+  }
+
+  // Falls du später anders heißt, hier ergänzen:
+  function guessSectionId(fallback){
+    var el = document.querySelector('[data-section-id]'); // oft am Grid
+    if(el && el.getAttribute('data-section-id')) return el.getAttribute('data-section-id');
+    return fallback || 'product-grid'; // gängiger Name
+  }
+
+  // URL aus UI bauen (kompatibel zu deiner aktuellen Struktur)
+  function toCents(v){
+    var n = Math.round(parseFloat((v||'').toString().replace(',','.'))*100);
+    return isNaN(n) ? null : n;
+  }
+  function buildUrlFromUI(){
+    var url = new URL(window.location.href);
+
+    // alte filter.* entfernen
+    Array.from(url.searchParams.keys()).forEach(function(k){
+      if(k.indexOf('filter.') === 0) url.searchParams.delete(k);
+    });
+
+    // Preis
+    var minI = (root.querySelector('[data-min]') || document.querySelector('[data-min]'));
+    var maxI = (root.querySelector('[data-max]') || document.querySelector('[data-max]'));
+    var min = minI && minI.value, max = maxI && maxI.value;
+    var minC = toCents(min), maxC = toCents(max);
+    if(min && minC!==null) url.searchParams.set('filter.p.price.gte', String(minC));
+    if(max && maxC!==null) url.searchParams.set('filter.p.price.lte', String(maxC));
+
+    // Tags (Farbe / Marke / Serie)
+    function addChecked(sel, prefix){
+      (root.querySelectorAll(sel) || []).forEach(function(inp){
+        if(inp.checked){ url.searchParams.append('filter.p.tag', prefix+' '+inp.value); }
+      });
+    }
+    addChecked('[data-color]',  'Farbe:');
+    addChecked('[data-brand]',  'Marke:');
+    addChecked('[data-series]', 'Serie:');
+
+    return url;
+  }
+
+  async function fetchGrid(url){
+    var grid = findGrid();
+    if(!grid) return;
+
+    // Grid dezent „laden“
+    grid.classList.add('loading');
+
+    // Section-ID raten / lesen
+    var secId = guessSectionId('product-grid');
+
+    // Request: nur die Grid-Section neu laden
+    var apiUrl = url.toString();
+    apiUrl += (apiUrl.indexOf('?')>-1 ? '&' : '?') + 'section_id=' + encodeURIComponent(secId);
+
+    try{
+      var res = await fetch(apiUrl, { credentials:'same-origin' });
+      var html = await res.text();
+      var doc = new DOMParser().parseFromString(html, 'text/html');
+
+      // neue Grid-HTML extrahieren
+      var newGrid = doc.querySelector('#ProductGridContainer') ||
+                    doc.querySelector('[data-section-id="product-grid"]') ||
+                    doc.querySelector('[data-id="product-grid"]') ||
+                    doc.querySelector('.product-grid');
+      if(newGrid){
+        grid.innerHTML = newGrid.innerHTML;
+        grid.classList.remove('loading');
+      } else {
+        grid.classList.remove('loading');
+        console.warn('HW AJAX: Grid selector not found in response');
+      }
+
+      // URL in der Leiste aktualisieren (Back/Share funktioniert)
+      history.pushState({}, '', url.toString());
+
+      // Event feuern, damit Chips/Counter etc. refreshen können
+      document.dispatchEvent(new Event('filters:refresh'));
+    }catch(err){
+      grid.classList.remove('loading');
+      console.warn('HW AJAX error:', err);
+    }
+  }
+
+  // Klick auf "Filter anwenden" abfangen (oder Form-Submit)
+  function startAjax(e){
+    if(e){ e.preventDefault(); }
+    var url = buildUrlFromUI();
+    fetchGrid(url);
+  }
+
+  if(applyBtn){ applyBtn.addEventListener('click', startAjax); }
+  if(form){ form.addEventListener('submit', startAjax); }
+});
+</script>
+
 </head>
 
 
