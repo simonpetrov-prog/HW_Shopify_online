@@ -1,13 +1,11 @@
 {% section 'header' %}
 
-<!-- einfache Breadcrumbs direkt im Template (KEIN Snippet nötig) -->
-<nav class="hw-bc" aria-label="Breadcrumbs">
-  <a href="/" class="hw-bc__link">Start</a>
-  <span class="hw-bc__sep">›</span>
-  <span class="hw-bc__current">{{ collection.title }}</span>
-</nav>
-
-
+<main class="container">
+  <!-- DEBUG: collection.liquid is LIVE -->
+  {% render 'hw-filters' %}
+  {% section 'collection-sort' %}
+  {% section 'product-grid' %}
+</main>
 
 {% section 'cart-drawer' %}
 {% section 'footer' %}
