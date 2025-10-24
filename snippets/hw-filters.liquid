@@ -1,280 +1,244 @@
-
-<!-- HW FILTERS SNIPPET ✅ {{ 'now' | date: '%Y-%m-%d %H:%M:%S' }} -->
-<section class="filters-container" data-hw-filters>
-  <h2 class="filters-title">🔍 Filter</h2>
-<!-- Mobile-Trigger -->
-<button type="button" class="hw-filter-mobile-btn" data-mobile-open>Filter öffnen</button>
-<div class="hw-filter-overlay" data-overlay hidden></div>
+<!-- HW FILTERS v3 (Snippet) -->
+<section class="hwf" data-hwf>
+  <h2 class="hwf__title">Filter</h2>
 
   <!-- Aktive Filter -->
-  <div class="active-filters" data-active-filters hidden>
-    <strong>Aktive Filter:</strong>
-    <div class="active-filters-list"></div>
-    <button type="button" class="reset-btn" data-reset>Alle löschen ✕</button>
+  <div class="hwf-active" data-active hidden>
+    <strong>Aktiv:</strong>
+    <div class="hwf-active__list" data-active-list></div>
+    <button type="button" class="hwf-btn hwf-btn--ghost" data-reset>Alle löschen ✕</button>
   </div>
 
-<div class="hw-filter-panel" data-mobile-panel>
-  <div class="hw-filter-panel-head">
-    <strong>Filter</strong>
-    <button type="button" class="hw-filter-close" data-mobile-close>✕</button>
-  </div>
-
-  <form id="filters-form" class="filters-form">
+  <form class="hwf-form" id="hwf-form" method="get" action="">
     <!-- Preis -->
-    <div class="filter-block">
-      <button type="button" class="filter-toggle" data-target="price">Preis</button>
-      <div id="filter-price" class="filter-panel">
-        <label>von</label>
-        <input type="number" step="0.01" placeholder="z. B. 2.99" data-min>
-        <label>bis</label>
-        <input type="number" step="0.01" placeholder="z. B. 9.99" data-max>
+    <div class="hwf-block">
+      <button type="button" class="hwf-toggle" data-target="price">Preis</button>
+      <div id="hwf-price" class="hwf-panel">
+        <div class="hwf-price">
+          <label>von</label>
+          <input type="number" step="0.01" inputmode="decimal" placeholder="z. B. 2,99" data-min>
+          <label>bis</label>
+          <input type="number" step="0.01" inputmode="decimal" placeholder="z. B. 9,99" data-max>
+        </div>
       </div>
     </div>
 
     <!-- Farbe -->
-    <div class="filter-block">
-      <button type="button" class="filter-toggle" data-target="color">Farbe</button>
-      <div id="filter-color" class="filter-panel">
-        <label><input type="checkbox" data-color value="Türkis">Türkis</label>
-        <label><input type="checkbox" data-color value="Blau">Blau</label>
-        <label><input type="checkbox" data-color value="Rot">Rot</label>
-        <label><input type="checkbox" data-color value="Orange">Orange</label>
-        <label><input type="checkbox" data-color value="Schwarz">Schwarz</label>
-        <label><input type="checkbox" data-color value="Weiß">Weiß</label>
+    <div class="hwf-block">
+      <button type="button" class="hwf-toggle" data-target="color">Farbe</button>
+      <div id="hwf-color" class="hwf-panel" data-panel="color">
+        <label class="hwf-chip"><input type="checkbox" data-color value="Blau"><span class="dot"></span>Blau</label>
+        <label class="hwf-chip"><input type="checkbox" data-color value="Rot"><span class="dot"></span>Rot</label>
+        <label class="hwf-chip"><input type="checkbox" data-color value="Orange"><span class="dot"></span>Orange</label>
+        <label class="hwf-chip"><input type="checkbox" data-color value="Schwarz"><span class="dot"></span>Schwarz</label>
+        <label class="hwf-chip"><input type="checkbox" data-color value="Weiß"><span class="dot"></span>Weiß</label>
+        <label class="hwf-chip"><input type="checkbox" data-color value="Grau"><span class="dot"></span>Grau</label>
       </div>
     </div>
 
     <!-- Marke -->
-    <div class="filter-block">
-      <button type="button" class="filter-toggle" data-target="brand">Marke</button>
-      <div id="filter-brand" class="filter-panel">
-        <label><input type="checkbox" data-brand value="Ferrari">Ferrari</label>
-        <label><input type="checkbox" data-brand value="Porsche">Porsche</label>
-        <label><input type="checkbox" data-brand value="Lamborghini">Lamborghini</label>
-        <label><input type="checkbox" data-brand value="BMW">BMW</label>
-        <label><input type="checkbox" data-brand value="Mercedes-Benz">Mercedes-Benz</label>
-        <label><input type="checkbox" data-brand value="Koenigsegg">Koenigsegg</label>
-        <label><input type="checkbox" data-brand value="Toyota">Toyota</label>
+    <div class="hwf-block">
+      <button type="button" class="hwf-toggle" data-target="brand">Marke</button>
+      <div id="hwf-brand" class="hwf-panel">
+        <label class="hwf-chip"><input type="checkbox" data-brand value="Ferrari"><span class="dot"></span>Ferrari</label>
+        <label class="hwf-chip"><input type="checkbox" data-brand value="Porsche"><span class="dot"></span>Porsche</label>
+        <label class="hwf-chip"><input type="checkbox" data-brand value="Lamborghini"><span class="dot"></span>Lamborghini</label>
+        <label class="hwf-chip"><input type="checkbox" data-brand value="BMW"><span class="dot"></span>BMW</label>
+        <label class="hwf-chip"><input type="checkbox" data-brand value="Mercedes-Benz"><span class="dot"></span>Mercedes-Benz</label>
+        <label class="hwf-chip"><input type="checkbox" data-brand value="Toyota"><span class="dot"></span>Toyota</label>
+        <label class="hwf-chip"><input type="checkbox" data-brand value="Koenigsegg"><span class="dot"></span>Koenigsegg</label>
       </div>
     </div>
 
     <!-- Serie -->
-    <div class="filter-block">
-      <button type="button" class="filter-toggle" data-target="series">Serie</button>
-      <div id="filter-series" class="filter-panel">
-        <label><input type="checkbox" data-series value="Mainline">Mainline</label>
-        <label><input type="checkbox" data-series value="Premium">Premium</label>
-        <label><input type="checkbox" data-series value="ID">ID</label>
+    <div class="hwf-block">
+      <button type="button" class="hwf-toggle" data-target="series">Serie</button>
+      <div id="hwf-series" class="hwf-panel">
+        <label class="hwf-chip"><input type="checkbox" data-series value="Mainline"><span class="dot"></span>Mainline</label>
+        <label class="hwf-chip"><input type="checkbox" data-series value="Premium"><span class="dot"></span>Premium</label>
+        <label class="hwf-chip"><input type="checkbox" data-series value="ID"><span class="dot"></span>ID</label>
       </div>
     </div>
 
     <!-- Aktionen -->
-    <div class="filter-actions">
-      <button type="submit" class="apply-btn" data-apply>Filter anwenden</button>
-      <button type="button" class="reset-btn" data-reset>Zurücksetzen</button>
-    </div>
-    <div class="filter-actions mobile-only">
-      <button type="submit" class="apply-btn" data-apply>Übernehmen</button>
+    <div class="hwf-actions">
+      <button type="submit" class="hwf-btn hwf-btn--apply" data-apply>Filter anwenden</button>
+      <button type="button" class="hwf-btn" data-reset>Zurücksetzen</button>
     </div>
   </form>
 </section>
 
 <style>
-.filters-container{background:#fff;border:2px solid #0046BE;border-radius:10px;padding:16px;margin:16px 0}
-.filters-title{margin:0 0 12px;color:#0046BE;font-weight:700;text-align:center}
-.filter-block{margin-bottom:12px}
-.filter-toggle{width:100%;background:#0046BE;color:#fff;border:0;border-radius:6px;padding:8px;font-weight:700;cursor:pointer}
-.filter-toggle:hover{background:#FF6B00}
-.filter-panel{display:none;padding:8px;margin-top:6px;border:1px solid #ddd;border-radius:6px;background:#f9f9f9}
-.filter-panel label{display:block;margin:4px 0}
-.filter-actions{display:flex;gap:10px;justify-content:center;margin-top:16px}
-.apply-btn{background:#FF6B00;color:#fff;padding:8px 16px;border:0;border-radius:6px;font-weight:700;cursor:pointer}
-.reset-btn{background:#ddd;color:#333;padding:8px 16px;border:0;border-radius:6px;font-weight:700;cursor:pointer}
+/* Box */
+.hwf{background:#fff;border:2px solid #0046BE;border-radius:12px;padding:14px;margin:16px 0}
+.hwf__title{margin:0 0 10px;color:#0046BE;font-weight:900;text-align:center}
 
-/* Aktive Filter */
-.active-filters{display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#f7f7f7;border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:12px}
-.active-filters-list{display:flex;flex-wrap:wrap;gap:6px}
-.filter-chip{background:#e5e5e5;color:#333;padding:4px 10px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
-.filter-chip:hover{background:#d5d5d5}
-.filter-chip span{font-size:16px;line-height:1;color:#666}
+/* Aktive Chips */
+.hwf-active{display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#f7f7f7;border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:12px}
+.hwf-active__list{display:flex;flex-wrap:wrap;gap:6px}
+.hwf-chip--active{background:#e5e5e5;color:#333;padding:4px 10px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+.hwf-chip--active:hover{background:#d5d5d5}
+.hwf-chip--active span{font-size:16px;color:#666}
+
+/* Blöcke & Panels */
+.hwf-block{margin-bottom:12px}
+.hwf-toggle{width:100%;background:#eee;color:#111;border:1px solid #ddd;border-radius:8px;padding:9px 10px;font-weight:800;cursor:pointer;text-align:left}
+.hwf-toggle:hover{background:#e8e8e8}
+.hwf-panel{display:none;padding:10px;margin-top:6px;border:1px solid #ddd;border-radius:8px;background:#fafafa}
+.hwf-panel.is-open{display:block}
+
+/* Chip-Inputs */
+.hwf-panel .hwf-chip{display:inline-flex;align-items:center;gap:8px;background:#eee;color:#333;border:1px solid #ddd;border-radius:999px;padding:6px 10px;margin:4px 6px 0 0;font-weight:700;cursor:pointer}
+.hwf-panel input{display:none}
+.hwf-panel .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.2);display:inline-block}
+
+/* Preis */
+.hwf-price{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.hwf-price input{border:1px solid #ddd;border-radius:8px;padding:6px 10px;min-width:120px}
+
+/* Buttons */
+.hwf-actions{display:flex;gap:10px;justify-content:center;margin-top:10px}
+.hwf-btn{background:#ddd;color:#333;padding:10px 16px;border:0;border-radius:10px;font-weight:900;cursor:pointer}
+.hwf-btn--apply{background:#FF6B00;color:#fff}
+.hwf-btn--ghost{background:#e5e5e5}
+
+/* Mobile */
+@media (max-width:768px){
+  .hwf{padding:12px}
+}
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', ()=>{
-  const root = document.querySelector('[data-hw-filters]');
+/* ---------- HW Filters v3 (stabil, ohne globale Abhängigkeiten) ---------- */
+(function(){
+  var root = document.currentScript ? document.currentScript.previousElementSibling : null;
+  // Fallback, falls Script verschoben wurde:
+  if(!root || !root.matches || !root.matches('.hwf')) root = document.querySelector('[data-hwf]');
   if(!root) return;
-  const activeBox = root.querySelector('[data-active-filters]');
-  const activeList = root.querySelector('.active-filters-list');
 
   // Panels togglen
-  root.querySelectorAll('.filter-toggle').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const p = document.getElementById('filter-'+btn.dataset.target);
-      if(!p) return;
-      p.style.display = (p.style.display==='block' ? 'none' : 'block');
-    });
+  root.addEventListener('click', function(e){
+    var btn = e.target.closest('.hwf-toggle');
+    if(!btn) return;
+    var panel = document.getElementById('hwf-' + btn.getAttribute('data-target'));
+    if(panel){ panel.classList.toggle('is-open'); }
   });
 
-  // Shopify Filter URLs
-  const PREFIX_COLOR='Farbe:', PREFIX_BRAND='Marke:', PREFIX_SERIES='Serie:';
-  const toCents=v=>{const n=Math.round(parseFloat((v||'').replace(',','.'))*100);return isNaN(n)?null:n;};
-
+  // Helpers
+  function toCents(v){
+    var n = Math.round(parseFloat((v||'').toString().replace(',','.'))*100);
+    return isNaN(n) ? null : n;
+  }
+  function cleanFiltersIn(url){
+    Array.from(url.searchParams.keys()).forEach(function(k){
+      if(k.indexOf('filter.')===0) url.searchParams.delete(k);
+    });
+  }
   function buildUrl(){
-    const url=new URL(window.location.href);
-    [...url.searchParams.keys()].forEach(k=>{if(k.startsWith('filter.'))url.searchParams.delete(k);});
-    const min=root.querySelector('[data-min]')?.value;
-    const max=root.querySelector('[data-max]')?.value;
-    const minC=toCents(min),maxC=toCents(max);
-    if(min&&minC!==null)url.searchParams.set('filter.p.price.gte',String(minC));
-    if(max&&maxC!==null)url.searchParams.set('filter.p.price.lte',String(maxC));
-    root.querySelectorAll('[data-color]:checked').forEach(i=>url.searchParams.append('filter.p.tag',`${PREFIX_COLOR} ${i.value}`));
-    root.querySelectorAll('[data-brand]:checked').forEach(i=>url.searchParams.append('filter.p.tag',`${PREFIX_BRAND} ${i.value}`));
-    root.querySelectorAll('[data-series]:checked').forEach(i=>url.searchParams.append('filter.p.tag',`${PREFIX_SERIES} ${i.value}`));
+    var url = new URL(window.location.href);
+    cleanFiltersIn(url);
+
+    // Preis
+    var minI = root.querySelector('[data-min]'), maxI = root.querySelector('[data-max]');
+    var minC = minI && toCents(minI.value), maxC = maxI && toCents(maxI.value);
+    if(minI && minI.value && minC!==null) url.searchParams.set('filter.p.price.gte', String(minC));
+    if(maxI && maxI.value && maxC!==null) url.searchParams.set('filter.p.price.lte', String(maxC));
+
+    // Tags
+    function addChecked(sel,prefix){
+      root.querySelectorAll(sel).forEach(function(i){
+        if(i.checked) url.searchParams.append('filter.p.tag', prefix+' '+i.value);
+      });
+    }
+    addChecked('[data-color]','Farbe:');
+    addChecked('[data-brand]','Marke:');
+    addChecked('[data-series]','Serie:');
     return url;
   }
 
-  root.querySelector('[data-apply]')?.addEventListener('click',e=>{
-    e.preventDefault();
-    window.location.href=buildUrl().toString();
-  });
+  // Anwenden
+  var applyBtn = root.querySelector('[data-apply]');
+  if(applyBtn){
+    applyBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      window.location.href = buildUrl().toString();
+    });
+  }
 
-  root.querySelectorAll('[data-reset]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const url=new URL(window.location.href);
-      [...url.searchParams.keys()].forEach(k=>{if(k.startsWith('filter.'))url.searchParams.delete(k);});
-      window.location.href=url.toString();
+  // Zurücksetzen
+  root.querySelectorAll('[data-reset]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var url = new URL(window.location.href);
+      cleanFiltersIn(url);
+      window.location.href = url.toString();
     });
   });
 
-  // Wiederherstellen + Chips anzeigen
-  (function restore(){
-    const url=new URL(window.location.href);
-    const tags=url.searchParams.getAll('filter.p.tag');
-    const gte=url.searchParams.get('filter.p.price.gte');
-    const lte=url.searchParams.get('filter.p.price.lte');
+  // Wiederherstellen aus URL + aktive Chips
+  var activeBox = root.querySelector('[data-active]');
+  var activeList = root.querySelector('[data-active-list]');
+
+  function restore(){
+    // alles clear
+    root.querySelectorAll('[type="checkbox"]').forEach(function(i){ i.checked = false; });
+    var minI = root.querySelector('[data-min]'), maxI = root.querySelector('[data-max]');
+    if(minI) minI.value=''; if(maxI) maxI.value='';
+
+    var url = new URL(window.location.href);
+    var tags = url.searchParams.getAll('filter.p.tag');
+    var gte  = url.searchParams.get('filter.p.price.gte');
+    var lte  = url.searchParams.get('filter.p.price.lte');
+
+    // Preis anzeigen
+    if(gte && minI){ minI.value = (parseInt(gte,10)/100).toFixed(2).replace('.',','); }
+    if(lte && maxI){ maxI.value = (parseInt(lte,10)/100).toFixed(2).replace('.',','); }
+
+    // Checkboxen ankreuzen
+    function mark(sel,prefix){
+      root.querySelectorAll(sel).forEach(function(inp){
+        var val = (prefix+' '+inp.value).toLowerCase();
+        if(tags.some(function(t){ return decodeURIComponent(t).toLowerCase()===val; })){
+          inp.checked = true;
+        }
+      });
+    }
+    mark('[data-color]','Farbe:');
+    mark('[data-brand]','Marke:');
+    mark('[data-series]','Serie:');
+
+    // Chips rendern
     activeList.innerHTML='';
-    const addChip=(label,value,filterKey)=>{
-      const chip=document.createElement('div');
-      chip.className='filter-chip';
-      chip.innerHTML=`${label}: ${value} <span>✕</span>`;
-      chip.addEventListener('click',()=>{
-        url.searchParams.delete(filterKey);
-        window.location.href=url.toString();
+    function addChip(label,value,key,valRaw){
+      var chip=document.createElement('div');
+      chip.className='hwf-chip--active';
+      chip.innerHTML = label+': '+value+' <span>✕</span>';
+      chip.addEventListener('click', function(){
+        var u = new URL(window.location.href);
+        if(key==='filter.p.tag'){
+          var all = u.searchParams.getAll('filter.p.tag');
+          u.searchParams.delete('filter.p.tag');
+          all.forEach(function(t){
+            if(t !== valRaw) u.searchParams.append('filter.p.tag', t);
+          });
+        } else {
+          u.searchParams.delete(key);
+        }
+        window.location.href = u.toString();
       });
       activeList.appendChild(chip);
-    };
-    if(gte||lte){addChip('Preis',`${gte?parseInt(gte,10)/100:''}€ - ${lte?parseInt(lte,10)/100:''}€`,'filter.p.price.gte');}
-    tags.forEach(t=>{
-      const decoded=decodeURIComponent(t);
-      const [prefix,val]=decoded.split(': ');
-      addChip(prefix,val,'filter.p.tag');
-    });
-    if(tags.length||gte||lte) activeBox.hidden=false;
-// Re-render bei AJAX
-document.addEventListener('filters:refresh', restore);
-  })();
-});
-// --- AJAX FILTERING (ohne Reload) ---
-const grid = document.querySelector('[data-section-id="product-grid"]') || document.querySelector('.product-grid');
-if(grid){
-  const applyBtn = root.querySelector('[data-apply]');
-  applyBtn?.addEventListener('click', async (e)=>{
-    e.preventDefault();
-    const url = buildUrl();
-    history.pushState({}, '', url.toString());
-
-    // Ladeindikator
-    grid.style.opacity = '0.3';
-
-    try {
-      // Shopify Section-API: ruft nur den Produkt-Grid neu ab
-      const res = await fetch(url.toString() + '&section_id=product-grid');
-      const text = await res.text();
-      const parser = new DOMParser();
-      const html = parser.parseFromString(text, 'text/html');
-      const newGrid = html.querySelector('[data-section-id="product-grid"]') || html.querySelector('.product-grid');
-      if(newGrid) grid.innerHTML = newGrid.innerHTML;
-    } catch(err){
-      console.error('Filter AJAX Error:', err);
-    } finally {
-      grid.style.opacity = '1';
     }
+    if(gte || lte){
+      var preisTxt = (gte? (parseInt(gte,10)/100)+'€':'' ) + (lte? ' – '+(parseInt(lte,10)/100)+'€':'' );
+      addChip('Preis', preisTxt.trim(), 'filter.p.price.gte');
+    }
+    tags.forEach(function(t){
+      var dec = decodeURIComponent(t);
+      var parts = dec.split(': ');
+      addChip(parts[0]||'Tag', parts[1]||'', 'filter.p.tag', t);
+    });
 
-    // Aktive Filter sofort aktualisieren (kein Reload)
-    const event = new Event('filters:refresh');
-    document.dispatchEvent(event);
-  });
-}
-/* Mobile Overlay */
-.hw-filter-mobile-btn{
-  display:none; width:100%; margin:8px 0 0;
-  background:#0046BE; color:#fff; border:0; border-radius:8px;
-  padding:10px; font-weight:800; letter-spacing:.2px;
-}
-.hw-filter-overlay{
-  position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:49;
-}
-.hw-filter-panel{
-  /* Desktop: normal */
-  position:static; background:#fff; border:2px solid #0046BE; border-radius:10px;
-  padding:12px; margin-top:8px; z-index:50;
-}
-.hw-filter-panel-head{ display:none; align-items:center; justify-content:space-between; margin-bottom:8px; }
-.hw-filter-close{
-  background:transparent; border:0; font-size:20px; line-height:1; cursor:pointer;
-}
-.mobile-only{ display:none; }
-
-/* Handy: Panel als Bottom Sheet */
-@media (max-width: 768px){
-  .hw-filter-mobile-btn{ display:block; }
-  .filters-container{ border:0; padding:0; }
-  .hw-filter-panel{
-    position:fixed; left:0; right:0; bottom:-100%; top:auto;
-    border-radius:16px 16px 0 0; border:0;
-    box-shadow:0 -12px 40px rgba(0,0,0,.2);
-    transition:bottom .28s ease;
-    padding:16px; max-height:75vh; overflow:auto; background:#fff;
+    activeBox.hidden = !(tags.length || gte || lte);
   }
-  .hw-filter-panel-head{ display:flex; }
-  .hw-filter-overlay[hidden]{ display:none; }
-  .filters-container.is-open .hw-filter-panel{ bottom:0; }
-  .filters-container.is-open .hw-filter-overlay{ display:block; }
-  .mobile-only{ display:flex; }
-  .filter-actions.mobile-only{ position:sticky; bottom:0; background:#fff; padding-top:10px; }
-}
-
-// --- Mobile Overlay Controls ---
-(function(){
-  const root = document.querySelector('[data-hw-filters]');
-  if(!root) return;
-  const openBtn  = root.querySelector('[data-mobile-open]');
-  const closeBtn = root.querySelector('[data-mobile-close]');
-  const overlay  = root.querySelector('[data-overlay]');
-  const panel    = root.querySelector('[data-mobile-panel]');
-
-  const open = ()=>{
-    root.classList.add('is-open');
-    overlay?.removeAttribute('hidden');
-    document.documentElement.style.overflow = 'hidden'; // scroll lock
-  };
-  const close = ()=>{
-    root.classList.remove('is-open');
-    overlay?.setAttribute('hidden','');
-    document.documentElement.style.overflow = '';
-  };
-
-  openBtn?.addEventListener('click', open);
-  closeBtn?.addEventListener('click', close);
-  overlay?.addEventListener('click', close);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') close(); });
-
-  // Nach Anwenden/Zurücksetzen auf Handy Panel schließen
-  const apply = root.querySelector('[data-apply]');
-  apply?.addEventListener('click', ()=>{ if(window.matchMedia('(max-width:768px)').matches) close(); });
-  root.querySelectorAll('[data-reset]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ if(window.matchMedia('(max-width:768px)').matches) close(); });
-  });
+  restore();
 })();
-
 </script>
