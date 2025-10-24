@@ -106,6 +106,42 @@
 @media (max-width:768px){
   .hwf{padding:12px}
 }
+
+/* --- SIZE TWEAKS / OVERLAY FIX (add-on) --- */
+
+/* Chips kompakter */
+.hwf-panel .hwf-chip{
+  padding: 4px 8px;
+  font-size: 13px;
+  border-radius: 999px;
+  margin: 3px 6px 0 0;
+}
+.hwf-panel .dot{
+  width: 12px;
+  height: 12px;
+}
+
+/* Toggle-Buttons schlanker */
+.hwf-toggle{
+  padding: 7px 10px;
+  font-size: 14px;
+  border-radius: 8px;
+}
+
+/* Preisfelder etwas kleiner */
+.hwf-price input{
+  padding: 6px 8px;
+  min-width: 110px;
+  font-size: 14px;
+}
+
+/* Aktionsbuttons kompakter */
+.hwf-btn{ padding: 8px 12px; font-size: 14px; }
+.hwf-btn--apply{ padding: 9px 14px; }
+
+/* Falls noch ein altes Overlay vom früheren Mobile-Filter existiert: weg damit */
+.hw-filter-overlay { display: none !important; }
+
 </style>
 
 <script>
