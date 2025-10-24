@@ -158,6 +158,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
       addChip(prefix,val,'filter.p.tag');
     });
     if(tags.length||gte||lte) activeBox.hidden=false;
+// Re-render bei AJAX
+document.addEventListener('filters:refresh', restore);
   })();
 });
 // --- AJAX FILTERING (ohne Reload) ---
