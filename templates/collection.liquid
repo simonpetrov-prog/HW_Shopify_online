@@ -1,5 +1,12 @@
-{% render 'hw-header' %}
-{% render 'hw-breadcrumbs' %}
+{% section 'header' %}
+
+<!-- einfache Breadcrumbs direkt im Template (KEIN Snippet nötig) -->
+<nav class="hw-bc" aria-label="Breadcrumbs">
+  <a href="/" class="hw-bc__link">Start</a>
+  <span class="hw-bc__sep">›</span>
+  <span class="hw-bc__current">{{ collection.title }}</span>
+</nav>
+
 {% section 'header' %}
 
 <main class="container">
