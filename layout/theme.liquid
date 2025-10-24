@@ -16,6 +16,22 @@
   <!-- Basis-Variablen + Grundstyles (konsolidiert) -->
   <style id="hw-vars">
 
+<style id="hw-filter-css-fix">
+  /* Panels standardmäßig zu */
+  .filter-panel{ display:none; }
+
+  /* geöffnet per Klasse */
+  .filter-panel.is-open{ display:block; }
+
+  /* Sicherheit: Buttons bleiben klickbar */
+  .filter-toggle{ pointer-events:auto; }
+
+  /* Falls irgendwo noch ein Overlay stört: nur aktiv bei offenem Panel */
+  .hw-filter-overlay[hidden]{ display:none !important; }
+  .hw-filter-overlay{ pointer-events:none; }
+  .filters-container.is-open .hw-filter-overlay{ pointer-events:auto; }
+</style>
+
 /* Mobile Header Fixes */
 @media (max-width: 768px){
   .header__heading .header__heading-link{ font-size:0; line-height:0; }
