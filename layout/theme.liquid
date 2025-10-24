@@ -16,6 +16,8 @@
   <!-- Basis-Variablen + Grundstyles (konsolidiert) -->
   <style id="hw-vars">
   :root{
+    --font-body: {{ settings.type_body_font.family | default: 'system-ui' }}, {{ settings.type_body_font.fallback_families | default: 'sans-serif' }};
+    --font-heading: {{ settings.type_header_font.family | default: 'system-ui' }}, {{ settings.type_header_font.fallback_families | default: 'sans-serif' }};
     --primary:#0046BE;   /* Königsblau */
     --accent:#FF6B00;    /* Orange */
     --text:#111;
@@ -23,8 +25,9 @@
     --bg:#fff;
   }
 
-  html,body{background:var(--bg); color:var(--text);}
-  a{color:var(--primary); text-decoration:none;}
+ html,body{background:var(--bg); color:var(--text); font-family:var(--font-body); }
+  h1,h2,h3,h4,.h1,.h2,.h3,.h4{ font-family:var(--font-heading); }
+a{color:var(--primary); text-decoration:none;}
   a:hover{color:var(--accent);}
 
   .container{max-width:1200px;margin:0 auto;padding:0 20px;}
