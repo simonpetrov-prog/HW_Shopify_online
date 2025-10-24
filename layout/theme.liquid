@@ -7,6 +7,8 @@
     {{ content_for_header }}
     {{ 'base.css' | asset_url | stylesheet_tag }}
     <style>
+.product-grid.loading { opacity:.3; transition:.2s; pointer-events:none; }
+
       :root {
         --primary: {{ settings.primary_color | default: '#0046BE' }};
         --accent:  {{ settings.accent_color  | default: '#FF6B00' }};
