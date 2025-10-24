@@ -31,9 +31,26 @@
   }
   nav.header__inline-menu::-webkit-scrollbar, .header__inline-menu .list-menu::-webkit-scrollbar{ display:none; }
 
-  /* Abstände enger, Icons bleiben rechts */
-  .header__inner{ gap:8px; padding:8px 10px; }
-  .header__icons{ margin-left:auto; gap:8px; }
+/* aktive Nav-Leiste zentriert */
+.header .header__nav a.nav__link{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 6px;
+}
+
+.header .header__nav a.nav__link.is-active::after{
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 24px;               /* Länge des Strichs */
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent, #FF6B00);
+}
 
   /* Falls Textlinks zu breit werden: leicht kleinere Schrift */
   .list-menu__item{ font-size:14px; }
