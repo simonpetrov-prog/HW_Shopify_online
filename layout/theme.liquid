@@ -16,6 +16,37 @@
   <!-- Basis-Variablen + Grundstyles (konsolidiert) -->
   <style id="hw-vars">
 
+/* Mobile Header Fixes */
+@media (max-width: 768px){
+  .header__heading .header__heading-link{ font-size:0; line-height:0; }
+}
+  /* Logo-Bild kompakt halten */
+  .header__heading .header__heading-link img{
+    max-height:32px !important; height:auto; width:auto; display:inline-block;
+  }
+
+  /* Menüzeile darf seitlich scrollen statt umbrechen/überlappen */
+  nav.header__inline-menu, .header__inline-menu .list-menu{
+    overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  nav.header__inline-menu::-webkit-scrollbar, .header__inline-menu .list-menu::-webkit-scrollbar{ display:none; }
+
+  /* Abstände enger, Icons bleiben rechts */
+  .header__inner{ gap:8px; padding:8px 10px; }
+  .header__icons{ margin-left:auto; gap:8px; }
+
+  /* Falls Textlinks zu breit werden: leicht kleinere Schrift */
+  .list-menu__item{ font-size:14px; }
+}
+
+/* Warenkorb-Badge sicher positionieren (falls nicht schon vorhanden) */
+a[href*="/cart"]{ position:relative; display:inline-flex; align-items:center; gap:6px; }
+.header__cart-count{
+  position:absolute; right:-8px; top:-6px;
+  background:#FF6B00; color:#fff; border-radius:999px;
+  padding:2px 6px; font-size:12px; line-height:1; font-weight:800;
+}
+
 .hw-bc{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 12px;margin:6px 0 10px;border:1px solid #eee;border-radius:10px;background:#fafafa}
 .hw-bc__link{color:#0046BE;text-decoration:none;font-weight:700}
 .hw-bc__link:hover{color:#FF6B00}
