@@ -282,6 +282,26 @@ a{color:var(--primary); text-decoration:none;}
       }, { passive:false });
     })();
   </script>
+
+<script>
+/* Auto-Fix: doppelte Header auf Produktseiten entfernen (nur dort) */
+document.addEventListener('DOMContentLoaded', function () {
+  if (!/\btemplate-product\b/.test(document.body.className)) return;
+
+  // Sammle alle möglichen Header-Elemente, die Themes nutzen
+  var headers = document.querySelectorAll('header, .site-header, header[role="banner"], .header');
+
+  if (headers.length > 1) {
+    // Ersten behalten, alle weiteren entfernen
+    for (var i = 1; i < headers.length; i++) {
+      if (headers[i] && headers[i].parentNode) {
+        headers[i].parentNode.removeChild(headers[i]);
+      }
+    }
+  }
+});
+</script>
+
 </head>
 
 
