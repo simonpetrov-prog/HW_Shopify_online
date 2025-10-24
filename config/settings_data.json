@@ -16,7 +16,9 @@
     "sections": {
       "header": {
         "type": "header",
-        "settings": {}
+        "settings": {
+          "logo": "shopify://shop_images/C8DC74AA-6D8E-417E-AC49-8341E04992FF.png"
+        }
       },
       "footer": {
         "type": "footer",
@@ -43,6 +45,10 @@
           "limit": 6,
           "more_link": "shopify://collections/all"
         }
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
       }
     },
     "content_for_index": []
