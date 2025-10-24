@@ -319,6 +319,26 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 </script>
 
+<script id="hw-filter-toggle-fix">
+document.addEventListener('DOMContentLoaded', function(){
+  // Ein globaler Click-Listener reicht überall (Snippet/Section egal)
+  document.addEventListener('click', function(e){
+    var btn = e.target.closest('.filter-toggle');
+    if(!btn) return;
+
+    // Zielpanel ID nach Schema: #filter-{data-target}
+    var target = btn.getAttribute('data-target');
+    if(!target) return;
+
+    var panel = document.getElementById('filter-' + target);
+    if(!panel) return;
+
+    e.preventDefault();
+    panel.classList.toggle('is-open');
+  }, true);
+});
+</script>
+
 </head>
 
 
