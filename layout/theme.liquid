@@ -195,6 +195,14 @@ a{color:var(--primary); text-decoration:none;}
   .hw-filter-overlay[hidden]{ display:none !important; }
   .hw-filter-overlay{ pointer-events:none; }
   .filters-container.is-open .hw-filter-overlay{ pointer-events:auto; }
+
+/* PDP Tabs */
+.pdp-tabs{display:flex;gap:8px;margin:16px 0}
+.pdp-tab{padding:8px 12px;border:1px solid #ddd;border-radius:10px;background:#f6f7fb;color:#111;font-weight:800;cursor:pointer}
+.pdp-tab.is-active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.pdp-panel{display:none;border:1px solid #eee;border-radius:12px;padding:14px;background:#fff}
+.pdp-panel.is-active{display:block}
+
 </style>
 
 <style id="hw-grid-loading">
