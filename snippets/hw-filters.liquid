@@ -326,6 +326,14 @@ root.addEventListener('keydown', function(e){
   e.stopPropagation();
 }, true);
 
+// Nach dem Setzen der Checkboxen: ARIA + Klasse synchronisieren
+root.querySelectorAll('.hwf-chip').forEach(function(ch){
+  var c = ch.querySelector('input[type="checkbox"]');
+  if(!c) return;
+  ch.classList.toggle('is-checked', !!c.checked);
+  ch.setAttribute('aria-checked', c.checked ? 'true' : 'false');
+});
+
   restore();
 })();
 </script>
