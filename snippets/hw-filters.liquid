@@ -281,31 +281,47 @@
     activeBox.hidden = !(tags.length || gte || lte);
   }
 
-  /* --- CHIP CLICK FIX: toggelt die Checkbox zuverlässig --- */
-  root.addEventListener('click', function(e){
-    var chip = e.target.closest('.hwf-chip');
-    if(!chip || !root.contains(chip)) return;
+  
+  /* --- CHIP CLICK FIX (Mobile/iOS robust) --- */
+root.addEventListener('click', function(e){
+  var chip = e.target.closest('.hwf-chip');
+  if(!chip || !root.contains(chip)) return;
 
-    var cb = chip.querySelector('input[type="checkbox"]');
-    if(!cb) return;
+  var cb = chip.querySelector('input[type="checkbox"]');
+  if(!cb) return;
 
-    // Toggle und visuelles Feedback
-    cb.checked = !cb.checked;
-    e.preventDefault();
-    e.stopPropagation();
-  }, true);
+  // Toggle State
+  cb.checked = !cb.checked;
 
-  // Tastatur: Space/Enter toggeln ebenfalls
-  root.addEventListener('keydown', function(e){
-    if(e.key !== ' ' && e.key !== 'Enter') return;
-    var chip = e.target.closest('.hwf-chip');
-    if(!chip || !root.contains(chip)) return;
-    var cb = chip.querySelector('input[type="checkbox"]');
-    if(!cb) return;
-    cb.checked = !cb.checked;
-    e.preventDefault();
-    e.stopPropagation();
-  }, true);
+  // Visuelles Feedback + ARIA
+  chip.classList.toggle('is-checked', cb.checked);
+  chip.setAttribute('aria-checked', cb.checked ? 'true' : 'false');
+
+  // „echtes“ change-Event feuern (wichtig für andere Listener)
+  cb.dispatchEvent(new Event('change', { bubbles:true }));
+
+  // Tap nicht weiterreichen (verhindert iOS Label-Doppelhandling)
+  e.preventDefault();
+  e.stopPropagation();
+}, true);
+
+/* Tastatur-Access (Enter/Space) – hilft u.a. iPad mit Tastatur */
+root.addEventListener('keydown', function(e){
+  if(e.key !== ' ' && e.key !== 'Enter') return;
+  var chip = e.target.closest('.hwf-chip');
+  if(!chip || !root.contains(chip)) return;
+
+  var cb = chip.querySelector('input[type="checkbox"]');
+  if(!cb) return;
+
+  cb.checked = !cb.checked;
+  chip.classList.toggle('is-checked', cb.checked);
+  chip.setAttribute('aria-checked', cb.checked ? 'true' : 'false');
+  cb.dispatchEvent(new Event('change', { bubbles:true }));
+
+  e.preventDefault();
+  e.stopPropagation();
+}, true);
 
   restore();
 })();
