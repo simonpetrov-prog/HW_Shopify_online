@@ -363,6 +363,17 @@ root.querySelectorAll('.hwf-chip').forEach(function(ch){
   ch.setAttribute('aria-checked', c.checked ? 'true' : 'false');
 });
 
+/* Preis-Panel auto-öffnen, wenn min/max in der URL gesetzt sind */
+(function(){
+  var url = new URL(window.location.href);
+  var hasMin = url.searchParams.get('filter.p.price.gte');
+  var hasMax = url.searchParams.get('filter.p.price.lte');
+  var pricePanel = document.getElementById('hwf-price');
+  if((hasMin || hasMax) && pricePanel){
+    pricePanel.classList.add('is-open');
+  }
+})();
+
   restore();
 })();
 </script>
