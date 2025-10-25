@@ -142,6 +142,11 @@
 /* Falls noch ein altes Overlay vom früheren Mobile-Filter existiert: weg damit */
 .hw-filter-overlay { display: none !important; }
 
+/* Mobile: Panels sicher über allem & klickbar */
+.hwf-panel{ position: relative; z-index: 5; }
+.hwf{ position: relative; z-index: 4; }
+.hwf-panel *{ pointer-events: auto; }
+
 </style>
 
 <script>
