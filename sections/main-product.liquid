@@ -68,31 +68,51 @@
         <li>✅ Sichere Zahlung</li>
       </ul>
 
-      <!-- TABS -->
-      <div class="pdp-tabs">
-        <button class="tab is-active" data-tab="desc">Beschreibung</button>
-        <button class="tab" data-tab="details">Details</button>
-        <button class="tab" data-tab="ship">Versand & Rückgabe</button>
+<div class="pdp-tabs" id="pdp-tabs">
+  <button type="button" class="pdp-tab is-active" data-tab="details">Beschreibung</button>
+  <button type="button" class="pdp-tab" data-tab="specs">Details</button>
+  <button type="button" class="pdp-tab" data-tab="shipping">Versand & Rückgabe</button>
+</div>
 
-        <div class="tab-panels">
-          <div class="panel is-active" id="tab-desc">
-            {{ product.description | default: 'Detailliertes Sammlermodell. Perfekt für Fans & Sammler.' }}
-          </div>
-          <div class="panel" id="tab-details">
-            <ul class="bullets">
-              <li>Marke: Hot Wheels</li>
-              <li>Zustand: Neu & OVP</li>
-              <li>Skala: 1:64</li>
-            </ul>
-          </div>
-          <div class="panel" id="tab-ship">
-            <p>Versand mit Sendungsverfolgung. Rückgabe innerhalb 14 Tagen möglich (ungeöffnet).</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+<div class="pdp-panels">
+  <section class="pdp-panel is-active" data-panel="details">
+    {{ product.description }}
+  </section>
+
+  <section class="pdp-panel" data-panel="specs">
+    {%- comment -%} Deine Produkt-Details hier (Liste, Tabelle, Icons …) {%- endcomment -%}
+    <ul>
+      <li>Zustand: Sehr gut</li>
+      <li>Serie: Mainline</li>
+      <li>Farbe: Türkis</li>
+    </ul>
+  </section>
+
+  <section class="pdp-panel" data-panel="shipping">
+    <ul>
+      <li>Versand: 2–4 Werktage (DE)</li>
+      <li>14 Tage Rückgabe</li>
+      <li>Sichere Zahlung</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+  (function(){
+    const tabs   = document.querySelectorAll('#pdp-tabs .pdp-tab');
+    const panels = document.querySelectorAll('.pdp-panel');
+    tabs.forEach(tab=>{
+      tab.addEventListener('click', ()=>{
+        const key = tab.getAttribute('data-tab');
+        tabs.forEach(t=>t.classList.remove('is-active'));
+        panels.forEach(p=>p.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        const target = document.querySelector('.pdp-panel[data-panel="'+key+'"]');
+        if(target) target.classList.add('is-active');
+      });
+    });
+  })();
+</script>
 
 <!-- Sticky CTA (nur mobil) -->
 <div class="pdp-sticky">
