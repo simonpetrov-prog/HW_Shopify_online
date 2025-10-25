@@ -10,18 +10,28 @@
   </div>
 
   <form class="hwf-form" id="hwf-form" method="get" action="">
-    <!-- Preis -->
-    <div class="hwf-block">
-      <button type="button" class="hwf-toggle" data-target="price">Preis</button>
-      <div id="hwf-price" class="hwf-panel">
-        <div class="hwf-price">
-          <label>von</label>
-          <input type="number" step="0.01" inputmode="decimal" placeholder="z. B. 2,99" data-min>
-          <label>bis</label>
-          <input type="number" step="0.01" inputmode="decimal" placeholder="z. B. 9,99" data-max>
-        </div>
-      </div>
+
+<!-- Preis -->
+<div class="hwf-block">
+  <button type="button" class="hwf-toggle" data-target="price">
+    Preis <span class="count" data-count="price" hidden>0</span>
+  </button>
+  {%- comment -%}
+    Für den Test ist das Panel standardmäßig offen (is-open).
+    Wenn es bei dir dann sichtbar ist, kannst du 'is-open' wieder entfernen.
+  {%- endcomment -%}
+  <div id="hwf-price" class="hwf-panel is-open">
+    <div class="hwf-price">
+      <label for="hwf-min">von</label>
+      <input id="hwf-min" type="number" step="0.01" inputmode="decimal"
+             placeholder="z. B. 2,99" data-min>
+
+      <label for="hwf-max">bis</label>
+      <input id="hwf-max" type="number" step="0.01" inputmode="decimal"
+             placeholder="z. B. 9,99" data-max>
     </div>
+  </div>
+</div>
 
     <!-- Farbe -->
     <div class="hwf-block">
