@@ -160,6 +160,25 @@
 .hwf{ position: relative; z-index: 4; }
 .hwf-panel *{ pointer-events: auto; }
 
+/* Preisfelder sicher sichtbar machen */
+.hwf-price input{
+  display: inline-block !important;
+  background: #fff;
+  color: #111;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 120px;
+  font-size: 14px;
+  line-height: 1.2;
+  -webkit-appearance: none; /* iOS */
+  appearance: none;
+}
+.hwf-price label{
+  font-weight: 800;
+  color: #333;
+}
+
 </style>
 
 <script>
