@@ -42,6 +42,41 @@
         {% unless product.available %}<span class="soldout">Ausverkauft</span>{% endunless %}
       </div>
 
+<div class="pdp-tabs" id="pdp-tabs">
+  <button type="button" class="pdp-tab is-active" data-tab="details">Details</button>
+  <button type="button" class="pdp-tab" data-tab="shipping">Versand & Rückgabe</button>
+</div>
+
+<div class="pdp-panels">
+  <section class="pdp-panel is-active" data-panel="details">
+    {{ product.description }}
+  </section>
+  <section class="pdp-panel" data-panel="shipping">
+    <ul>
+      <li>Versand: 2–4 Werktage (DE)</li>
+      <li>14 Tage Rückgabe</li>
+      <li>Sichere Zahlung</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+  (function(){
+    const tabs = document.querySelectorAll('#pdp-tabs .pdp-tab');
+    const panels = document.querySelectorAll('.pdp-panel');
+    tabs.forEach(tab=>{
+      tab.addEventListener('click', ()=>{
+        const key = tab.getAttribute('data-tab');
+        tabs.forEach(t=>t.classList.remove('is-active'));
+        panels.forEach(p=>p.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        const target = document.querySelector('.pdp-panel[data-panel="'+key+'"]');
+        if(target) target.classList.add('is-active');
+      });
+    });
+  })();
+</script>
+
       {% if product.variants.size > 1 %}
         <div class="pdp-variants">
           <label for="pdp-variant">Variante</label>
