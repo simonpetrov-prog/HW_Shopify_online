@@ -532,5 +532,62 @@ window.showToast = function(msg, type='ok', ms=2200){
 
 <div id="toast-root" aria-live="polite" aria-atomic="true"></div>
 
+<script>
+// Fängt alle fetch-Aufrufe ab (nur für unseren Shop, keine externen)
+// und zeigt je nach Endpoint einen Toast an.
+(function(){
+  if (!window.fetch) return;
+  const _fetch = window.fetch;
+  window.fetch = async function(input, init){
+    const res = await _fetch(input, init);
+    try {
+      const url = (typeof input === 'string') ? input : input.url;
+      if (url && url.indexOf('/cart/add') !== -1) {
+        if (res.ok) showToast('✅ Produkt in den Warenkorb gelegt','ok');
+        else        showToast('⚠️ Konnte nicht hinzugefügt werden','err');
+      }
+      if (url && url.indexOf('/cart/change') !== -1) {
+        if (res.ok) showToast('Menge aktualisiert','info');
+      }
+      if (url && url.indexOf('/cart/clear') !== -1) {
+        if (res.ok) showToast('🧹 Warenkorb geleert','info');
+      }
+      if (url && url.indexOf('/cart/update') !== -1) {
+        if (res.ok) showToast('Warenkorb aktualisiert','info');
+      }
+    } catch(e){}
+    return res;
+  };
+
+  // Bonus: sehr alte Themes nutzen manchmal XHR statt fetch
+  if (window.XMLHttpRequest) {
+    const _open = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url){
+      this.__hw_url = url;
+      return _open.apply(this, arguments);
+    };
+    const _send = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function(){
+      this.addEventListener('load', function(){
+        try {
+          const url = this.__hw_url || '';
+          if (url.indexOf('/cart/add') !== -1) {
+            (this.status>=200 && this.status<300)
+              ? showToast('✅ Produkt in den Warenkorb gelegt','ok')
+              : showToast('⚠️ Konnte nicht hinzugefügt werden','err');
+          }
+          if (url.indexOf('/cart/change') !== -1) {
+            (this.status>=200 && this.status<300)
+              ? showToast('Menge aktualisiert','info')
+              : null;
+          }
+        } catch(e){}
+      });
+      return _send.apply(this, arguments);
+    };
+  }
+})();
+</script>
+
   </body>
 </html>
