@@ -42,14 +42,14 @@
         {% unless product.available %}<span class="soldout">Ausverkauft</span>{% endunless %}
       </div>
 
-      <div class="pdp-qty">
-        <label for="pdp-qty">Menge</label>
-        <div class="qty">
-          <button type="button" class="qty-btn" data-d="-1">–</button>
-          <input id="pdp-qty" type="number" name="quantity" value="1" min="1" step="1" inputmode="numeric">
-          <button type="button" class="qty-btn" data-d="1">+</button>
-        </div>
-      </div>
+      <button class="qty-plus"
+  onclick="showToast('Menge aktualisiert','info')">+</button>
+
+<button class="qty-minus"
+  onclick="showToast('Menge aktualisiert','info')">−</button>
+
+<button class="remove"
+  onclick="showToast('🗑️ Aus dem Warenkorb entfernt','err')">x</button>
 
       <form class="pdp-actions" method="post" action="/cart/add" data-ajax-add>
         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
