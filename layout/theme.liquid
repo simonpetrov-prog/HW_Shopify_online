@@ -349,6 +349,16 @@ document.addEventListener('DOMContentLoaded', function(){
     panel.classList.toggle('is-open');
   }, true);
 });
+
+#toast-root{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:9999}
+.hw-toast{
+  background:#111;color:#fff;padding:10px 14px;border-radius:10px;
+  box-shadow:0 8px 20px rgba(0,0,0,.2);margin-top:8px;font-weight:700;min-width:220px;text-align:center
+}
+.hw-toast--ok{background:#0f766e}   /* grünlich */
+.hw-toast--info{background:#1f2937} /* dunkelgrau */
+.hw-toast--err{background:#b91c1c}  /* rot */
+
 </script>
 
 <script id="hw-ajax-filters">
@@ -500,11 +510,27 @@ document.addEventListener('DOMContentLoaded', function(){
 
 </script>
 
+ <script>
+window.showToast = function(msg, type='ok', ms=2200){
+  const root = document.getElementById('toast-root'); if(!root) return;
+  const el = document.createElement('div');
+  el.className = 'hw-toast hw-toast--' + (type==='err'?'err':type==='info'?'info':'ok');
+  el.textContent = msg;
+  root.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateY(6px)'; }, ms);
+  setTimeout(()=>{ root.removeChild(el); }, ms+400);
+};
+</script>
+
+
 
 </head>
 
 
   <body>
     {{ content_for_layout }}
+
+<div id="toast-root" aria-live="polite" aria-atomic="true"></div>
+
   </body>
 </html>
