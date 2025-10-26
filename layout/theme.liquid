@@ -652,26 +652,6 @@ window.showToast = function(msg, type='ok', ms=2200){
 })();
 </script>
 
-<!-- ✅ Toast-Container (falls noch nicht vorhanden) -->
-<div id="toast-root" aria-live="polite" aria-atomic="true"></div>
-<style>
-  #toast-root{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;z-index:9999}
-  .hw-toast{background:#111;color:#fff;padding:10px 14px;border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.2);margin-top:8px;font-weight:700;min-width:220px;text-align:center;transition:.3s}
-  .hw-toast--ok{background:#0f766e}
-  .hw-toast--info{background:#1f2937}
-  .hw-toast--err{background:#b91c1c}
-</style>
-<script>
-  window.showToast = window.showToast || function(msg,type,ms){
-    var root = document.getElementById('toast-root'); if(!root) return;
-    var el = document.createElement('div');
-    el.className = 'hw-toast ' + (type==='err'?'hw-toast--err':type==='info'?'hw-toast--info':'hw-toast--ok');
-    el.textContent = msg;
-    root.appendChild(el);
-    setTimeout(function(){ el.style.opacity='0'; el.style.transform='translateY(6px)'; }, ms||2200);
-    setTimeout(function(){ if(el.parentNode) root.removeChild(el); }, (ms||2200)+400);
-  };
-</script>
 
 <!-- ✅ Ultra-robuster Toast-Trigger: beobachtet die Cart-Badge-Änderung -->
 <script>
