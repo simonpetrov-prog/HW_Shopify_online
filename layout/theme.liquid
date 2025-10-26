@@ -592,5 +592,65 @@ window.showToast = function(msg, type='ok', ms=2200){
 })();
 </script>
 
+<script>
+/* Universelle UI-Trigger für Toasts (funktioniert ohne fetch-Hook) */
+(function(){
+  if (typeof window.showToast !== 'function') return;
+
+  // 1) Klicks auf Add-to-Cart / Entfernen / Menge
+  document.addEventListener('click', function(e){
+    const el = e.target.closest('button, a, input');
+    if (!el) return;
+
+    const nameAttr = (el.getAttribute('name') || '').toLowerCase();
+    const idAttr   = (el.getAttribute('id') || '').toLowerCase();
+    const cls      = el.className || '';
+
+    // Add to cart: viele Themes nutzen name="add" oder Klasse add-to-cart
+    if (
+      nameAttr === 'add' ||
+      /(^|\s)add-to-cart(\s|$)/i.test(cls) ||
+      el.dataset.addToCart !== undefined
+    ) {
+      // kleinen Delay, damit UI sich aktualisieren kann
+      setTimeout(()=> showToast('✅ Produkt in den Warenkorb gelegt','ok'), 150);
+      return;
+    }
+
+    // Entfernen aus dem Cart
+    if (
+      /remove/i.test(nameAttr) ||
+      /cart-item__remove|remove-item|cart-remove/i.test(cls) ||
+      el.dataset.cartRemove !== undefined
+    ) {
+      setTimeout(()=> showToast('🗑️ Aus dem Warenkorb entfernt','info'), 150);
+      return;
+    }
+
+    // Mengenänderung (+ / -)
+    if (
+      /qty|quantity|menge/i.test(nameAttr) ||
+      /qty__button|quantity-button|js-qty/i.test(cls) ||
+      el.dataset.qty !== undefined
+    ) {
+      setTimeout(()=> showToast('Menge aktualisiert','info'), 200);
+      return;
+    }
+  }, true); // useCapture=true, damit wir möglichst früh dran sind
+
+  // 2) (Optional) Wenn dein Filter-Formular Buttons hat:
+  document.addEventListener('click', function(e){
+    const b = e.target.closest('button');
+    if (!b) return;
+    if (/filter.*anwenden/i.test(b.textContent||'')) {
+      setTimeout(()=> showToast('Filter angewendet','info'), 100);
+    }
+    if (/zurücksetzen|reset/i.test(b.textContent||'')) {
+      setTimeout(()=> showToast('Alle Filter entfernt','info'), 100);
+    }
+  }, true);
+})();
+</script>
+
   </body>
 </html>
