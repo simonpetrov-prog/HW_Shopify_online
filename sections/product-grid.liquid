@@ -34,7 +34,10 @@
           {% if product.available %}
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
             <input type="hidden" name="quantity" value="1">
-            <button type="submit" class="btn quick-add__btn">In den Warenkorb</button>
+            <button type="submit" class="btn"
+  onclick="showToast('✅ Produkt in den Warenkorb gelegt','ok')">
+  In den Warenkorb
+</button>
           {% else %}
             <button type="button" class="btn quick-add__btn" disabled>Ausverkauft</button>
           {% endif %}
