@@ -203,6 +203,43 @@ a{color:var(--primary); text-decoration:none;}
 .pdp-panel{display:none;border:1px solid #eee;border-radius:12px;padding:14px;background:#fff}
 .pdp-panel.is-active{display:block}
 
+/* PDP Tabs – kompakt, klar, kontrastreich */
+.pdp-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 8px}
+.pdp-tab{
+  appearance:none;
+  border:1px solid #e5e7eb;
+  background:#f6f7fb;
+  color:#111;
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:800;
+  line-height:1;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.pdp-tab:hover{border-color:var(--primary,#0046BE)}
+.pdp-tab.is-active{
+  background:var(--primary,#0046BE);
+  border-color:var(--primary,#0046BE);
+  color:#fff;
+  box-shadow:0 6px 18px rgba(0,70,190,.16);
+}
+
+.pdp-panels{margin-top:10px}
+.pdp-panel{
+  display:none;
+  border:1px solid #eee;
+  border-radius:12px;
+  padding:14px;
+  background:#fff;
+}
+.pdp-panel.is-active{display:block}
+
+/* Mobile etwas kleiner */
+@media (max-width:640px){
+  .pdp-tab{padding:8px 12px;font-size:14px}
+}
+
 </style>
 
 <style id="hw-grid-loading">
@@ -290,43 +327,6 @@ a{color:var(--primary); text-decoration:none;}
       if (console && console.warn) console.warn('HW color chips init failed:', err);
     }
   })();
-
-/* PDP Tabs – kompakt, klar, kontrastreich */
-.pdp-tabs{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 8px}
-.pdp-tab{
-  appearance:none;
-  border:1px solid #e5e7eb;
-  background:#f6f7fb;
-  color:#111;
-  padding:10px 14px;
-  border-radius:12px;
-  font-weight:800;
-  line-height:1;
-  cursor:pointer;
-  transition:.15s ease;
-}
-.pdp-tab:hover{border-color:var(--primary,#0046BE)}
-.pdp-tab.is-active{
-  background:var(--primary,#0046BE);
-  border-color:var(--primary,#0046BE);
-  color:#fff;
-  box-shadow:0 6px 18px rgba(0,70,190,.16);
-}
-
-.pdp-panels{margin-top:10px}
-.pdp-panel{
-  display:none;
-  border:1px solid #eee;
-  border-radius:12px;
-  padding:14px;
-  background:#fff;
-}
-.pdp-panel.is-active{display:block}
-
-/* Mobile etwas kleiner */
-@media (max-width:640px){
-  .pdp-tab{padding:8px 12px;font-size:14px}
-}
 
   </script>
 
