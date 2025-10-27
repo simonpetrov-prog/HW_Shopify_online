@@ -652,71 +652,130 @@ window.showToast = function(msg, type='ok', ms=2200){
 })();
 </script>
 
+<!-- ✅ HW TOAST SYSTEM -->
+<div id="toast-root" aria-live="polite" aria-atomic="true"></div>
+
+<style>
+  #toast-root {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 16px;
+    z-index: 9999;
+  }
+
+  .hw-toast {
+    background: #111;
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .2);
+    margin-top: 8px;
+    font-weight: 700;
+    min-width: 220px;
+    text-align: center;
+    transition: .3s;
+  }
+
+  .hw-toast--ok { background: #0f766e; }    /* Grün  */
+  .hw-toast--info { background: #1f2937; }  /* Grau   */
+  .hw-toast--err { background: #b91c1c; }   /* Rot    */
+</style>
+
 <script>
-(function(){
-  let justFired = false; // 🔹 Sperre gegen Doppelfeuer
-
-  function safeToast(msg,type){
-    if (justFired) return;
-    justFired = true;
-    showToast(msg,type);
-    setTimeout(()=>justFired=false,500); // nach 0,5 s wieder freigeben
-  }
-
-  function getCountEl(){
-    return document.querySelector('.header__cart-count') ||
-           document.querySelector('.cart-count') ||
-           document.querySelector('[data-cart-count]');
-  }
-  function readCount(el){
-    if(!el) return 0;
-    const t=(el.getAttribute('data-cart-count')||el.textContent||'').trim();
-    const n=parseInt(t,10);
-    return isNaN(n)?0:n;
-  }
-
-  let countEl=getCountEl();
-  let last=readCount(countEl);
-
-  function hookObserver(){
-    try{
-      const obs=new MutationObserver(()=>{
-        const cur=readCount(countEl);
-        if(cur>last){ safeToast('✅ Produkt in den Warenkorb gelegt','ok'); }
-        else if(cur<last){ safeToast('🗑️ Aus dem Warenkorb entfernt','info'); }
-        last=cur;
-      });
-      obs.observe(countEl,{characterData:true,childList:true,subtree:true,attributes:true,attributeFilter:['data-cart-count']});
-    }catch(e){}
-  }
-
-  if(countEl){hookObserver();}else{
-    let tries=0;
-    const iv=setInterval(()=>{
-      countEl=getCountEl();
-      if(countEl){hookObserver();clearInterval(iv);}
-      else if(++tries>20){clearInterval(iv);}
-    },500);
-  }
-
-  document.addEventListener('click',e=>{
-    const el=e.target.closest('button,a,input'); if(!el)return;
-    const name=(el.getAttribute('name')||'').toLowerCase();
-    const cls=el.className||'';
-
-    if(/qty|quantity|menge/.test(name)||/qty|quantity|js-qty|plus|minus/.test(cls)){
-      setTimeout(()=>safeToast('Menge aktualisiert','info'),120);
-    }
-    if(name==='add'||/add-to-cart|product-form__submit/i.test(cls)){
-      setTimeout(()=>{
-        const cur=readCount(getCountEl());
-        if(cur===last){ safeToast('✅ Produkt in den Warenkorb gelegt','ok'); }
-      },500);
-    }
-  },true);
-})();
+  // Basisfunktion: Toast anzeigen
+  window.showToast = window.showToast || function (msg, type, ms) {
+    const root = document.getElementById('toast-root');
+    if (!root) return;
+    const el = document.createElement('div');
+    el.className = 'hw-toast ' + (type === 'err' ? 'hw-toast--err' : type === 'info' ? 'hw-toast--info' : 'hw-toast--ok');
+    el.textContent = msg;
+    root.appendChild(el);
+    setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(6px)';
+    }, ms || 2200);
+    setTimeout(() => { if (el.parentNode) root.removeChild(el); }, (ms || 2200) + 400);
+  };
 </script>
 
+<script>
+  /* ✅ Ultra-robuster HW Central Toast Trigger */
+  (function(){
+    let justFired = false; // 🔹 Sperre gegen Doppelfeuer
+
+    function safeToast(msg, type){
+      if (justFired) return;
+      justFired = true;
+      showToast(msg, type);
+      setTimeout(()=> justFired = false, 500); // nach 0,5s wieder freigeben
+    }
+
+    // 🧩 Warenkorb-Zähler finden
+    function getCountEl(){
+      return document.querySelector('.header__cart-count') ||
+             document.querySelector('.cart-count') ||
+             document.querySelector('[data-cart-count]');
+    }
+    function readCount(el){
+      if(!el) return 0;
+      const t = (el.getAttribute('data-cart-count') || el.textContent || '').trim();
+      const n = parseInt(t, 10);
+      return isNaN(n) ? 0 : n;
+    }
+
+    let countEl = getCountEl();
+    let last = readCount(countEl);
+
+    // 👁️ Beobachte Änderungen am Zähler
+    function hookObserver(){
+      try{
+        const obs = new MutationObserver(()=>{
+          const cur = readCount(countEl);
+          if(cur > last){ safeToast('✅ Produkt in den Warenkorb gelegt','ok'); }
+          else if(cur < last){ safeToast('🗑️ Aus dem Warenkorb entfernt','info'); }
+          last = cur;
+        });
+        obs.observe(countEl,{characterData:true,childList:true,subtree:true,attributes:true,attributeFilter:['data-cart-count']});
+      }catch(e){}
+    }
+
+    if(countEl){ hookObserver(); }
+    else {
+      let tries = 0;
+      const iv = setInterval(()=>{
+        countEl = getCountEl();
+        if(countEl){ hookObserver(); clearInterval(iv); }
+        else if(++tries > 20){ clearInterval(iv); }
+      }, 500);
+    }
+
+    // ➕ / ➖ Mengenänderungen
+    document.addEventListener('click', e=>{
+      const el = e.target.closest('button,a,input');
+      if(!el) return;
+      const name = (el.getAttribute('name') || '').toLowerCase();
+      const cls  = el.className || '';
+      if(/qty|quantity|menge/.test(name) || /qty|quantity|js-qty|plus|minus/.test(cls)){
+        setTimeout(()=> safeToast('Menge aktualisiert','info'),120);
+      }
+    }, true);
+
+    // 🛒 Add-to-Cart Buttons (Fallback für nicht-AJAX Themes)
+    document.addEventListener('click', e=>{
+      const el = e.target.closest('button,[type="submit"]');
+      if(!el) return;
+      const name = (el.getAttribute('name') || '').toLowerCase();
+      const cls  = el.className || '';
+      if(name==='add' || /add-to-cart|product-form__submit/i.test(cls)){
+        setTimeout(()=>{
+          const cur = readCount(getCountEl());
+          if(cur === last){ safeToast('✅ Produkt in den Warenkorb gelegt','ok'); }
+        }, 500);
+      }
+    }, true);
+  })();
+</script>
 
   </body>
 </html>
