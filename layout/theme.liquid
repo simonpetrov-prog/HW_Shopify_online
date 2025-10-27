@@ -652,85 +652,71 @@ window.showToast = function(msg, type='ok', ms=2200){
 })();
 </script>
 
-
-<!-- ✅ Ultra-robuster Toast-Trigger: beobachtet die Cart-Badge-Änderung -->
 <script>
 (function(){
-  // 1) Ein Element finden, das die Warenkorb-Anzahl anzeigt
+  let justFired = false; // 🔹 Sperre gegen Doppelfeuer
+
+  function safeToast(msg,type){
+    if (justFired) return;
+    justFired = true;
+    showToast(msg,type);
+    setTimeout(()=>justFired=false,500); // nach 0,5 s wieder freigeben
+  }
+
   function getCountEl(){
     return document.querySelector('.header__cart-count') ||
            document.querySelector('.cart-count') ||
            document.querySelector('[data-cart-count]');
   }
-  // Aktuellen Wert auslesen (Zahl aus Text)
   function readCount(el){
     if(!el) return 0;
-    var t = (el.getAttribute('data-cart-count') || el.textContent || '').trim();
-    var n = parseInt(t, 10);
-    return isNaN(n) ? 0 : n;
+    const t=(el.getAttribute('data-cart-count')||el.textContent||'').trim();
+    const n=parseInt(t,10);
+    return isNaN(n)?0:n;
   }
 
-  var countEl = getCountEl();
-  var last = readCount(countEl);
-
-  // 2) Falls beim Laden nicht gefunden, später nochmal suchen
-  var retry = 0;
-  var retryId = setInterval(function(){
-    if(!countEl){
-      countEl = getCountEl();
-      if(countEl){ last = readCount(countEl); clearInterval(retryId); hookObserver(); }
-      else if(++retry > 20){ clearInterval(retryId); } // nach ~10s aufgeben
-    }
-  }, 500);
-
-  if(countEl) hookObserver();
+  let countEl=getCountEl();
+  let last=readCount(countEl);
 
   function hookObserver(){
     try{
-      var obs = new MutationObserver(function(){
-        var current = readCount(countEl);
-        if(current > last){
-          showToast('✅ Produkt in den Warenkorb gelegt','ok');
-        } else if(current < last){
-          showToast('🗑️ Aus dem Warenkorb entfernt','info');
-        }
-        last = current;
+      const obs=new MutationObserver(()=>{
+        const cur=readCount(countEl);
+        if(cur>last){ safeToast('✅ Produkt in den Warenkorb gelegt','ok'); }
+        else if(cur<last){ safeToast('🗑️ Aus dem Warenkorb entfernt','info'); }
+        last=cur;
       });
-      obs.observe(countEl, { characterData:true, childList:true, subtree:true, attributes:true, attributeFilter:['data-cart-count'] });
+      obs.observe(countEl,{characterData:true,childList:true,subtree:true,attributes:true,attributeFilter:['data-cart-count']});
     }catch(e){}
   }
 
-  // 3) Menge ändern (+/–) → kleines Info-Toast (falls Badge nicht wechselt)
-  document.addEventListener('click', function(e){
-    var el = e.target.closest('button, a, input');
-    if(!el) return;
-    var name = (el.getAttribute('name')||'').toLowerCase();
-    var cls  = el.className||'';
-    if (/qty|quantity|menge/.test(name) || /qty|quantity|js-qty|plus|minus/.test(cls)){
-      setTimeout(function(){ showToast('Menge aktualisiert','info'); }, 120);
-    }
-  }, true);
+  if(countEl){hookObserver();}else{
+    let tries=0;
+    const iv=setInterval(()=>{
+      countEl=getCountEl();
+      if(countEl){hookObserver();clearInterval(iv);}
+      else if(++tries>20){clearInterval(iv);}
+    },500);
+  }
 
-  // 4) Fallback für klassische Add-to-Cart Buttons (ohne AJAX)
-  document.addEventListener('click', function(e){
-    var el = e.target.closest('button, [type="submit"]');
-    if(!el) return;
-    var name = (el.getAttribute('name')||'').toLowerCase();
-    var cls  = el.className||'';
-    if (name==='add' || /add-to-cart|product-form__submit/i.test(cls)){
-      // Nur zeigen, wenn NICHT direkt eine Navigation passiert (AJAX-Drawer zeigt dann Badge-Change)
-      setTimeout(function(){
-        // wenn Count gleich blieb (last unverändert), trotzdem Feedback geben
-        var curEl = getCountEl();
-        var cur = readCount(curEl);
-        if(cur === last){
-          showToast('✅ Produkt in den Warenkorb gelegt','ok');
-        }
-      }, 500);
+  document.addEventListener('click',e=>{
+    const el=e.target.closest('button,a,input'); if(!el)return;
+    const name=(el.getAttribute('name')||'').toLowerCase();
+    const cls=el.className||'';
+
+    if(/qty|quantity|menge/.test(name)||/qty|quantity|js-qty|plus|minus/.test(cls)){
+      setTimeout(()=>safeToast('Menge aktualisiert','info'),120);
     }
-  }, true);
+    if(name==='add'||/add-to-cart|product-form__submit/i.test(cls)){
+      setTimeout(()=>{
+        const cur=readCount(getCountEl());
+        if(cur===last){ safeToast('✅ Produkt in den Warenkorb gelegt','ok'); }
+      },500);
+    }
+  },true);
 })();
 </script>
+
 
   </body>
 </html>
