@@ -826,5 +826,67 @@ header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;bor
 }
 </style>
 
+<!-- HW Search Overlay -->
+<div id="hw-search" class="hw-search" hidden>
+  <div class="hw-search__backdrop" data-close></div>
+  <div class="hw-search__panel">
+    <form action="/search" method="get" role="search" class="hw-search__form">
+      <input type="search" name="q" placeholder="Suche nach Modellen, Marken…" autocomplete="off" autofocus>
+      <button type="submit" class="btn btn--primary">Suchen</button>
+    </form>
+    <button class="hw-search__close" type="button" data-close>×</button>
+  </div>
+</div>
+
+<style>
+.hw-search[hidden]{display:none}
+.hw-search{position:fixed;inset:0;z-index:60}
+.hw-search__backdrop{position:absolute;inset:0;background:rgba(0,0,0,.45)}
+.hw-search__panel{
+  position:absolute;left:50%;top:12%;transform:translateX(-50%);
+  width:min(720px,92vw);background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.25);
+  padding:16px;border:1px solid #e5e5e5
+}
+.hw-search__form{display:flex;gap:10px}
+.hw-search__form input{
+  flex:1;border:1px solid #ddd;border-radius:12px;padding:12px 14px;font-size:16px
+}
+.hw-search__close{
+  position:absolute;right:10px;top:10px;background:#eee;border:0;border-radius:10px;width:36px;height:36px;font-size:20px;font-weight:900;cursor:pointer
+}
+@media (max-width:768px){
+  .hw-search__panel{top:6%}
+}
+</style>
+
+<script>
+(function(){
+  const root = document.getElementById('hw-search');
+  const toggles = document.querySelectorAll('.hw-search-toggle');
+  if(!root || !toggles.length) return;
+
+  function open(){
+    root.hidden = false;
+    const inp = root.querySelector('input[name="q"]');
+    setTimeout(()=> inp && inp.focus(), 50);
+    document.body.style.overflow = 'hidden';
+  }
+  function close(){
+    root.hidden = true;
+    document.body.style.overflow = '';
+    toggles.forEach(t=> t.setAttribute('aria-expanded','false'));
+  }
+
+  toggles.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      t.setAttribute('aria-expanded','true');
+      open();
+    });
+  });
+  root.addEventListener('click', (e)=>{ if(e.target.closest('[data-close]')) close(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !root.hidden) close(); });
+})();
+</script>
+
   </body>
 </html>
