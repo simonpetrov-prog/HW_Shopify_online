@@ -17,12 +17,13 @@
       <a href="/collections/all" class="nav__link{% if template.name contains 'collection' %} is-active{% endif %}">Produkte</a>
     </nav>
 
-    <button class="cart-btn" data-cart-toggle aria-label="Warenkorb öffnen">
-      <span>Warenkorb</span>
-      <span class="cart-badge{% if cart.item_count == 0 %} is-hidden{% endif %}" data-cart-count>{{ cart.item_count }}</span>
     <button class="hw-search-toggle header__icon" aria-controls="hw-search" aria-expanded="false" type="button">
   🔎 <span class="label">Suche</span>
 </button>
+
+    <button class="cart-btn" data-cart-toggle aria-label="Warenkorb öffnen">
+      <span>Warenkorb</span>
+      <span class="cart-badge{% if cart.item_count == 0 %} is-hidden{% endif %}" data-cart-count>{{ cart.item_count }}</span>
   </button>
   </div>
 </header>
