@@ -803,5 +803,28 @@ window.showToast = function(msg, type='ok', ms=2200){
 }
 </style>
 
+<style>
+/* HW Mobile Header Polish */
+header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid #eee}
+.header__heading .header__heading-link{font-size:0;line-height:0}
+.header__heading .header__heading-link img{height:32px;width:auto;display:inline-block}
+
+.header__icons{margin-left:auto;display:flex;align-items:center;gap:10px}
+.header__icon{position:relative;display:inline-flex;align-items:center;gap:6px}
+.header__cart-count,.cart-badge{position:absolute;right:-8px;top:-6px;background:#FF6B00;color:#fff;border-radius:999px;padding:2px 6px;font-size:12px;font-weight:900;line-height:1}
+
+/* Menü Links (Startseite/Produkte) */
+.header__inline-menu .list-menu{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.header__inline-menu .list-menu::-webkit-scrollbar{display:none}
+.header__inline-menu a{padding:8px 12px;border-radius:999px;font-weight:800;color:#111}
+.header__inline-menu a:hover{background:rgba(0,70,190,.08);color:var(--primary,#0046BE)}
+.header__inline-menu a.is-active{background:var(--primary,#0046BE);color:#fff;position:relative}
+.header__inline-menu a.is-active::after{content:"";position:absolute;left:0;right:0;margin:auto;bottom:-6px;width:24px;height:3px;border-radius:2px;background:var(--accent,#FF6B00)}
+
+@media (max-width:768px){
+  .header__icons .label{display:none}
+}
+</style>
+
   </body>
 </html>
