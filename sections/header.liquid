@@ -1,82 +1,191 @@
-<style> .header{ outline:4px solid #FF6B00 !important; } </style>
+{% comment %}
+  HW Central Seller – Header (Logo • Menü • Suche • Warenkorb)
+  Section: sections/header.liquid
+{% endcomment %}
 
-{%- comment -%} HW Header: Menü → Suche → Warenkorb {%- endcomment -%}
-<div class="header__inline-menu">
-  {{- content_for_menu -}}
-</div>
+<header class="header" role="banner">
+  <div class="header__inner">
 
-<!-- 🔎 Inline-Suche zwischen Menü und Warenkorb -->
-<form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
-  <input
-    class="hw-inline-search__input"
-    type="search"
-    name="q"
-    placeholder="Suche…"
-    autocomplete="off"
-    aria-label="Suche"
-  >
-  <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">Suchen</button>
-</form>
+    {%- comment -%} Logo {%- endcomment -%}
+    <a class="header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      {% if section.settings.logo != blank %}
+        <img
+          src="{{ section.settings.logo | image_url: width: 300 }}"
+          alt="{{ shop.name | escape }}"
+          style="height: {{ section.settings.logo_height | default: 36 }}px; width: auto;"
+          loading="eager"
+        >
+      {% else %}
+        <span class="header__logo-text">{{ shop.name }}</span>
+      {% endif %}
+    </a>
 
-<!-- 🛒 Profi-Warenkorb-Button (ohne Emoji) -->
-<a href="{{ routes.cart_url }}"
-   class="cart-btn"
-   aria-label="Warenkorb">
-  <span class="cart-btn__text">Warenkorb</span>
-  <span class="cart-badge"
-        data-cart-count
-        {% unless cart.item_count > 0 %}hidden{% endunless %}>
-    {{ cart.item_count }}
-  </span>
-</a>
+    {%- comment -%} Hauptmenü {%- endcomment -%}
+    <nav class="header__inline-menu" role="navigation" aria-label="Hauptmenü">
+      {% if section.settings.main_menu != blank %}
+        <ul class="list-menu">
+          {% for link in section.settings.main_menu.links %}
+            <li>
+              <a class="nav__link{% if link.active %} is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </nav>
 
-</button>
+    {%- comment -%} Suche (zwischen Menü und Warenkorb) {%- endcomment -%}
+    <form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
+      <input
+        class="hw-inline-search__input"
+        type="search"
+        name="q"
+        placeholder="Suche…"
+        autocomplete="off"
+        aria-label="Suche"
+      >
+      <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">Suchen</button>
+    </form>
+
+    {%- comment -%} Warenkorb-Button (Badge nutzt data-cart-count) {%- endcomment -%}
+    <a href="{{ routes.cart_url }}"
+       class="cart-btn"
+       aria-label="Warenkorb">
+      <span class="cart-btn__text">Warenkorb</span>
+      <span class="cart-badge"
+            data-cart-count
+            {% unless cart.item_count > 0 %}hidden{% endunless %}>
+        {{ cart.item_count }}
+      </span>
+    </a>
+
   </div>
 </header>
 
 <style>
+/* ===== Header Layout & Basics ===== */
 .header{
-  position:sticky; top:0; z-index:30; background:#fff;
-  border-bottom:1px solid var(--border);
-  transition:box-shadow .2s ease, transform .2s ease;
+  position: sticky; top: 0; z-index: 30; background: #fff;
+  border-bottom: 1px solid var(--border, #e5e5e5);
+  transition: box-shadow .2s ease;
 }
-.header.is-scrolled{ box-shadow:0 6px 22px rgba(0,0,0,.06); }
+.header.is-scrolled{ box-shadow: 0 6px 22px rgba(0,0,0,.06); }
 
 .header__inner{
-  max-width:1200px; margin:0 auto; padding:12px 20px;
-  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  max-width: 1200px; margin: 0 auto; padding: 12px 20px;
+  display: flex; align-items: center; gap: 16px;
 }
-.header__logo img{ display:block; height:36px; }
 
-.header__nav{ display:flex; gap:12px; align-items:center; }
+/* Logo */
+.header__logo{ display:inline-flex; align-items:center; min-width: 0; }
+.header__logo img{ display:block; height:auto; }
+.header__logo-text{ font-weight: 900; font-size: 18px; color: #111; }
+
+/* Menü */
+.header__inline-menu{ flex: 0 1 auto; }
+.header__inline-menu .list-menu{
+  display:flex; gap: 8px; align-items:center; margin:0; padding:0; list-style:none;
+  overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.header__inline-menu .list-menu::-webkit-scrollbar{ display:none; }
+
 .nav__link{
   padding:8px 12px; border-radius:10px; font-weight:800; color:#111;
-  position:relative;
+  position:relative; white-space:nowrap; display:inline-block;
 }
-.nav__link:hover{ background:rgba(0,70,190,.08); color:var(--primary); }
-.nav__link.is-active{ color:#fff; background:var(--primary); }
+.nav__link:hover{ background: rgba(0,70,190,.08); color: var(--primary,#0046BE); }
+.nav__link.is-active{ color:#fff; background: var(--primary,#0046BE); }
 .nav__link.is-active::after{
-  content:''; position:absolute; left:12px; right:12px; bottom:-8px; height:3px; border-radius:2px;
-  background:var(--accent);
+  content:''; position:absolute; left:0; right:0; margin:auto; bottom:-6px;
+  width:24px; height:3px; border-radius:2px; background: var(--accent,#FF6B00);
 }
 
-.cart-btn{
-  display:flex; align-items:center; gap:10px; background:var(--primary);
-  color:#fff; border:0; border-radius:12px; padding:9px 14px; font-weight:800; cursor:pointer;
+/* Suche (zwischen Menü & Warenkorb) */
+.hw-inline-search{
+  display:flex; align-items:center; gap:8px;
+  background:#f6f7fb; border:1px solid #e5e7eb; border-radius:999px;
+  padding:6px 8px; min-width:220px; max-width:360px; flex: 0 1 360px;
 }
-.cart-btn:hover{ filter:brightness(.96); }
+.hw-inline-search:focus-within{ border-color: var(--primary,#0046BE); box-shadow: 0 0 0 3px rgba(0,70,190,.12); }
+.hw-inline-search__input{
+  flex:1; border:0; background:transparent; outline:none;
+  font-size:14px; color:#111; min-width:120px;
+}
+.hw-inline-search__input::placeholder{ color:#6b7280; }
+.hw-inline-search__btn{
+  background: var(--primary,#0046BE); color:#fff; border:0; border-radius:999px;
+  padding:8px 12px; font-weight:800; cursor:pointer; transition:.15s;
+}
+.hw-inline-search__btn:hover{ filter:brightness(.95); }
+.hw-inline-search__btn:active{ transform: translateY(1px); }
+
+/* Warenkorb-Button */
+.cart-btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  background: var(--primary,#0046BE); color:#fff; border:0; border-radius:12px;
+  padding:10px 18px; font-weight:800; letter-spacing:.3px; text-decoration:none;
+  transition: background .2s ease, transform .1s ease; margin-left: auto;
+}
+.cart-btn:hover{ background: var(--accent,#FF6B00); transform: translateY(-1px); }
+.cart-btn:active{ transform: translateY(0); }
 .cart-badge{
   min-width:22px; height:22px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
-  background:#000; color:#fff; font-size:12px; padding:0 6px;
+  background:#000; color:#fff; font-size:12px; font-weight:800; padding:0 6px;
 }
-.cart-badge.is-hidden{ display:none; }
+
+/* Mobile Verhalten */
+@media (max-width: 768px){
+  .header__inner{ gap: 10px; padding: 10px 12px; }
+  .hw-inline-search{
+    min-width:0; width:42px; padding:6px; gap:0; overflow:hidden;
+    border-radius:12px; transition: width .18s ease, padding .18s ease;
+  }
+  .hw-inline-search__input{ width:0; opacity:0; transition: opacity .12s; }
+  .hw-inline-search.hw--open{ width:min(76vw,420px); padding:6px 8px; gap:8px; }
+  .hw-inline-search.hw--open .hw-inline-search__input{ width:auto; opacity:1; }
+  .cart-btn{ padding:8px 14px; border-radius:10px; }
+  .cart-btn__text{ font-size:14px; }
+}
 </style>
+
+<script>
+/* Shadow beim Scrollen */
+document.addEventListener('scroll', function(){
+  var h = document.querySelector('.header');
+  if(!h) return;
+  h.classList.toggle('is-scrolled', window.scrollY > 8);
+});
+
+/* Mobile: Suchleiste aufklappen */
+(function(){
+  var form = document.querySelector('.hw-inline-search');
+  if(!form) return;
+  var input = form.querySelector('.hw-inline-search__input');
+  var btn = form.querySelector('.hw-inline-search__btn');
+
+  function isMobile(){ return window.matchMedia('(max-width: 768px)').matches; }
+  function open(){ form.classList.add('hw--open'); setTimeout(function(){ input && input.focus(); }, 30); }
+  function close(){ form.classList.remove('hw--open'); }
+
+  btn.addEventListener('click', function(e){
+    if(isMobile() && !form.classList.contains('hw--open')){
+      e.preventDefault(); open();
+    }
+  });
+  input.addEventListener('focus', function(){ if(isMobile()) open(); });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+  document.addEventListener('click', function(e){
+    if(isMobile() && !form.contains(e.target)) close();
+  });
+})();
+</script>
 
 {% schema %}
 {
   "name": "Header",
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo" }
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "range", "id": "logo_height", "label": "Logo-Höhe", "min": 24, "max": 64, "step": 4, "unit": "px", "default": 36 },
+    { "type": "link_list", "id": "main_menu", "label": "Hauptmenü" }
   ]
 }
 {% endschema %}
