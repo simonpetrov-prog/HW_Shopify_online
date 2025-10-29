@@ -22,16 +22,31 @@
 
     {%- comment -%} Hauptmenü {%- endcomment -%}
     <nav class="header__inline-menu" role="navigation" aria-label="Hauptmenü">
-      {% if section.settings.main_menu != blank %}
-        <ul class="list-menu">
-          {% for link in section.settings.main_menu.links %}
-            <li>
-              <a class="nav__link{% if link.active %} is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      {% endif %}
-    </nav>
+  <ul class="list-menu">
+    <!-- Feste Buttons -->
+    <li>
+      <a href="/"
+         class="nav__link {% if template.name == 'index' %}is-active{% endif %}">
+        Startseite
+      </a>
+    </li>
+    <li>
+      <a href="/collections/all"
+         class="nav__link {% if template.name == 'collection' or request.path contains '/collections' %}is-active{% endif %}">
+        Produkte
+      </a>
+    </li>
+
+    <!-- Optional: zusätzlich ausgewähltes Menü anhängen -->
+    {% if section.settings.main_menu != blank %}
+      {% for link in section.settings.main_menu.links %}
+        <li>
+          <a class="nav__link{% if link.active %} is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+        </li>
+      {% endfor %}
+    {% endif %}
+  </ul>
+</nav>
 
     {%- comment -%} Suche (zwischen Menü und Warenkorb) {%- endcomment -%}
     <form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
