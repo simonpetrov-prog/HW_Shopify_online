@@ -160,6 +160,51 @@
   .cart-btn{ padding:8px 14px; border-radius:10px; }
   .cart-btn__text{ font-size:14px; }
 }
+
+/* Menü-Links: Basis + Unterstrich immer exakt zentriert */
+.header__inline-menu .list-menu a.nav__link{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px 10px;     /* etwas Platz unten für die Linie */
+  border-radius: 10px;
+  font-weight: 800;
+  color: #111;
+  white-space: nowrap;
+}
+
+.header__inline-menu .list-menu a.nav__link:hover{
+  background: rgba(0,70,190,.08);
+  color: var(--primary,#0046BE);
+}
+
+/* Aktiver Zustand + Mini-Leiste perfekt mittig */
+.header__inline-menu .list-menu a.nav__link.is-active{
+  color: #fff;
+  background: var(--primary,#0046BE);
+}
+
+.header__inline-menu .list-menu a.nav__link.is-active::after{
+  content: "";
+  position: absolute;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: -6px;               /* Abstand unter dem Chip */
+  margin: 0 auto !important;  /* zentriert */
+  width: 24px;                /* kurze, elegante Linie */
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent,#FF6B00);
+  transform: none !important; /* alte translate-Fixes aushebeln */
+}
+
+/* Mobile: etwas dichter bündig */
+@media (max-width:768px){
+  .header__inline-menu .list-menu a.nav__link{ padding:8px 10px 9px; }
+  .header__inline-menu .list-menu a.nav__link.is-active::after{ bottom:-5px; width:22px; }
+}
+
 </style>
 
 <script>
