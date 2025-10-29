@@ -17,6 +17,19 @@
       <a href="/collections/all" class="nav__link{% if template.name contains 'collection' %} is-active{% endif %}">Produkte</a>
     </nav>
 
+{%- comment -%} HW Inline Search (zwischen Menü und Icons) {%- endcomment -%}
+<form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
+  <input
+    class="hw-inline-search__input"
+    type="search"
+    name="q"
+    placeholder="Suche…"
+    autocomplete="off"
+    aria-label="Suche"
+  >
+  <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">🔎</button>
+</form>
+
     <button class="cart-btn" data-cart-toggle aria-label="Warenkorb öffnen">
       <span>Warenkorb</span>
       <span class="cart-badge{% if cart.item_count == 0 %} is-hidden{% endif %}" data-cart-count>{{ cart.item_count }}</span>
