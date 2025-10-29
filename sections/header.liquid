@@ -29,6 +29,17 @@
   >
   <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">🔎</button>
 </form>
+{%- comment -%} HW Cart Button (neu) {%- endcomment -%}
+<a href="{{ routes.cart_url }}"
+   class="header__icon cart-link"
+   aria-label="Warenkorb">
+  🛒 <span class="label">Warenkorb</span>
+  <span class="header__cart-count"
+        data-cart-count
+        {% unless cart.item_count > 0 %}hidden{% endunless %}>
+    {{ cart.item_count }}
+  </span>
+</a>
 </button>
   </div>
 </header>
