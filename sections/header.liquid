@@ -17,29 +17,18 @@
       <a href="/collections/all" class="nav__link{% if template.name contains 'collection' %} is-active{% endif %}">Produkte</a>
     </nav>
 
-{%- comment -%} HW Inline Search (zwischen Menü und Icons) {%- endcomment -%}
-<form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
-  <input
-    class="hw-inline-search__input"
-    type="search"
-    name="q"
-    placeholder="Suche…"
-    autocomplete="off"
-    aria-label="Suche"
-  >
-  <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">🔎</button>
-</form>
-{%- comment -%} HW Cart Button (neu) {%- endcomment -%}
+{%- comment -%} HW Central Seller – Warenkorb Button {%- endcomment -%}
 <a href="{{ routes.cart_url }}"
-   class="header__icon cart-link"
+   class="cart-btn"
    aria-label="Warenkorb">
-  🛒 <span class="label">Warenkorb</span>
-  <span class="header__cart-count"
+  <span class="cart-btn__text">Warenkorb</span>
+  <span class="cart-badge"
         data-cart-count
         {% unless cart.item_count > 0 %}hidden{% endunless %}>
     {{ cart.item_count }}
   </span>
 </a>
+
 </button>
   </div>
 </header>
