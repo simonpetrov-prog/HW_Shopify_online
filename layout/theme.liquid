@@ -1058,5 +1058,26 @@ document.addEventListener('submit', function(e){
 });
 </script>
 
+<script>
+document.addEventListener('click', function(e){
+  const row = e.target.closest('[data-acc]');
+  if (!row) return;
+
+  const key = row.getAttribute('data-acc');
+  const body = document.querySelector('[data-acc-body="'+key+'"]');
+  if (!body) return;
+
+  const isOpen = body.classList.contains('is-open');
+
+  // erst alle zu
+  document.querySelectorAll('.hw-filter-body').forEach(b => b.classList.remove('is-open'));
+
+  // dann nur den anklickten auf
+  if (!isOpen) {
+    body.classList.add('is-open');
+  }
+});
+</script>
+
   </body>
 </html>
