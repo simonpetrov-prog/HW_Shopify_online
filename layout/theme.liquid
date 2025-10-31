@@ -1222,5 +1222,104 @@ document.addEventListener('click', function(e){
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+
+  // Tabs schalten
+  const tabs = document.querySelectorAll('.hw-tab[data-filter]');
+  const panels = document.querySelectorAll('.hw-panel');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const key = tab.dataset.filter;
+      // tabs
+      tabs.forEach(t => t.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      // panels
+      panels.forEach(p => {
+        p.classList.toggle('is-open', p.dataset.panel === key);
+      });
+    });
+  });
+
+  // Chips auswählbar machen
+  document.querySelectorAll('.hw-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const input = chip.querySelector('input');
+      if (input) {
+        // bei checkbox toggle
+        if (input.type === 'checkbox') {
+          input.checked = !input.checked;
+          chip.classList.toggle('is-selected', input.checked);
+        }
+        // bei radio nur diesen markieren
+        if (input.type === 'radio') {
+          const name = input.name;
+          document.querySelectorAll('input[name="'+name+'"]').forEach(r => {
+            const parent = r.closest('.hw-chip');
+            if (parent) parent.classList.remove('is-selected');
+          });
+          input.checked = true;
+          chip.classList.add('is-selected');
+        }
+      }
+    });
+  });
+
+  // Reset
+  const resetBtn = document.getElementById('hw-filter-reset');
+  if (resetBtn){
+    resetBtn.addEventListener('click', () => {
+      // inputs leeren
+      document.querySelectorAll('.hw-panel input').forEach(i => {
+        if (i.type === 'checkbox' || i.type === 'radio') {
+          i.checked = false;
+          const p = i.closest('.hw-chip');
+          if (p) p.classList.remove('is-selected');
+        } else {
+          i.value = '';
+        }
+      });
+      // aktive chips oben leeren
+      const af = document.getElementById('hw-active-filters');
+      if (af) af.innerHTML = '';
+    });
+  }
+
+  // Anwenden-Buttons → nur UI anzeigen
+  document.querySelectorAll('.hw-apply').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const box = document.getElementById('hw-active-filters');
+      if (!box) return;
+
+      // mini-demo: wir sammeln einfach die selektierten chips
+      const selectedChips = document.querySelectorAll('.hw-chip.is-selected');
+      box.innerHTML = '';
+      selectedChips.forEach(ch => {
+        const txt = ch.innerText.trim();
+        const pill = document.createElement('span');
+        pill.className = 'hw-active-pill';
+        pill.textContent = txt;
+        box.appendChild(pill);
+      });
+
+      // Preis
+      const min = document.getElementById('hw-price-min').value;
+      const max = document.getElementById('hw-price-max').value;
+      if (min || max){
+        const pill = document.createElement('span');
+        pill.className = 'hw-active-pill';
+        pill.textContent = `Preis: ${min || '0'} - ${max || '∞'}`;
+        box.appendChild(pill);
+      }
+
+      // hier könntest du später noch echte Query-Parameter bauen
+      // und window.location = '/collections/all?...' machen
+    });
+  });
+
+});
+</script>
+
   </body>
 </html>
