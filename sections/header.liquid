@@ -205,6 +205,31 @@
   .header__inline-menu .list-menu a.nav__link.is-active::after{ bottom:-5px; width:22px; }
 }
 
+/* --- Desktop Layout justieren --- */
+.header__inner{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Start, damit Logo links bleibt */
+  gap: 16px;
+}
+
+/* Menü & Suche weiter rechts positionieren */
+.header__inline-menu{
+  margin-left: auto; /* Menü rückt auf rechte Seite */
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hw-inline-search{
+  flex: 0 1 280px;
+  margin-left: 10px;
+}
+
 </style>
 
 <script>
