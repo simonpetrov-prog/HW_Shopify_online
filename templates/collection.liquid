@@ -1,40 +1,5 @@
 {% section 'header' %}
 
-{% if request.params.q %}
-  <div class="search-banner">
-    <p>Suchergebnisse für: <strong>{{ request.params.q }}</strong></p>
-  </div>
-  <script>
-    // Client-seitig Filter auf Suchbegriff anwenden
-    document.addEventListener("DOMContentLoaded", () => {
-      const q = "{{ request.params.q }}".toLowerCase();
-      const grid = document.querySelectorAll(".product-card");
-      if (!grid.length) return;
-      let visible = 0;
-      grid.forEach(card => {
-        const title = card.textContent.toLowerCase();
-        const match = title.includes(q);
-        card.style.display = match ? "" : "none";
-        if (match) visible++;
-      });
-      // Optional: Anzeige, wenn nichts gefunden
-      if (visible === 0) {
-        document.querySelector(".search-banner").insertAdjacentHTML("beforeend", "<p>Keine Produkte gefunden.</p>");
-      }
-    });
-  </script>
-
-  <style>
-    .search-banner{
-      background:#f4f4f4;
-      border-radius:8px;
-      padding:10px 14px;
-      margin-bottom:10px;
-      font-weight:600;
-    }
-  </style>
-{% endif %}
-
 <main class="container">
   <!-- DEBUG: collection.liquid is LIVE -->
   {% render 'hw-filters' %}
