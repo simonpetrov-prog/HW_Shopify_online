@@ -93,11 +93,12 @@ async function loadCartDrawer(){
     total.textContent = money(cart.total_price);
 
     // Header-Badge updaten
-    const badge = document.querySelector('[data-cart-count]');
-    if (badge){
-      badge.textContent = cart.item_count;
-      badge.classList.toggle('is-hidden', cart.item_count === 0);
-    }
+// Header-Badge updaten (INSIDE button)
+const badge = document.querySelector('[data-cart-count]');
+if (badge){
+  badge.textContent = cart.item_count;
+  badge.hidden = (cart.item_count === 0);  // <— wichtig
+}
   } catch(e){
     console.error(e);
     const body = document.getElementById('cart-body');
