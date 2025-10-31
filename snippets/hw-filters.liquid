@@ -12,10 +12,18 @@
   <form class="hwf-form" id="hwf-form" method="get" action="">
 
 <!-- Preis -->
-<div class="hwf-block">
-  <button type="button" class="hwf-toggle" data-target="price">
-    Preis <span class="count" data-count="price" hidden>0</span>
+<div class="filter-block">
+  <button type="button" class="filter-toggle" data-filter-target="price">
+    Preis
+    <span class="chevron">▾</span>
   </button>
+  <div class="filter-panel" data-filter-panel="price" hidden>
+    <!-- dein bisheriger Preis-Filter kommt HIER rein -->
+    {{ 'price' | placeholder }} {# hier zb. min/max inputs #}
+    <label>Min (€): <input type="number" name="min_price"></label>
+    <label>Max (€): <input type="number" name="max_price"></label>
+  </div>
+</div>
   {%- comment -%}
     Für den Test ist das Panel standardmäßig offen (is-open).
     Wenn es bei dir dann sichtbar ist, kannst du 'is-open' wieder entfernen.
