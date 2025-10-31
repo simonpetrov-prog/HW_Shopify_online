@@ -217,6 +217,149 @@ a{color:var(--primary); text-decoration:none;}
   background:#fff;
 }
 
+/* HW Filter Box */
+.hw-filter-shell{
+  border:3px solid #0046BE;
+  border-radius:18px;
+  padding:14px 14px 18px;
+  background:#fff;
+  margin-bottom:20px;
+}
+.hw-filter-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  margin-bottom:12px;
+}
+.hw-filter-head h2{
+  font-size:22px;
+  font-weight:800;
+  color:#0046BE;
+  margin:0;
+}
+
+.hw-active-filters{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.hw-active-pill{
+  background:#ECECEC;
+  border-radius:999px;
+  padding:4px 10px;
+  font-weight:600;
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.hw-active-pill button{
+  background:transparent;
+  border:0;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.hw-filter-tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.hw-tab{
+  background:#fff;
+  border:1px solid #d9d9d9;
+  border-radius:12px;
+  padding:6px 14px;
+  font-weight:700;
+  cursor:pointer;
+}
+.hw-tab.is-active{
+  background:#0046BE;
+  color:#fff;
+  border-color:#0046BE;
+}
+.hw-tab.hw-tab--reset{
+  margin-left:auto;
+  background:#eee;
+  border-color:#eee;
+  color:#111;
+}
+
+.hw-panels{ width:100%; }
+.hw-panel{ display:none; }
+.hw-panel.is-open{ display:block; }
+
+.hw-price-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+  margin-bottom:14px;
+}
+.hw-price-grid label{
+  display:block;
+  font-weight:600;
+  margin-bottom:4px;
+}
+.hw-price-grid input{
+  width:100%;
+  border:1px solid #d5d5d5;
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:14px;
+  background:#fff;
+}
+
+.hw-chip-wrap{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+.hw-chip-wrap--column{
+  flex-direction:column;
+  align-items:flex-start;
+}
+.hw-chip{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  background:#F2F2F2;
+  border:1px solid #E0E0E0;
+  border-radius:999px;
+  padding:6px 12px;
+  cursor:pointer;
+  font-weight:600;
+}
+.hw-chip input{ display:none; }
+.hw-chip .dot{
+  width:14px; height:14px; border-radius:50%; background:#ddd;
+}
+.hw-chip.is-selected{
+  background:#0046BE;
+  color:#fff;
+  border-color:#0046BE;
+}
+.hw-chip.is-selected .dot{
+  background:#fff;
+}
+
+.hw-apply{
+  background:#FF6B00;
+  color:#fff;
+  border:0;
+  border-radius:10px;
+  padding:8px 14px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+@media (max-width: 720px){
+  .hw-price-grid{ grid-template-columns:1fr; }
+  .hw-filter-head{ flex-direction:column; align-items:flex-start; }
+  .hw-filter-tabs{ gap:6px; }
+}
+
 </style>
 
 <style id="hw-filter-css-fix">
