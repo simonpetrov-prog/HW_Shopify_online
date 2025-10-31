@@ -1,5 +1,73 @@
 {% section 'header' %}
 
+{% if request.params.q %}
+  <div class="search-banner">
+    <p>Suchergebnisse für: <strong>{{ request.params.q }}</strong></p>
+  </div>
+{% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  // Suchbegriff aus der URL
+  const params = new URLSearchParams(window.location.search);
+  const q = (params.get('q') || '').trim().toLowerCase();
+  if (!q) return;  // nichts gesucht -> nichts filtern
+
+  // Alle möglichen Produktkarten einsammeln
+  const cards = document.querySelectorAll(
+    '.hw-product-card, .product-card, .product-item, [data-product-title]'
+  );
+  let visible = 0;
+
+  cards.forEach(card => {
+    // Titel finden
+    let title = '';
+    // 1) eigenes data-Attribut
+    if (card.dataset && card.dataset.productTitle) {
+      title = card.dataset.productTitle.toLowerCase();
+    } else {
+      // 2) nach h3/h2/a im Card-Body suchen
+      const t =
+        card.querySelector('.hw-product-card__title') ||
+        card.querySelector('.product-title') ||
+        card.querySelector('h3 a') ||
+        card.querySelector('h3') ||
+        card.querySelector('a');
+      if (t) title = t.textContent.trim().toLowerCase();
+    }
+
+    // Match?
+    if (title.includes(q)) {
+      card.style.display = '';
+      visible++;
+    } else {
+      card.style.display = 'none';
+    }
+  });
+
+  // nichts gefunden → kleine Meldung
+  if (visible === 0) {
+    const container = document.querySelector('.search-banner') || document.querySelector('main') || document.body;
+    const box = document.createElement('div');
+    box.textContent = 'Keine Produkte gefunden.';
+    box.style.marginTop = '10px';
+    box.style.fontWeight = '600';
+    container.appendChild(box);
+  }
+});
+</script>
+
+<style>
+.search-banner{
+  background:#f4f4f4;
+  border:1px solid #e5e5e5;
+  border-radius:10px;
+  padding:8px 12px;
+  margin:10px 0 14px;
+  font-weight:600;
+}
+</style>
+
 <main class="container">
   <!-- DEBUG: collection.liquid is LIVE -->
   {% render 'hw-filters' %}
