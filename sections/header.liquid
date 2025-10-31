@@ -62,11 +62,11 @@
     </form>
 
     {%- comment -%} Warenkorb-Button (Badge nutzt data-cart-count) {%- endcomment -%}
-
-<button type="button"
+<button
+  type="button"
   class="cart-btn"
-  data-open-cart
-  aria-label="Warenkorb">
+  data-cart-toggle
+  aria-label="Warenkorb öffnen">
   <span class="cart-btn__text">Warenkorb</span>
   <span class="cart-badge"
         data-cart-count
