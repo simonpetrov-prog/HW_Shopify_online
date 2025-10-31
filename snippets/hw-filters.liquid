@@ -385,3 +385,18 @@ root.querySelectorAll('.hwf-chip').forEach(function(ch){
   restore();
 })();
 </script>
+
+<script>
+document.addEventListener('click', function(e){
+  const btn = e.target.closest('.filter-toggle');
+  if (!btn) return;
+  const key = btn.dataset.filterTarget;
+  const panel = document.querySelector('[data-filter-panel="'+key+'"]');
+  if (!panel) return;
+  const isHidden = panel.hasAttribute('hidden');
+  // erst alle schließen:
+  document.querySelectorAll('[data-filter-panel]').forEach(p=>p.setAttribute('hidden',''));
+  // dann dieses öffnen
+  if (isHidden) panel.removeAttribute('hidden');
+});
+</script>
