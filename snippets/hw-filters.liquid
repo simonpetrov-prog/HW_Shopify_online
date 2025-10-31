@@ -1,405 +1,97 @@
-<!-- HW FILTERS v3 (Snippet) -->
-<section class="hwf" data-hwf>
-  <h2 class="hwf__title">Filter</h2>
+{%- comment -%}
+HW FILTER PANEL – v2
+- horizontale Button-Leiste
+- darunter Akkordeon
+- nutzt Tags:
+  Farbe: Blau
+  Marke: Ferrari
+  Serie: Mainline
+  TH: Ja
+{%- endcomment -%}
 
-  <!-- Aktive Filter -->
-  <div class="hwf-active" data-active hidden>
-    <strong>Aktiv:</strong>
-    <div class="hwf-active__list" data-active-list></div>
-    <button type="button" class="hwf-btn hwf-btn--ghost" data-reset>Alle löschen ✕</button>
+<div class="hw-filter-shell">
+  <div class="hw-filter-head">
+    <h2>Filter</h2>
+
+    <div class="hw-active-filters" id="hw-active-filters">
+      {% comment %} Hier könntest du später Shopify-aktive-Filter ausgeben {% endcomment %}
+      <!-- wird per JS befüllt -->
+    </div>
   </div>
 
-  <form class="hwf-form" id="hwf-form" method="get" action="">
+  <!-- Button-Reihe -->
+  <div class="hw-filter-tabs">
+    <button type="button" class="hw-tab is-active" data-filter="price">Preis ▾</button>
+    <button type="button" class="hw-tab" data-filter="color">Farbe ▾</button>
+    <button type="button" class="hw-tab" data-filter="brand">Marke ▾</button>
+    <button type="button" class="hw-tab" data-filter="th">TH ▾</button>
 
-<!-- Preis -->
-<button type="button"
-        class="hw-filter-row"
-        data-acc="price">
-  <span>Preis</span>
-  <span class="hw-filter-arrow">▾</span>
-</button>
+    <button type="button" class="hw-tab hw-tab--reset" id="hw-filter-reset">Zurücksetzen</button>
+  </div>
 
-<div class="hw-filter-body" data-acc-body="price">
-  <div class="hw-price-grid">
-    <div>
-      <label for="price-min">von</label>
-      <input id="price-min"
-             type="number"
-             name="price_min"
-             inputmode="decimal"
-             min="0"
-             step="0.01"
-             placeholder="z. B. 2,99">
+  <!-- Panel-Bereich -->
+  <div class="hw-panels">
+
+    {# --- Preis --- #}
+    <div class="hw-panel is-open" data-panel="price">
+      <div class="hw-price-grid">
+        <div>
+          <label for="hw-price-min">von</label>
+          <input id="hw-price-min" type="number" step="0.01" min="0" placeholder="z. B. 2,99">
+        </div>
+        <div>
+          <label for="hw-price-max">bis</label>
+          <input id="hw-price-max" type="number" step="0.01" min="0" placeholder="z. B. 9,99">
+        </div>
+      </div>
+      <button class="hw-apply" data-apply="price">Filter anwenden</button>
     </div>
-    <div>
-      <label for="price-max">bis</label>
-      <input id="price-max"
-             type="number"
-             name="price_max"
-             inputmode="decimal"
-             min="0"
-             step="0.01"
-             placeholder="z. B. 9,99">
+
+    {# --- Farbe --- #}
+    <div class="hw-panel" data-panel="color">
+      <div class="hw-chip-wrap" id="hw-color-list">
+        {% assign colors = "Türkis, Blau, Rot, Weiß, Schwarz, Grau, Orange" | split: "," %}
+        {% for c in colors %}
+          {% assign label = c | strip %}
+          <label class="hw-chip" data-color="{{ label }}">
+            <input type="checkbox" value="{{ label | escape }}">
+            <span class="dot"></span>
+            <span>{{ label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+      <button class="hw-apply" data-apply="color">Filter anwenden</button>
     </div>
+
+    {# --- Marke (Auto-Marken) --- #}
+    <div class="hw-panel" data-panel="brand">
+      <div class="hw-chip-wrap" id="hw-brand-list">
+        {% assign auto_brands = "Ferrari, Porsche, Lamborghini, BMW, Mercedes, Toyota, Koenigsegg" | split: "," %}
+        {% for b in auto_brands %}
+          {% assign label = b | strip %}
+          <label class="hw-chip" data-brand="{{ label }}">
+            <input type="checkbox" value="{{ label | escape }}">
+            <span>{{ label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+      <button class="hw-apply" data-apply="brand">Filter anwenden</button>
+    </div>
+
+    {# --- Treasure Hunt --- #}
+    <div class="hw-panel" data-panel="th">
+      <div class="hw-chip-wrap hw-chip-wrap--column">
+        <label class="hw-chip" data-th="Ja">
+          <input type="radio" name="hw-th" value="Ja">
+          <span>Ja</span>
+        </label>
+        <label class="hw-chip" data-th="Ohne">
+          <input type="radio" name="hw-th" value="Ohne">
+          <span>Ohne</span>
+        </label>
+      </div>
+      <button class="hw-apply" data-apply="th">Filter anwenden</button>
+    </div>
+
   </div>
 </div>
-
-    <!-- Farbe -->
-    <div class="hwf-block">
-      <button type="button" class="hwf-toggle" data-target="color">Farbe</button>
-      <div id="hwf-color" class="hwf-panel" data-panel="color">
-        <label class="hwf-chip" role="checkbox" tabindex="0">
-           <input type="checkbox" data-color value="Blau"><span class="dot"></span>Blau
-        </label>
-        <label class="hwf-chip"><input type="checkbox" data-color value="Blau"><span class="dot"></span>Blau</label>
-        <label class="hwf-chip"><input type="checkbox" data-color value="Rot"><span class="dot"></span>Rot</label>
-        <label class="hwf-chip"><input type="checkbox" data-color value="Orange"><span class="dot"></span>Orange</label>
-        <label class="hwf-chip"><input type="checkbox" data-color value="Schwarz"><span class="dot"></span>Schwarz</label>
-        <label class="hwf-chip"><input type="checkbox" data-color value="Weiß"><span class="dot"></span>Weiß</label>
-        <label class="hwf-chip"><input type="checkbox" data-color value="Grau"><span class="dot"></span>Grau</label>
-      </div>
-    </div>
-
-    <!-- Marke -->
-    <div class="hwf-block">
-      <button type="button" class="hwf-toggle" data-target="brand">Marke</button>
-      <div id="hwf-brand" class="hwf-panel">
-        <label class="hwf-chip"><input type="checkbox" data-brand value="Ferrari"><span class="dot"></span>Ferrari</label>
-        <label class="hwf-chip"><input type="checkbox" data-brand value="Porsche"><span class="dot"></span>Porsche</label>
-        <label class="hwf-chip"><input type="checkbox" data-brand value="Lamborghini"><span class="dot"></span>Lamborghini</label>
-        <label class="hwf-chip"><input type="checkbox" data-brand value="BMW"><span class="dot"></span>BMW</label>
-        <label class="hwf-chip"><input type="checkbox" data-brand value="Mercedes-Benz"><span class="dot"></span>Mercedes-Benz</label>
-        <label class="hwf-chip"><input type="checkbox" data-brand value="Toyota"><span class="dot"></span>Toyota</label>
-        <label class="hwf-chip"><input type="checkbox" data-brand value="Koenigsegg"><span class="dot"></span>Koenigsegg</label>
-      </div>
-    </div>
-
-    <!-- Serie -->
-    <div class="hwf-block">
-      <button type="button" class="hwf-toggle" data-target="series">Serie</button>
-      <div id="hwf-series" class="hwf-panel">
-        <label class="hwf-chip"><input type="checkbox" data-series value="Mainline"><span class="dot"></span>Mainline</label>
-        <label class="hwf-chip"><input type="checkbox" data-series value="Premium"><span class="dot"></span>Premium</label>
-        <label class="hwf-chip"><input type="checkbox" data-series value="ID"><span class="dot"></span>ID</label>
-      </div>
-    </div>
-
-    <!-- Aktionen -->
-    <div class="hwf-actions">
-      <button type="submit" class="hwf-btn hwf-btn--apply" data-apply>Filter anwenden</button>
-      <button type="button" class="hwf-btn" data-reset>Zurücksetzen</button>
-    </div>
-  </form>
-</section>
-
-<style>
-/* Box */
-.hwf{background:#fff;border:2px solid #0046BE;border-radius:12px;padding:14px;margin:16px 0}
-.hwf__title{margin:0 0 10px;color:#0046BE;font-weight:900;text-align:center}
-
-/* Aktive Chips */
-.hwf-active{display:flex;align-items:center;flex-wrap:wrap;gap:8px;background:#f7f7f7;border:1px solid #ddd;border-radius:8px;padding:10px;margin-bottom:12px}
-.hwf-active__list{display:flex;flex-wrap:wrap;gap:6px}
-.hwf-chip--active{background:#e5e5e5;color:#333;padding:4px 10px;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
-.hwf-chip--active:hover{background:#d5d5d5}
-.hwf-chip--active span{font-size:16px;color:#666}
-
-/* Blöcke & Panels */
-.hwf-block{margin-bottom:12px}
-.hwf-toggle{width:100%;background:#eee;color:#111;border:1px solid #ddd;border-radius:8px;padding:9px 10px;font-weight:800;cursor:pointer;text-align:left}
-.hwf-toggle:hover{background:#e8e8e8}
-.hwf-panel{display:none;padding:10px;margin-top:6px;border:1px solid #ddd;border-radius:8px;background:#fafafa}
-.hwf-panel.is-open{display:block}
-
-/* Chip-Inputs */
-.hwf-panel .hwf-chip{display:inline-flex;align-items:center;gap:8px;background:#eee;color:#333;border:1px solid #ddd;border-radius:999px;padding:6px 10px;margin:4px 6px 0 0;font-weight:700;cursor:pointer}
-.hwf-panel input{display:none}
-.hwf-panel .dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.2);display:inline-block}
-
-/* Preis */
-.hwf-price{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.hwf-price input{border:1px solid #ddd;border-radius:8px;padding:6px 10px;min-width:120px}
-
-/* Buttons */
-.hwf-actions{display:flex;gap:10px;justify-content:center;margin-top:10px}
-.hwf-btn{background:#ddd;color:#333;padding:10px 16px;border:0;border-radius:10px;font-weight:900;cursor:pointer}
-.hwf-btn--apply{background:#FF6B00;color:#fff}
-.hwf-btn--ghost{background:#e5e5e5}
-
-/* Mobile */
-@media (max-width:768px){
-  .hwf{padding:12px}
-}
-
-/* --- SIZE TWEAKS / OVERLAY FIX (add-on) --- */
-
-/* Chips kompakter */
-.hwf-panel .hwf-chip{
-  padding: 4px 8px;
-  font-size: 13px;
-  border-radius: 999px;
-  margin: 3px 6px 0 0;
-}
-.hwf-panel .dot{
-  width: 12px;
-  height: 12px;
-}
-
-/* Toggle-Buttons schlanker */
-.hwf-toggle{
-  padding: 7px 10px;
-  font-size: 14px;
-  border-radius: 8px;
-}
-
-/* Preisfelder etwas kleiner */
-.hwf-price input{
-  padding: 6px 8px;
-  min-width: 110px;
-  font-size: 14px;
-}
-
-/* Aktionsbuttons kompakter */
-.hwf-btn{ padding: 8px 12px; font-size: 14px; }
-.hwf-btn--apply{ padding: 9px 14px; }
-
-/* Falls noch ein altes Overlay vom früheren Mobile-Filter existiert: weg damit */
-.hw-filter-overlay { display: none !important; }
-
-/* Mobile: Panels sicher über allem & klickbar */
-.hwf-panel{ position: relative; z-index: 5; }
-.hwf{ position: relative; z-index: 4; }
-.hwf-panel *{ pointer-events: auto; }
-
-/* Preisfelder sicher sichtbar machen */
-.hwf-price input{
-  display: inline-block !important;
-  background: #fff;
-  color: #111;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px 10px;
-  min-width: 120px;
-  font-size: 14px;
-  line-height: 1.2;
-  -webkit-appearance: none; /* iOS */
-  appearance: none;
-}
-.hwf-price label{
-  font-weight: 800;
-  color: #333;
-}
-
-</style>
-
-<script>
-/* ---------- HW Filters v3 (stabil, ohne globale Abhängigkeiten) ---------- */
-(function(){
-  var root = document.currentScript ? document.currentScript.previousElementSibling : null;
-  // Fallback, falls Script verschoben wurde:
-  if(!root || !root.matches || !root.matches('.hwf')) root = document.querySelector('[data-hwf]');
-  if(!root) return;
-
-  // Panels togglen
-  root.addEventListener('click', function(e){
-    var btn = e.target.closest('.hwf-toggle');
-    if(!btn) return;
-    var panel = document.getElementById('hwf-' + btn.getAttribute('data-target'));
-    if(panel){ panel.classList.toggle('is-open'); }
-  });
-
-  // Helpers
-  function toCents(v){
-    var n = Math.round(parseFloat((v||'').toString().replace(',','.'))*100);
-    return isNaN(n) ? null : n;
-  }
-  function cleanFiltersIn(url){
-    Array.from(url.searchParams.keys()).forEach(function(k){
-      if(k.indexOf('filter.')===0) url.searchParams.delete(k);
-    });
-  }
-  function buildUrl(){
-    var url = new URL(window.location.href);
-    cleanFiltersIn(url);
-
-    // Preis
-    var minI = root.querySelector('[data-min]'), maxI = root.querySelector('[data-max]');
-    var minC = minI && toCents(minI.value), maxC = maxI && toCents(maxI.value);
-    if(minI && minI.value && minC!==null) url.searchParams.set('filter.p.price.gte', String(minC));
-    if(maxI && maxI.value && maxC!==null) url.searchParams.set('filter.p.price.lte', String(maxC));
-
-    // Tags
-    function addChecked(sel,prefix){
-      root.querySelectorAll(sel).forEach(function(i){
-        if(i.checked) url.searchParams.append('filter.p.tag', prefix+' '+i.value);
-      });
-    }
-    addChecked('[data-color]','Farbe:');
-    addChecked('[data-brand]','Marke:');
-    addChecked('[data-series]','Serie:');
-    return url;
-  }
-
-  // Anwenden
-  var applyBtn = root.querySelector('[data-apply]');
-  if(applyBtn){
-    applyBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      window.location.href = buildUrl().toString();
-    });
-  }
-
-  // Zurücksetzen
-  root.querySelectorAll('[data-reset]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var url = new URL(window.location.href);
-      cleanFiltersIn(url);
-      window.location.href = url.toString();
-    });
-  });
-
-  // Wiederherstellen aus URL + aktive Chips
-  var activeBox = root.querySelector('[data-active]');
-  var activeList = root.querySelector('[data-active-list]');
-
-  function restore(){
-    // alles clear
-    root.querySelectorAll('[type="checkbox"]').forEach(function(i){ i.checked = false; });
-    var minI = root.querySelector('[data-min]'), maxI = root.querySelector('[data-max]');
-    if(minI) minI.value=''; if(maxI) maxI.value='';
-
-    var url = new URL(window.location.href);
-    var tags = url.searchParams.getAll('filter.p.tag');
-    var gte  = url.searchParams.get('filter.p.price.gte');
-    var lte  = url.searchParams.get('filter.p.price.lte');
-
-    // Preis anzeigen
-    if(gte && minI){ minI.value = (parseInt(gte,10)/100).toFixed(2).replace('.',','); }
-    if(lte && maxI){ maxI.value = (parseInt(lte,10)/100).toFixed(2).replace('.',','); }
-
-    // Checkboxen ankreuzen
-    function mark(sel,prefix){
-      root.querySelectorAll(sel).forEach(function(inp){
-        var val = (prefix+' '+inp.value).toLowerCase();
-        if(tags.some(function(t){ return decodeURIComponent(t).toLowerCase()===val; })){
-          inp.checked = true;
-        }
-      });
-    }
-    mark('[data-color]','Farbe:');
-    mark('[data-brand]','Marke:');
-    mark('[data-series]','Serie:');
-
-    // Chips rendern
-    activeList.innerHTML='';
-    function addChip(label,value,key,valRaw){
-      var chip=document.createElement('div');
-      chip.className='hwf-chip--active';
-      chip.innerHTML = label+': '+value+' <span>✕</span>';
-      chip.addEventListener('click', function(){
-        var u = new URL(window.location.href);
-        if(key==='filter.p.tag'){
-          var all = u.searchParams.getAll('filter.p.tag');
-          u.searchParams.delete('filter.p.tag');
-          all.forEach(function(t){
-            if(t !== valRaw) u.searchParams.append('filter.p.tag', t);
-          });
-        } else {
-          u.searchParams.delete(key);
-        }
-        window.location.href = u.toString();
-      });
-      activeList.appendChild(chip);
-    }
-    if(gte || lte){
-      var preisTxt = (gte? (parseInt(gte,10)/100)+'€':'' ) + (lte? ' – '+(parseInt(lte,10)/100)+'€':'' );
-      addChip('Preis', preisTxt.trim(), 'filter.p.price.gte');
-    }
-    tags.forEach(function(t){
-      var dec = decodeURIComponent(t);
-      var parts = dec.split(': ');
-      addChip(parts[0]||'Tag', parts[1]||'', 'filter.p.tag', t);
-    });
-
-    activeBox.hidden = !(tags.length || gte || lte);
-  }
-
-  
-  /* --- CHIP CLICK FIX (Mobile/iOS robust) --- */
-root.addEventListener('click', function(e){
-  var chip = e.target.closest('.hwf-chip');
-  if(!chip || !root.contains(chip)) return;
-
-  var cb = chip.querySelector('input[type="checkbox"]');
-  if(!cb) return;
-
-  // Toggle State
-  cb.checked = !cb.checked;
-
-  // Visuelles Feedback + ARIA
-  chip.classList.toggle('is-checked', cb.checked);
-  chip.setAttribute('aria-checked', cb.checked ? 'true' : 'false');
-
-  // „echtes“ change-Event feuern (wichtig für andere Listener)
-  cb.dispatchEvent(new Event('change', { bubbles:true }));
-
-  // Tap nicht weiterreichen (verhindert iOS Label-Doppelhandling)
-  e.preventDefault();
-  e.stopPropagation();
-}, true);
-
-/* Tastatur-Access (Enter/Space) – hilft u.a. iPad mit Tastatur */
-root.addEventListener('keydown', function(e){
-  if(e.key !== ' ' && e.key !== 'Enter') return;
-  var chip = e.target.closest('.hwf-chip');
-  if(!chip || !root.contains(chip)) return;
-
-  var cb = chip.querySelector('input[type="checkbox"]');
-  if(!cb) return;
-
-  cb.checked = !cb.checked;
-  chip.classList.toggle('is-checked', cb.checked);
-  chip.setAttribute('aria-checked', cb.checked ? 'true' : 'false');
-  cb.dispatchEvent(new Event('change', { bubbles:true }));
-
-  e.preventDefault();
-  e.stopPropagation();
-}, true);
-
-// Nach dem Setzen der Checkboxen: ARIA + Klasse synchronisieren
-root.querySelectorAll('.hwf-chip').forEach(function(ch){
-  var c = ch.querySelector('input[type="checkbox"]');
-  if(!c) return;
-  ch.classList.toggle('is-checked', !!c.checked);
-  ch.setAttribute('aria-checked', c.checked ? 'true' : 'false');
-});
-
-/* Preis-Panel auto-öffnen, wenn min/max in der URL gesetzt sind */
-(function(){
-  var url = new URL(window.location.href);
-  var hasMin = url.searchParams.get('filter.p.price.gte');
-  var hasMax = url.searchParams.get('filter.p.price.lte');
-  var pricePanel = document.getElementById('hwf-price');
-  if((hasMin || hasMax) && pricePanel){
-    pricePanel.classList.add('is-open');
-  }
-})();
-
-  restore();
-})();
-</script>
-
-<script>
-document.addEventListener('click', function(e){
-  const btn = e.target.closest('.filter-toggle');
-  if (!btn) return;
-  const key = btn.dataset.filterTarget;
-  const panel = document.querySelector('[data-filter-panel="'+key+'"]');
-  if (!panel) return;
-  const isHidden = panel.hasAttribute('hidden');
-  // erst alle schließen:
-  document.querySelectorAll('[data-filter-panel]').forEach(p=>p.setAttribute('hidden',''));
-  // dann dieses öffnen
-  if (isHidden) panel.removeAttribute('hidden');
-});
-</script>
