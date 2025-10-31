@@ -62,16 +62,16 @@
     </form>
 
     {%- comment -%} Warenkorb-Button (Badge nutzt data-cart-count) {%- endcomment -%}
-    <a href="{{ routes.cart_url }}"
-       class="cart-btn"
-       aria-label="Warenkorb">
-      <span class="cart-btn__text">Warenkorb</span>
-      <span class="cart-badge"
-            data-cart-count
-            {% unless cart.item_count > 0 %}hidden{% endunless %}>
-        {{ cart.item_count }}
-      </span>
-    </a>
+<button type="button"
+   class="cart-btn js-open-cart"
+   aria-label="Warenkorb">
+  <span class="cart-btn__text">Warenkorb</span>
+  <span class="cart-badge"
+        data-cart-count
+        {% unless cart.item_count > 0 %}hidden{% endunless %}>
+    {{ cart.item_count }}
+  </span>
+</button>
 
   </div>
 </header>
