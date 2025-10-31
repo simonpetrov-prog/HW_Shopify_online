@@ -899,43 +899,56 @@ header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;bor
 
 <script>
 (function(){
-  const openBtns = document.querySelectorAll('.js-open-cart, [data-open-cart]');
-  const drawer = document.querySelector('.cart-drawer');
-  if (!drawer) return; // falls Section nicht geladen
+  // 1. Alle Buttons, die den Warenkorb öffnen sollen
+  const openers = document.querySelectorAll('[data-open-cart], .js-open-cart');
 
-  // Optional: Schließen-Element im Drawer
-  const closeBtns = drawer.querySelectorAll('.cart-drawer__close, [data-cart-close]');
+  // 2. Versuchen, einen Drawer zu finden (mehrere mögliche Namen)
+  function findCartDrawer(){
+    return document.querySelector('.cart-drawer')
+        || document.querySelector('[data-cart-drawer]')
+        || document.querySelector('.drawer--cart')
+        || document.querySelector('#CartDrawer');
+  }
 
   function openDrawer(){
+    const drawer = findCartDrawer();
+    if (!drawer) return;
     drawer.classList.add('is-open');
     document.body.style.overflow = 'hidden';
   }
+
   function closeDrawer(){
+    const drawer = findCartDrawer();
+    if (!drawer) return;
     drawer.classList.remove('is-open');
     document.body.style.overflow = '';
   }
 
-  openBtns.forEach(btn => {
+  // 3. Button-Klicks anbinden
+  openers.forEach(btn => {
     btn.addEventListener('click', (e)=>{
       e.preventDefault();
       openDrawer();
     });
   });
 
-  closeBtns.forEach(btn => {
-    btn.addEventListener('click', closeDrawer);
-  });
-
-  // Klick auf Overlay schließt auch
-  drawer.addEventListener('click', (e)=>{
-    if (e.target.classList.contains('cart-drawer')) {
+  // 4. Schließen (X / Close-Button / Overlay)
+  document.addEventListener('click', (e)=>{
+    if (e.target.matches('[data-cart-close], .cart-drawer__close')) {
+      e.preventDefault();
+      closeDrawer();
+    }
+    // Klick auf dunklen Hintergrund
+    if (e.target.classList && e.target.classList.contains('cart-drawer')) {
       closeDrawer();
     }
   });
 
-  // ESC schließen
+  // 5. ESC schließt auch
   document.addEventListener('keydown', (e)=>{
-    if (e.key === 'Escape') closeDrawer();
+    if (e.key === 'Escape') {
+      closeDrawer();
+    }
   });
 })();
 </script>
