@@ -249,6 +249,31 @@ a{color:var(--primary); text-decoration:none;}
 }
 @media (max-width:768px){ .header__icons .label{ display:none; } }
 
+/* Sticky ATC */
+.hw-sticky-atc{
+  position:fixed; left:0; right:0; bottom:0;
+  background:#fff; border-top:1px solid #e5e5e5;
+  z-index:70; box-shadow:0 -10px 25px rgba(0,0,0,.04);
+  padding:6px 10px;
+}
+.hw-sticky-atc[hidden]{ display:none !important; }
+.hw-sticky-atc__inner{
+  max-width:1200px; margin:0 auto;
+  display:flex; align-items:center; gap:10px;
+}
+.hw-sticky-atc img{
+  width:46px; height:46px; object-fit:cover; border-radius:8px;
+}
+.hw-sticky-atc__info .title{ font-weight:800; margin:0; }
+.hw-sticky-atc__info .price{ margin:2px 0 0; }
+.hw-sticky-atc__info .price .old{ text-decoration:line-through; opacity:.55; margin-right:4px; }
+.hw-sticky-atc__form .btn{ border-radius:999px; }
+@media (max-width:640px){
+  .hw-sticky-atc__inner{ gap:8px; }
+  .hw-sticky-atc__info .title{ font-size:13px; }
+  .hw-sticky-atc__form .btn{ padding:8px 14px; }
+}
+
 </style>
 
 <style id="hw-grid-loading">
