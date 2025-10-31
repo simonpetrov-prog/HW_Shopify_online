@@ -1009,5 +1009,16 @@ header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;bor
 })();
 </script>
 
+<script>
+document.addEventListener('submit', function(e){
+  const form = e.target;
+  if (!form.classList || !form.classList.contains('hw-inline-search')) return;
+  e.preventDefault();
+  const q = form.querySelector('input[name="q"]')?.value || '';
+  // weiterleiten auf deine Produktseite, Suchbegriff mitgeben
+  window.location.href = '/collections/all?q=' + encodeURIComponent(q);
+});
+</script>
+
   </body>
 </html>
