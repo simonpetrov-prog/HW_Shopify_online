@@ -897,5 +897,48 @@ header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;bor
 })();
 </script>
 
+<script>
+(function(){
+  const openBtns = document.querySelectorAll('.js-open-cart, [data-open-cart]');
+  const drawer = document.querySelector('.cart-drawer');
+  if (!drawer) return; // falls Section nicht geladen
+
+  // Optional: Schließen-Element im Drawer
+  const closeBtns = drawer.querySelectorAll('.cart-drawer__close, [data-cart-close]');
+
+  function openDrawer(){
+    drawer.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer(){
+    drawer.classList.remove('is-open');
+    document.body.style.overflow = '';
+  }
+
+  openBtns.forEach(btn => {
+    btn.addEventListener('click', (e)=>{
+      e.preventDefault();
+      openDrawer();
+    });
+  });
+
+  closeBtns.forEach(btn => {
+    btn.addEventListener('click', closeDrawer);
+  });
+
+  // Klick auf Overlay schließt auch
+  drawer.addEventListener('click', (e)=>{
+    if (e.target.classList.contains('cart-drawer')) {
+      closeDrawer();
+    }
+  });
+
+  // ESC schließen
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape') closeDrawer();
+  });
+})();
+</script>
+
   </body>
 </html>
