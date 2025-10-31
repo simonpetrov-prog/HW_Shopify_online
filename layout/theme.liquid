@@ -179,7 +179,45 @@ a{color:var(--primary); text-decoration:none;}
   .hw-chip input{ display:none; }
   .hw-chip .dot{ width:14px;height:14px;border-radius:50%;border:1px solid rgba(0,0,0,.2);display:inline-block; }
   .hw-chip.is-checked{background:#e0e0e0;border-color:#cfcfcf;}
-  </style>
+ 
+.hw-filter-row{
+  width:100%;
+  background:#ECECEC;
+  border:1px solid #ddd;
+  border-radius:14px;
+  padding:10px 14px;
+  margin-bottom:10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-weight:700;
+  cursor:pointer;
+}
+.hw-filter-arrow{ font-size:12px; opacity:.6; }
+
+.hw-filter-body{ display:none; margin-bottom:12px; }
+.hw-filter-body.is-open{ display:block; }
+
+.hw-price-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+.hw-price-grid label{
+  display:block;
+  font-weight:600;
+  margin-bottom:4px;
+}
+.hw-price-grid input{
+  width:100%;
+  border:1px solid #d5d5d5;
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:14px;
+  background:#fff;
+}
+
+</style>
 
 <style id="hw-filter-css-fix">
   /* Panels standardmäßig zu */
