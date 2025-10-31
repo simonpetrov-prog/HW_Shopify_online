@@ -978,5 +978,24 @@ header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;bor
 })();
 </script>
 
+<script>
+(function(){
+  const bar = document.getElementById('hw-sticky-atc');
+  if (!bar) return;
+  // Element, das wir beobachten (dein normales Produkt-Formular)
+  const target = document.querySelector('form[action="/cart/add"]');
+  if (!target) return;
+
+  function check(){
+    const rect = target.getBoundingClientRect();
+    const isVisible = rect.top >= 0 && rect.bottom <= window.innerHeight;
+    bar.hidden = isVisible; // wenn Original sichtbar -> Sticky aus
+  }
+  check();
+  document.addEventListener('scroll', check, { passive:true });
+  window.addEventListener('resize', check);
+})();
+</script>
+
   </body>
 </html>
