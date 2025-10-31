@@ -264,3 +264,25 @@ document.addEventListener('click', e=>{
   "settings": []
 }
 {% endschema %}
+
+<!-- HW Sticky ATC -->
+<div class="hw-sticky-atc" id="hw-sticky-atc" hidden>
+  <div class="hw-sticky-atc__inner">
+    {% if product.featured_image %}
+      <img src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ product.title | escape }}">
+    {% endif %}
+    <div class="hw-sticky-atc__info">
+      <p class="title">{{ product.title }}</p>
+      <p class="price">
+        {% if product.compare_at_price > product.price %}
+          <span class="old">{{ product.compare_at_price | money }}</span>
+        {% endif %}
+        <span class="now">{{ product.price | money }}</span>
+      </p>
+    </div>
+    <form method="post" action="/cart/add" class="hw-sticky-atc__form">
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <button type="submit" class="btn btn--primary">In den Warenkorb</button>
+    </form>
+  </div>
+</div>
