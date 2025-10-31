@@ -891,6 +891,18 @@ header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;bor
 @media (max-width:768px){
   .hw-search__panel{top:6%}
 }
+
+/* Badge IM Warenkorb-Button (nicht oben im Header) */
+.cart-btn .cart-badge {
+  position: static !important;   /* nicht mehr oben rechts */
+  margin-left: 2px;
+}
+
+/* Badge nur zeigen, wenn sie NICHT hidden ist */
+.cart-badge[hidden] {
+  display: none !important;
+}
+
 </style>
 
 <script>
