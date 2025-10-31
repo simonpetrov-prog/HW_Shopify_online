@@ -199,10 +199,26 @@
   transform: none !important; /* alte translate-Fixes aushebeln */
 }
 
-/* Mobile: etwas dichter bündig */
-@media (max-width:768px){
-  .header__inline-menu .list-menu a.nav__link{ padding:8px 10px 9px; }
-  .header__inline-menu .list-menu a.nav__link.is-active::after{ bottom:-5px; width:22px; }
+@media (max-width: 768px){
+  .hw-inline-search{
+    min-width:0;
+    width:36px; /* kleiner */
+    padding:4px;
+    gap:0;
+    overflow:hidden;
+    border-radius:10px;
+    transition: width .18s ease, padding .18s ease;
+  }
+  .hw-inline-search__btn{
+    padding:6px 8px;
+    font-size:12px;
+  }
+  .hw-inline-search.hw--open{
+    width:min(72vw, 320px);
+    padding:6px 8px;
+    gap:6px;
+  }
+  .hw-inline-search__input{ font-size:13px; }
 }
 
 /* --- Desktop Layout justieren --- */
