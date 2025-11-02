@@ -1039,6 +1039,42 @@ header.header, .site-header{position:sticky;top:0;z-index:40;background:#fff;bor
 @media (max-width:768px){
   .header__icons .label{display:none}
 }
+
+<style>
+  /* Preis-Panel hübsch machen */
+  .hw-panel--price {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .hw-price-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  /* die Inputs dürfen NICHT über den blauen Rahmen raus */
+  .hw-panel--price input[type="number"],
+  .hw-panel--price input[type="text"] {
+    max-width: 110px;
+    width: 100%;
+  }
+
+  /* auf Handy noch schmaler */
+  @media (max-width: 640px) {
+    .hw-panel--price {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .hw-panel--price input[type="number"],
+    .hw-panel--price input[type="text"] {
+      max-width: 140px;
+    }
+  }
+</style>
+
 </style>
 
 <!-- HW Search Overlay -->
