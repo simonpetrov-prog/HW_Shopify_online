@@ -1,3 +1,4 @@
+{% comment %} HW Filters v2 – Tabs + Panels {% endcomment %}
 
 <div class="hw-filter-box">
   <div class="hw-filter-head">
@@ -5,18 +6,18 @@
     <button type="button" class="hw-filter-reset" data-filter-reset>Zurücksetzen</button>
   </div>
 
-  
+  <!-- TAB-LEISTE (DAS ist die Zeile, die du suchtest) -->
   <div class="hw-filter-tabs">
     <button type="button" class="hw-tab is-active" data-panel-target="price">Preis ▾</button>
     <button type="button" class="hw-tab" data-panel-target="color">Farbe ▾</button>
     <button type="button" class="hw-tab" data-panel-target="brand">Marke ▾</button>
-    <button type="button" class="hw-tab" data-panel-target="series">TH ▾</button>
+    <button type="button" class="hw-tab" data-panel-target="rarity">Seltenheit ▾</button>
   </div>
 
-  <!-- Panels -->
+  <!-- PANELS -->
   <div class="hw-filter-panels">
 
- 
+    <!-- Preis -->
     <div class="hw-panel hw-panel--price is-open" data-panel="price">
       <div class="hw-price-row">
         <label>von</label>
@@ -29,7 +30,7 @@
       <button type="button" class="hw-filter-apply" data-filter-apply>Filter anwenden</button>
     </div>
 
-
+    <!-- Farbe -->
     <div class="hw-panel" data-panel="color">
       <div class="hw-chip-list">
         {% assign colors = 'Blau, Rot, Orange, Schwarz, Weiß, Grau, Türkis' | split: ', ' %}
@@ -41,9 +42,10 @@
           </label>
         {% endfor %}
       </div>
+      <button type="button" class="hw-filter-apply" data-filter-apply>Filter anwenden</button>
     </div>
 
-
+    <!-- Marke -->
     <div class="hw-panel" data-panel="brand">
       <div class="hw-chip-list">
         {% assign brands = 'Ferrari, Porsche, Lamborghini, BMW, Mercedes, Toyota, Koenigsegg' | split: ', ' %}
@@ -54,191 +56,89 @@
           </label>
         {% endfor %}
       </div>
+      <button type="button" class="hw-filter-apply" data-filter-apply>Filter anwenden</button>
     </div>
 
-
-    <div class="hw-panel" data-panel="series">
+    <!-- Seltenheit (TH / STH im Titel) -->
+    <div class="hw-panel" data-panel="rarity">
       <div class="hw-chip-list">
-        <label class="hw-chip">
-          <input type="radio" name="th" value="ja">
-          JA
-        </label>
-        <label class="hw-chip">
-          <input type="radio" name="th" value="nein">
-          Ohne
-        </label>
+        <label class="hw-chip"><input type="radio" name="rarity" value="TH"> TH</label>
+        <label class="hw-chip"><input type="radio" name="rarity" value="STH"> STH</label>
       </div>
+      <button type="button" class="hw-filter-apply" data-filter-apply>Filter anwenden</button>
     </div>
 
   </div>
 </div>
 
 <style>
-/* Box */
-.hw-filter-box{
-  border:3px solid #0046BE;
-  border-radius:16px;
-  background:#fff;
-  padding:14px 16px 18px;
-  margin-bottom:18px;
-}
+.hw-filter-box{border:3px solid #0046BE;border-radius:16px;background:#fff;padding:14px 16px 18px;margin-bottom:18px}
+.hw-filter-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.hw-filter-head h2{font-size:20px;font-weight:800;color:#0046BE;margin:0}
+.hw-filter-reset{background:#eee;border:0;border-radius:999px;padding:6px 14px;font-weight:600;cursor:pointer}
 
-/* Kopf */
-.hw-filter-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:12px;
-}
-.hw-filter-head h2{
-  font-size:20px;
-  font-weight:800;
-  color:#0046BE;
-  margin:0;
-}
-.hw-filter-reset{
-  background:#eee;
-  border:0;
-  border-radius:999px;
-  padding:6px 14px;
-  font-weight:600;
-  cursor:pointer;
-}
+.hw-filter-tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.hw-tab{background:#fff;border:1px solid #d1d5db;border-radius:999px;padding:6px 14px;font-weight:600;cursor:pointer}
+.hw-tab.is-active{background:#0046BE;color:#fff;border-color:#0046BE}
 
-/* Tabs */
-.hw-filter-tabs{
-  display:flex;
-  gap:8px;
-  margin-bottom:12px;
-  flex-wrap:wrap;
-}
-.hw-tab{
-  background:#fff;
-  border:1px solid #d1d5db;
-  border-radius:999px;
-  padding:6px 14px;
-  font-weight:600;
-  cursor:pointer;
-}
-.hw-tab.is-active{
-  background:#0046BE;
-  color:#fff;
-  border-color:#0046BE;
-}
+.hw-filter-panels{display:block}
+.hw-panel{display:none}
+.hw-panel.is-open{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
 
-/* Panels */
-.hw-filter-panels{
-  display:block;
-}
-.hw-panel{
-  display:none;
-}
-.hw-panel.is-open{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:flex-end;
-}
+.hw-panel--price{align-items:flex-end}
+.hw-price-row{display:flex;flex-direction:column;gap:4px}
+.hw-price-row label{font-weight:600}
+.hw-price-row input{width:120px;max-width:120px;border:1px solid #d1d5db;border-radius:10px;padding:6px 8px;font-size:14px}
 
-/* PREIS-PANEL */
-.hw-panel--price{
-  align-items:flex-end;
-}
-.hw-price-row{
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-.hw-price-row label{
-  font-weight:600;
-}
-.hw-price-row input{
-  width:120px;
-  max-width:120px;
-  border:1px solid #d1d5db;
-  border-radius:10px;
-  padding:6px 8px;
-  font-size:14px;
-}
-.hw-filter-apply{
-  background:#FF6B00;
-  border:0;
-  border-radius:10px;
-  padding:8px 16px;
-  color:#fff;
-  font-weight:700;
-  cursor:pointer;
-}
+.hw-filter-apply{background:#FF6B00;border:0;border-radius:10px;padding:8px 16px;color:#fff;font-weight:700;cursor:pointer}
 
-/* Chips */
-.hw-chip-list{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.hw-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  background:#eee;
-  border:1px solid #ddd;
-  border-radius:999px;
-  padding:6px 12px;
-  font-weight:600;
-  cursor:pointer;
-}
-.hw-chip input{ display:none; }
-.hw-chip .dot{
-  width:14px;
-  height:14px;
-  border-radius:999px;
-  background:#ddd;
-  display:inline-block;
-}
-.hw-chip.is-checked,
-.hw-chip input:checked + .dot,
-.hw-chip input:checked ~ span{
-  background:#0046BE;
-  color:#fff;
-  border-color:#0046BE;
-}
+.hw-chip-list{display:flex;gap:8px;flex-wrap:wrap}
+.hw-chip{display:inline-flex;align-items:center;gap:6px;background:#eee;border:1px solid #ddd;border-radius:999px;padding:6px 12px;font-weight:600;cursor:pointer}
+.hw-chip input{display:none}
+.hw-chip .dot{width:14px;height:14px;border-radius:999px;background:#ddd;display:inline-block}
+.hw-chip input:checked ~ .dot{background:#0046BE}
+.hw-chip input:checked ~ span, .hw-chip input:checked ~ { color:#fff } /* fallback */
+.hw-chip input:checked + span, .hw-chip input:checked ~ span{color:#fff}
+.hw-chip input:checked ~ .dot, .hw-chip.is-checked{background:#0046BE;color:#fff;border-color:#0046BE}
 
-/* Mobile */
 @media (max-width: 700px){
-  .hw-panel.is-open{
-    flex-direction:column;
-    align-items:flex-start;
-  }
-  .hw-price-row input{
-    width:160px;
-    max-width:160px;
-  }
+  .hw-panel.is-open{flex-direction:column;align-items:flex-start}
+  .hw-price-row input{width:160px;max-width:160px}
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  // Tabs umschalten
-  document.querySelectorAll('.hw-tab').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const target = btn.getAttribute('data-panel-target');
-      // tabs
-      document.querySelectorAll('.hw-tab').forEach(t=>t.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      // panels
-      document.querySelectorAll('.hw-panel').forEach(p=>p.classList.remove('is-open'));
-      const active = document.querySelector('.hw-panel[data-panel="'+target+'"]');
-      if (active) active.classList.add('is-open');
+  // Tabs schalten
+  const tabs = document.querySelectorAll('.hw-tab');
+  const panels = document.querySelectorAll('.hw-panel');
+  tabs.forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      const key = tab.dataset.panelTarget;
+      tabs.forEach(t=>t.classList.remove('is-active'));
+      tab.classList.add('is-active');
+      panels.forEach(p=>p.classList.toggle('is-open', p.dataset.panel === key));
     });
   });
 
-  // Reset
-  const resetBtn = document.querySelector('[data-filter-reset]');
-  if (resetBtn){
-    resetBtn.addEventListener('click', ()=>{
-      document.querySelectorAll('.hw-filter-box input[type="checkbox"], .hw-filter-box input[type="radio"]').forEach(i=>i.checked=false);
-      document.querySelectorAll('.hw-filter-box input[type="number"]').forEach(i=>i.value='');
+  // Chips optisch toggeln (optional)
+  document.querySelectorAll('.hw-chip').forEach(ch=>{
+    ch.addEventListener('click', ()=>{
+      const input = ch.querySelector('input');
+      if (!input) return;
+      if (input.type === 'checkbox'){
+        input.checked = !input.checked;
+        ch.classList.toggle('is-checked', input.checked);
+      } else if (input.type === 'radio'){
+        const name = input.name;
+        document.querySelectorAll('input[name="'+name+'"]').forEach(r=>{
+          const parent = r.closest('.hw-chip');
+          if (parent) parent.classList.remove('is-checked');
+        });
+        input.checked = true;
+        ch.classList.add('is-checked');
+      }
     });
-  }
+  });
 });
 </script>
