@@ -16,7 +16,12 @@
       {% if use_max and price > max_cents %}{% continue %}{% endif %}
 
       {% assign shown = shown | plus: 1 %}
-      <article class="product product-card">
+      <article
+  class="hw-product-card"
+  data-title="{{ product.title | escape }}"
+  data-price="{{ product.price }}"                <!-- Preis in Cent -->
+  data-tags="{{ product.tags | join: ',' | escape }}"
+>
         <a href="{{ product.url }}" class="product-link">
           {% render 'product-badges', product: product %}
           <img src="{{ product.featured_image | img_url: '400x400' }}" alt="{{ product.title }}">
