@@ -20,7 +20,7 @@
   class="hw-product-card"
   data-title="{{ product.title | escape }}"
   data-price="{{ product.price }}"                <!-- Preis in Cent -->
-  ="{{ product.tags | join: ',' | escape }}"
+  {{ product.tags | join: ',' | escape }}"
 >
         <a href="{{ product.url }}" class="product-link">
           {% render 'product-badges', product: product %}
