@@ -1,111 +1,31 @@
-{% assign per_page = section.settings.per_page %}
-
-{% assign min_eur = request.params.min_price | plus: 0 %}
-{% assign max_eur = request.params.max_price | plus: 0 %}
-{% assign min_cents = min_eur | times: 100 %}
-{% assign max_cents = max_eur | times: 100 %}
-{% assign use_min = request.params.min_price %}
-{% assign use_max = request.params.max_price %}
-
-{% paginate collection.products by per_page %}
-  {% assign shown = 0 %}
-  <div class="grid">
-    {% for product in collection.products %}
-      {% assign price = product.price | plus: 0 %}
-      {% if use_min and price < min_cents %}{% continue %}{% endif %}
-      {% if use_max and price > max_cents %}{% continue %}{% endif %}
-
-      {% assign shown = shown | plus: 1 %}
-      <article
-  class="hw-product-card"
-  data-title="{{ product.title | escape }}"
-  data-price="{{ product.price }}"                <!-- Preis in Cent -->
-  {{ product.tags | join: ',' | escape }}"
->
-        <a href="{{ product.url }}" class="product-link">
-          {% render 'product-badges', product: product %}
-          <img src="{{ product.featured_image | img_url: '400x400' }}" alt="{{ product.title }}">
-          <h3>{{ product.title }}</h3>
-        </a>
-
-        <p class="price">
-          {% if product.compare_at_price > product.price %}
-            <span class="compare">{{ product.compare_at_price | money }}</span>
-          {% endif %}
-          <strong>{{ product.price | money }}</strong>
-        </p>
-
-        <form data-ajax-add class="quick-add">
-          {% if product.available %}
-            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-            <input type="hidden" name="quantity" value="1">
-            <button type="submit" class="btn"
-  onclick="showToast('✅ Produkt in den Warenkorb gelegt','ok')">
-  In den Warenkorb
-</button>
-          {% else %}
-            <button type="button" class="btn quick-add__btn" disabled>Ausverkauft</button>
-          {% endif %}
-        </form>
-      </article>
-    {% endfor %}
-  </div>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('form[data-ajax-add]').forEach(form => {
-    form.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const fd = new FormData(form);
-      await fetch('/cart/add.js', { method:'POST', headers:{'Accept':'application/json'}, body: fd });
-      const cart = await fetch('/cart.js').then(r => r.json());
-      // Badge aktualisieren & Drawer kurz zeigen
-      document.dispatchEvent(new CustomEvent('hw:cart-updated', { detail: { item_count: cart.item_count }}));
-      const drawer = document.getElementById('cart-drawer');
-      if (drawer){ drawer.classList.add('open'); }
-      document.documentElement.classList.add('cart-open');
-    });
-  });
-});
-</script>
-
-  {% if shown == 0 %}
-    <p>Keine Produkte im gewählten Preisbereich.</p>
-  {% else %}
-    {% if paginate.pages > 1 %}
-      <nav class="pagination" role="navigation" aria-label="Pagination">
-        {% if paginate.previous %}<a class="btn-outline" href="{{ paginate.previous.url }}">Zurück</a>{% endif %}
-        <span>Seite {{ paginate.current_page }} / {{ paginate.pages }}</span>
-        {% if paginate.next %}<a class="btn" href="{{ paginate.next.url }}">Weiter</a>{% endif %}
-      </nav>
-    {% endif %}
-  {% endif %}
-{% endpaginate %}
+{% comment %}
+  HW product grid – minimal loop with data attributes for live filtering
+{% endcomment %}
+<div class="product-grid">
+  {% for product in collection.products %}
+    <article
+      class="hw-product-card"
+      data-title="{{ product.title | escape }}"
+      data-price="{{ product.price }}"
+      data-tags="{{ product.tags | join: ',' | escape }}"
+    >
+      <a href="{{ product.url }}">
+        {% if product.featured_image %}
+          <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy">
+        {% endif %}
+        <h3 class="hw-product-card__title">{{ product.title }}</h3>
+      </a>
+      <div class="hw-product-card__price">
+        {{ product.price | money }}
+      </div>
+    </article>
+  {% endfor %}
+</div>
 
 <style>
-.grid{
-  display:grid; gap:20px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  margin:20px 0 40px;
-}
-.product{
-  text-align:center; border:1px solid var(--border); padding:14px; border-radius:12px; background:#fff;
-  transition:transform .12s ease, box-shadow .12s ease;
-}
-.product:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.06); }
-.product img{ width:100%; height:200px; object-fit:contain; border-radius:8px; background:#fff; }
-.product h3{ margin:10px 0 6px; font-size:1rem; color:var(--text); }
-.price{ margin:0 0 10px; }
-.price .compare{ text-decoration:line-through; color:#999; margin-right:6px; }
-
-.quick-add{ display:flex; justify-content:center; }
-.quick-add__btn{ width:100%; max-width:220px; }
-.product-link{ display:block; }
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.hw-product-card{border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff}
+.hw-product-card img{width:100%;height:auto;display:block;border-radius:8px}
+.hw-product-card__title{font-size:14px;font-weight:800;margin:8px 0 4px}
+.hw-product-card__price{font-weight:700}
 </style>
-
-{% schema %}
-{
-  "name": "Produkt-Grid",
-  "settings": [
-    { "type": "range", "id": "per_page", "label": "Produkte pro Seite", "min": 4, "max": 48, "step": 4, "default": 12 }
-  ]
-}
-{% endschema %}
