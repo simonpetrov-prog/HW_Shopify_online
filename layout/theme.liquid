@@ -1323,5 +1323,89 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  function getSelected(name){
+    return Array.from(document.querySelectorAll('.hw-panel input[name="'+name+'"]:checked'))
+      .map(i=>i.value.trim().toLowerCase());
+  }
+  function getPrice(name){
+    const el = document.querySelector('.hw-panel input[name="'+name+'"]');
+    if(!el || !el.value) return null;
+    const n = parseFloat(el.value.replace(',', '.'));
+    return isNaN(n) ? null : Math.round(n * 100); // in Cent
+  }
+  function applyFilters(){
+    const minC = getPrice('min_price');
+    const maxC = getPrice('max_price');
+    const brands = getSelected('brand');  // ["ferrari", ...]
+    const colors = getSelected('color');  // ["blau", ...]
+    const rarityEl = document.querySelector('.hw-panel input[name="rarity"]:checked');
+    const rarity = rarityEl ? rarityEl.value.trim().toLowerCase() : '';
+
+    const cards = document.querySelectorAll('.hw-product-card, .product-card, .product-item');
+    let visible = 0;
+
+    cards.forEach(card=>{
+      const title = (card.dataset.title || card.textContent || '').toLowerCase();
+      const priceC = parseInt(card.dataset.price || '0', 10);
+      const tags = (card.dataset.tags || '').toLowerCase();
+
+      // Preis
+      if (minC !== null && priceC < minC) { card.style.display='none'; return; }
+      if (maxC !== null && priceC > maxC) { card.style.display='none'; return; }
+
+      // Marke (Titel-Match)
+      if (brands.length && !brands.some(b => title.includes(b))) { card.style.display='none'; return; }
+
+      // Farbe (Titel-Match – ggf. später auf Tags umstellen)
+      if (colors.length && !colors.some(c => title.includes(c))) { card.style.display='none'; return; }
+
+      // Seltenheit aus Titel "(TH)" "(STH)"
+      if (rarity){
+        const hasTH  = title.includes('(th)');
+        const hasSTH = title.includes('(sth)');
+        if (rarity === 'th'  && !hasTH)  { card.style.display='none'; return; }
+        if (rarity === 'sth' && !hasSTH) { card.style.display='none'; return; }
+      }
+
+      card.style.display='';
+      visible++;
+    });
+
+    // Optionale "keine Treffer"-Info
+    let info = document.getElementById('hw-filter-result-info');
+    if (!info){
+      info = document.createElement('div');
+      info.id = 'hw-filter-result-info';
+      info.style.margin = '8px 0 12px';
+      info.style.fontWeight = '700';
+      const container = document.querySelector('.hw-filter-box') || document.querySelector('main') || document.body;
+      container.appendChild(info);
+    }
+    info.textContent = visible > 0 ? '' : 'Keine passenden Produkte gefunden.';
+  }
+
+  // Anwenden-Knöpfe
+  document.querySelectorAll('.hw-filter-apply').forEach(btn=>{
+    btn.addEventListener('click', applyFilters);
+  });
+  // Sofort-Anwenden bei Änderung
+  document.querySelectorAll('.hw-panel input').forEach(inp=>{
+    inp.addEventListener('change', applyFilters);
+  });
+  // Reset
+  const reset = document.querySelector('[data-filter-reset]');
+  if (reset){
+    reset.addEventListener('click', ()=>{
+      document.querySelectorAll('.hw-panel input[type="checkbox"], .hw-panel input[type="radio"]').forEach(i=> i.checked=false);
+      document.querySelectorAll('.hw-panel input[name="min_price"], .hw-panel input[name="max_price"]').forEach(i=> i.value='');
+      document.querySelectorAll('.hw-product-card, .product-card, .product-item').forEach(c=> c.style.display='');
+      const info = document.getElementById('hw-filter-result-info'); if (info) info.textContent = '';
+    });
+  }
+});
+</script>
+
   </body>
 </html>
