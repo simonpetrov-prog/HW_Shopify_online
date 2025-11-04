@@ -1408,97 +1408,116 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  // Helpers
-  function getChecked(name){
-    return Array.from(document.querySelectorAll('.hw-panel input[name="'+name+'"]:checked'))
-      .map(i => i.value.trim().toLowerCase());
-  }
-  function getPriceVal(name){
-    const el = document.querySelector('.hw-panel input[name="'+name+'"]');
-    if (!el || !el.value) return null;
-    const n = parseFloat(el.value.replace(',', '.'));
-    return isNaN(n) ? null : Math.round(n * 100); // -> Cent
-  }
-
-  function applyFilters(){
-    // Preis
-    const minC = getPriceVal('min_price');
-    const maxC = getPriceVal('max_price');
-
-    // Marke/Farbe (Checkboxen)
-    const brands = getChecked('brand'); // ["ferrari", ...]
-    const colors = getChecked('color'); // ["blau", ...]
-
-    // Seltenheit (Radio: TH / STH)
-    const r = document.querySelector('.hw-panel input[name="rarity"]:checked');
-    const rarity = r ? r.value.trim().toLowerCase() : '';
-
-    // Karten
-    const cards = document.querySelectorAll('.hw-product-card, .product-card, .product-item');
-
-    let visible = 0;
-    cards.forEach(card => {
-      const title = (card.dataset.title || card.textContent || '').toLowerCase();
-      const tags  = (card.dataset.tags || '').toLowerCase();
-      const price = parseInt(card.dataset.price || '0', 10);
-
-      // Preis
-      if (minC !== null && price < minC) { card.style.display='none'; return; }
-      if (maxC !== null && price > maxC) { card.style.display='none'; return; }
-
-      // Marke: match im Titel ODER in Tags
-      if (brands.length){
-        const ok = brands.some(b => title.includes(b) || tags.includes(b));
-        if (!ok){ card.style.display='none'; return; }
-      }
-
-      // Farbe: match im Titel ODER in Tags
-      if (colors.length){
-        const ok = colors.some(c => title.includes(c) || tags.includes(c));
-        if (!ok){ card.style.display='none'; return; }
-      }
-
-      // Seltenheit via Titel-Endung (TH / STH)
-      if (rarity){
-        const hasTH  = title.includes('(th)');
-        const hasSTH = title.includes('(sth)');
-        if (rarity === 'th'  && !hasTH)  { card.style.display='none'; return; }
-        if (rarity === 'sth' && !hasSTH) { card.style.display='none'; return; }
-      }
-
-      card.style.display = '';
-      visible++;
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    // ===== Tabs =====
+    const tabs = document.querySelectorAll('.hw-tab');
+    const panels = document.querySelectorAll('.hw-panel');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const key = tab.dataset.panelTarget;
+        tabs.forEach(t => t.classList.remove('is-active'));
+        tab.classList.add('is-active');
+        panels.forEach(p => p.classList.toggle('is-open', p.dataset.panel === key));
+      });
     });
 
-    // Info bei 0 Treffern
-    let info = document.getElementById('hw-filter-result-info');
-    if (!info){
-      info = document.createElement('div');
-      info.id = 'hw-filter-result-info';
-      info.style.margin = '8px 0 12px';
-      info.style.fontWeight = '700';
-      (document.querySelector('.hw-filter-box') || document.querySelector('main') || document.body).appendChild(info);
-    }
-    info.textContent = visible > 0 ? '' : 'Keine passenden Produkte gefunden.';
-  }
+    // ===== Chips (nur Optik über Klasse, Status macht der Browser) =====
+    const syncChip = (inp) => {
+      const chip = inp.closest('.hw-chip');
+      if (!chip) return;
+      if (inp.type === 'radio') {
+        document.querySelectorAll('input[name="'+inp.name+'"]').forEach(r => {
+          const c = r.closest('.hw-chip');
+          if (c) c.classList.toggle('is-checked', r.checked);
+        });
+      } else {
+        chip.classList.toggle('is-checked', inp.checked);
+      }
+    };
+    document.querySelectorAll('.hw-chip > input').forEach(inp => {
+      syncChip(inp); // initial
+      inp.addEventListener('change', () => syncChip(inp));
+    });
 
-  // Events
-  // Globaler "Filter anwenden"
-  document.querySelectorAll('[data-filter-apply]').forEach(btn => btn.addEventListener('click', applyFilters));
+    // ===== Filter anwenden (Live) =====
+    const getChecked = (name) =>
+      Array.from(document.querySelectorAll('.hw-panel input[name="'+name+'"]:checked'))
+        .map(i => i.value.trim().toLowerCase());
 
-  // Sofort-Update bei Änderungen (optional, kann drin bleiben)
-  document.querySelectorAll('.hw-panel input').forEach(inp => inp.addEventListener('change', applyFilters));
+    const getPriceVal = (name) => {
+      const el = document.querySelector('.hw-panel input[name="'+name+'"]');
+      if (!el || !el.value) return null;
+      const n = parseFloat(el.value.replace(',', '.'));
+      return isNaN(n) ? null : Math.round(n * 100);
+    };
 
-  // Reset
-  const reset = document.querySelector('[data-filter-reset]');
-  if (reset){
-    reset.addEventListener('click', () => {
-      document.querySelectorAll('.hw-panel input[type="checkbox"], .hw-panel input[type="radio"]').forEach(i => i.checked = false);
+    const applyFilters = () => {
+      const minC = getPriceVal('min_price');
+      const maxC = getPriceVal('max_price');
+      const brands = getChecked('brand');
+      const colors = getChecked('color');
+      const rarityEl = document.querySelector('.hw-panel input[name="rarity"]:checked');
+      const rarity = rarityEl ? rarityEl.value.trim().toLowerCase() : '';
+
+      const cards = document.querySelectorAll('.hw-product-card, .product-card, .product-item');
+      let visible = 0;
+
+      cards.forEach(card => {
+        const title = (card.dataset.title || card.textContent || '').toLowerCase();
+        const tags  = (card.dataset.tags || '').toLowerCase();
+        const price = parseInt(card.dataset.price || '0', 10);
+
+        // Preis
+        if (minC !== null && price < minC) { card.style.display='none'; return; }
+        if (maxC !== null && price > maxC) { card.style.display='none'; return; }
+
+        // Marke
+        if (brands.length && !brands.some(b => title.includes(b) || tags.includes(b))) { card.style.display='none'; return; }
+
+        // Farbe
+        if (colors.length && !colors.some(c => title.includes(c) || tags.includes(c))) { card.style.display='none'; return; }
+
+        // Seltenheit aus Titel
+        if (rarity) {
+          const hasTH  = title.includes('(th)');
+          const hasSTH = title.includes('(sth)');
+          if (rarity === 'th'  && !hasTH)  { card.style.display='none'; return; }
+          if (rarity === 'sth' && !hasSTH) { card.style.display='none'; return; }
+        }
+
+        card.style.display = '';
+        visible++;
+      });
+
+      let info = document.getElementById('hw-filter-result-info');
+      if (!info) {
+        info = document.createElement('div');
+        info.id = 'hw-filter-result-info';
+        info.style.margin = '8px 0 12px';
+        info.style.fontWeight = '700';
+        (document.querySelector('.hw-filter-box') || document.querySelector('main') || document.body).appendChild(info);
+      }
+      info.textContent = visible > 0 ? '' : 'Keine passenden Produkte gefunden.';
+    };
+
+    // Events
+    document.querySelectorAll('[data-filter-apply]').forEach(b => b.addEventListener('click', applyFilters));
+    document.querySelectorAll('.hw-panel input').forEach(i => i.addEventListener('change', applyFilters));
+    const resetBtn = document.querySelector('[data-filter-reset]');
+    if (resetBtn) resetBtn.addEventListener('click', () => {
+      document.querySelectorAll('.hw-panel input[type="checkbox"], .hw-panel input[type="radio"]').forEach(i => i.checked=false);
       document.querySelectorAll('.hw-panel input[name="min_price"], .hw-panel input[name="max_price"]').forEach(i => i.value='');
       document.querySelectorAll('.hw-product-card, .product-card, .product-item').forEach(c => c.style.display='');
       const info = document.getElementById('hw-filter-result-info'); if (info) info.textContent = '';
+      // Chips-Optik nach Reset synchronisieren
+      document.querySelectorAll('.hw-chip > input').forEach(inp => syncChip(inp));
     });
+
+    // Optional: beim Laden einmal anwenden
+    // applyFilters();
+  } catch (e) {
+    console.error('HW Filters error:', e);
   }
 });
 </script>
