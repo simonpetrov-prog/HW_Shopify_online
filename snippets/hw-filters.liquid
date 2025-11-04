@@ -111,6 +111,21 @@
   <button type="button" class="hw-reset" data-filter-reset>Zurücksetzen</button>
 </div>
 
+/* Grundzustand */
+.hw-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  background:#F2F2F2; border:1px solid #E0E0E0; color:#333;
+  border-radius:999px; padding:6px 12px; font-weight:600; cursor:pointer;
+}
+.hw-chip input{ display:none; }
+.hw-chip .dot{ width:14px; height:14px; border-radius:50%; background:#ddd; }
+
+/* Zustand „ausgewählt“ – moderne, robuste Variante via :has() */
+.hw-chip:has(> input:checked){
+  background:#0046BE; border-color:#0046BE; color:#fff;
+}
+.hw-chip:has(> input:checked) .dot{ background:#fff; }
+
 </style>
 
 <script>
