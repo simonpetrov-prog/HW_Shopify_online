@@ -127,24 +127,33 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 
-  // Chips optisch toggeln (optional)
-  document.querySelectorAll('.hw-chip').forEach(ch=>{
-    ch.addEventListener('click', ()=>{
-      const input = ch.querySelector('input');
-      if (!input) return;
-      if (input.type === 'checkbox'){
-        input.checked = !input.checked;
-        ch.classList.toggle('is-checked', input.checked);
-      } else if (input.type === 'radio'){
-        const name = input.name;
-        document.querySelectorAll('input[name="'+name+'"]').forEach(r=>{
-          const parent = r.closest('.hw-chip');
-          if (parent) parent.classList.remove('is-checked');
+<script>
+// Chips korrekt synchronisieren (keine Doppel-Toggles)
+document.addEventListener('DOMContentLoaded', () => {
+  const inputs = document.querySelectorAll('.hw-chip input');
+
+  inputs.forEach(inp => {
+    const chip = inp.closest('.hw-chip');
+
+    const sync = () => {
+      if (inp.type === 'radio') {
+        // bei Radio: alle im gleichen Namen zurücksetzen
+        document.querySelectorAll('input[name="'+inp.name+'"]').forEach(r => {
+          const c = r.closest('.hw-chip');
+          if (c) c.classList.toggle('is-checked', r.checked);
         });
-        input.checked = true;
-        ch.classList.add('is-checked');
+      } else {
+        // Checkbox: nur dieser Chip
+        if (chip) chip.classList.toggle('is-checked', inp.checked);
       }
-    });
+    };
+
+    // Initial state (z.B. nach Reload)
+    sync();
+
+    // Auf echte Zustandsänderung hören
+    inp.addEventListener('change', sync);
   });
 });
+</script>
 </script>
