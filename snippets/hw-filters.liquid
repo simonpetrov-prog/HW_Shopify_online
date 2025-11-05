@@ -34,8 +34,8 @@
 
     <!-- Seltenheit -->
     <div class="hw-panel" data-panel="rarity" hidden>
-      <label><input type="checkbox" value="th"> Treasure Hunt (TH)</label>
-      <label><input type="checkbox" value="sth"> Super Treasure Hunt (STH)</label>
+      <label><input type="checkbox" value="th"> Treasure Hunt</label>
+      <label><input type="checkbox" value="sth"> Super Treasure Hunt</label>
     </div>
   </div>
 
@@ -46,14 +46,19 @@
 </div>
 
 <style>
-/* --- BLAUER FILTER-KASTEN --- */
+/* --- BLAUER FILTER-KASTEN mit Orange-Akzent --- */
 .hw-filter-box{
-  border:3px solid #0046BE;         /* Königsblauer Rahmen */
+  border:3px solid var(--accent, #FF6B00);
   border-radius:16px;
   background:#fff;
   padding:14px 16px 12px;
   margin-bottom:18px;
-  box-shadow:0 4px 16px rgba(0,0,0,.04);
+  box-shadow:0 4px 18px rgba(0,0,0,.05);
+  transition:border-color .2s ease;
+}
+.hw-filter-box:hover{
+  border-color:#ff7c1a;
+  box-shadow:0 0 0 3px rgba(255,107,0,.1),0 4px 22px rgba(0,0,0,.06);
 }
 
 /* --- Tabs --- */
@@ -64,17 +69,23 @@
   margin-bottom:12px;
 }
 .hw-tab{
-  background:#eee;
-  border:1px solid #ddd;
+  background:#f5f5f5;
+  border:2px solid #eee;
   border-radius:8px;
-  padding:6px 12px;
+  padding:7px 14px;
   font-weight:700;
   cursor:pointer;
+  transition:all .15s ease;
+}
+.hw-tab:hover{
+  border-color:var(--accent, #FF6B00);
+  color:var(--accent, #FF6B00);
 }
 .hw-tab.active{
-  background:#0046BE;
+  background:var(--accent, #FF6B00);
   color:#fff;
-  border-color:#0046BE;
+  border-color:var(--accent, #FF6B00);
+  box-shadow:0 2px 6px rgba(255,107,0,.2);
 }
 
 /* --- Panels --- */
@@ -90,6 +101,10 @@
   margin-right:10px;
   margin-bottom:6px;
   cursor:pointer;
+  font-weight:600;
+}
+.hw-panel input[type="checkbox"]{
+  accent-color:var(--accent, #FF6B00);
 }
 .hw-panel input[type="number"]{
   width:90px;
@@ -103,25 +118,27 @@
   display:flex;
   justify-content:flex-end;
   gap:10px;
+  margin-top:10px;
 }
 .btn{
-  background:#0046BE;
+  background:var(--accent, #FF6B00);
   color:#fff;
   border:0;
   border-radius:8px;
   padding:8px 14px;
   font-weight:700;
+  transition:filter .15s ease;
 }
+.btn:hover{filter:brightness(.95);}
 .btn-outline{
   background:#fff;
-  color:#0046BE;
-  border:2px solid #0046BE;
+  color:var(--accent, #FF6B00);
+  border:2px solid var(--accent, #FF6B00);
   border-radius:8px;
   padding:8px 14px;
   font-weight:700;
 }
-.btn:hover{filter:brightness(.95);}
-.btn-outline:hover{background:#0046BE;color:#fff;}
+.btn-outline:hover{background:var(--accent, #FF6B00);color:#fff;}
 </style>
 
 <script>
