@@ -23,17 +23,19 @@
     </div>
 
     <!-- Farbe -->
-    <div class="hw-panel" data-panel="color" hidden>
+    <div class="hw-panel hw-scroll" data-panel="color" hidden>
       <label class="hw-chip"><input type="checkbox" name="color" value="rot"><span class="dot"></span><span>Rot</span></label>
       <label class="hw-chip"><input type="checkbox" name="color" value="blau"><span class="dot"></span><span>Blau</span></label>
       <label class="hw-chip"><input type="checkbox" name="color" value="weiß"><span class="dot"></span><span>Weiß</span></label>
       <label class="hw-chip"><input type="checkbox" name="color" value="schwarz"><span class="dot"></span><span>Schwarz</span></label>
       <label class="hw-chip"><input type="checkbox" name="color" value="orange"><span class="dot"></span><span>Orange</span></label>
       <label class="hw-chip"><input type="checkbox" name="color" value="grau"><span class="dot"></span><span>Grau</span></label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="grün"><span class="dot"></span><span>Grün</span></label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="gelb"><span class="dot"></span><span>Gelb</span></label>
     </div>
 
     <!-- Marke -->
-    <div class="hw-panel" data-panel="brand" hidden>
+    <div class="hw-panel hw-scroll" data-panel="brand" hidden>
       <label class="hw-chip"><input type="checkbox" name="brand" value="porsche"><span>Porsche</span></label>
       <label class="hw-chip"><input type="checkbox" name="brand" value="ferrari"><span>Ferrari</span></label>
       <label class="hw-chip"><input type="checkbox" name="brand" value="bmw"><span>BMW</span></label>
@@ -43,8 +45,8 @@
       <label class="hw-chip"><input type="checkbox" name="brand" value="koenigsegg"><span>Koenigsegg</span></label>
     </div>
 
-    <!-- Seltenheit (Mehrfach-Auswahl erlaubt) -->
-    <div class="hw-panel" data-panel="rarity" hidden>
+    <!-- Seltenheit -->
+    <div class="hw-panel hw-scroll" data-panel="rarity" hidden>
       <label class="hw-chip"><input type="checkbox" name="rarity" value="th"><span>Treasure Hunt</span></label>
       <label class="hw-chip"><input type="checkbox" name="rarity" value="sth"><span>Super Treasure Hunt</span></label>
     </div>
@@ -58,7 +60,7 @@
 </div>
 
 <style>
-/* Box mit blauem Rand, Orange als Akzent */
+/* ---- Container ---- */
 .hw-filter-box{
   border:3px solid #0046BE;
   border-radius:16px;
@@ -68,56 +70,142 @@
   box-shadow:0 4px 16px rgba(0,0,0,.05);
 }
 
-/* Tabs */
-.hw-filter-tabs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
-.hw-tab{
-  background:#f5f5f5; border:2px solid #eee; border-radius:10px;
-  padding:7px 14px; font-weight:800; cursor:pointer; transition:all .15s;
+/* ---- Tabs ---- */
+.hw-filter-tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
 }
-.hw-tab:hover{ border-color:#FF6B00; color:#FF6B00; }
+.hw-tab{
+  background:#f5f5f5;
+  border:2px solid #eee;
+  border-radius:10px;
+  padding:7px 14px;
+  font-weight:800;
+  cursor:pointer;
+  transition:all .15s;
+}
+.hw-tab:hover{
+  border-color:#FF6B00;
+  color:#FF6B00;
+}
 .hw-tab.active{
-  background:#0046BE; color:#fff; border-color:#0046BE;
+  background:#0046BE;
+  color:#fff;
+  border-color:#0046BE;
   box-shadow:0 2px 6px rgba(0,70,190,.25);
 }
 
-/* Panels */
+/* ---- Panels ---- */
 .hw-panel{ display:none; margin-bottom:12px; }
-.hw-panel:not([hidden]){ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-
-/* Preis Felder */
-.hw-price-row{ display:flex; flex-direction:column; gap:4px; }
-.hw-price-row input{
-  width:110px; max-width:110px; border:1px solid #d1d5db; border-radius:10px; padding:6px 8px;
+.hw-panel:not([hidden]){
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap:10px;
+  align-items:center;
 }
 
-/* Chips (Option-Buttons) */
+/* Preis-Panel */
+.hw-price-row{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.hw-price-row input{
+  width:110px;
+  max-width:110px;
+  border:1px solid #d1d5db;
+  border-radius:10px;
+  padding:6px 8px;
+}
+
+/* ---- Scrollbare Panels ---- */
+.hw-scroll{
+  max-height:160px;
+  overflow:auto;
+  padding-right:6px;
+}
+.hw-scroll::-webkit-scrollbar{
+  width:8px;
+  height:8px;
+}
+.hw-scroll::-webkit-scrollbar-thumb{
+  background:rgba(0,0,0,.2);
+  border-radius:6px;
+}
+.hw-scroll::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+/* ---- Chips ---- */
 .hw-chip{
-  display:inline-flex; align-items:center; gap:8px;
-  background:#F2F2F2; border:1px solid #E0E0E0; color:#333;
-  border-radius:999px; padding:8px 14px; font-weight:700; cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  background:#F2F2F2;
+  border:1px solid #E0E0E0;
+  color:#333;
+  border-radius:999px;
+  padding:6px 10px;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
   transition:all .15s;
 }
 .hw-chip input{ display:none; }
-.hw-chip .dot{ width:14px; height:14px; border-radius:50%; background:#ddd; }
+.hw-chip .dot{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  background:#ddd;
+}
 .hw-chip.is-checked{
-  background:#0046BE; border-color:#0046BE; color:#fff;
+  background:#0046BE;
+  border-color:#0046BE;
+  color:#fff;
   box-shadow:0 2px 6px rgba(0,70,190,.22);
 }
 .hw-chip.is-checked .dot{ background:#fff; }
 
-/* Actions */
-.hw-filter-actions{ display:flex; justify-content:flex-end; gap:10px; }
+/* ---- Aktionen ---- */
+.hw-filter-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  margin-top:8px;
+}
 .btn{
-  background:#FF6B00; color:#fff; border:0; border-radius:10px; padding:8px 16px; font-weight:800; cursor:pointer;
+  background:#FF6B00;
+  color:#fff;
+  border:0;
+  border-radius:10px;
+  padding:8px 16px;
+  font-weight:800;
+  cursor:pointer;
 }
 .btn-outline{
-  background:#fff; color:#0046BE; border:2px solid #0046BE; border-radius:10px; padding:8px 16px; font-weight:800; cursor:pointer;
+  background:#fff;
+  color:#0046BE;
+  border:2px solid #0046BE;
+  border-radius:10px;
+  padding:8px 16px;
+  font-weight:800;
+  cursor:pointer;
 }
 .btn:hover{ filter:brightness(.95); }
 .btn-outline:hover{ background:#0046BE; color:#fff; }
+
+/* ---- Mobile ---- */
 @media (max-width:700px){
-  .hw-panel:not([hidden]){ flex-direction:column; align-items:flex-start; }
-  .hw-price-row input{ width:150px; max-width:150px; }
+  .hw-panel:not([hidden]){
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-start;
+  }
+  .hw-scroll{
+    max-height:200px;
+  }
 }
 </style>
 
@@ -129,12 +217,12 @@ document.addEventListener('DOMContentLoaded',()=>{
       document.querySelectorAll('.hw-tab').forEach(t=>t.classList.remove('active'));
       document.querySelectorAll('.hw-panel').forEach(p=>p.hidden=true);
       tab.classList.add('active');
-      const panel = document.querySelector(`.hw-panel[data-panel="${tab.dataset.filter}"]`);
+      const panel=document.querySelector(`.hw-panel[data-panel="${tab.dataset.filter}"]`);
       if(panel) panel.hidden=false;
     });
   });
 
-  // Chip-Optik an echten Zustand koppeln (kein doppel-Toggle)
+  // Chip-Optik koppeln
   const syncChip = (inp)=>{
     const chip = inp.closest('.hw-chip');
     if (!chip) return;
@@ -145,7 +233,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     inp.addEventListener('change', ()=>syncChip(inp));
   });
 
-  // Reset (nur UI – Logik folgt in theme.liquid)
+  // Reset Button
   const resetBtn = document.querySelector('[data-filter-reset]');
   if (resetBtn) resetBtn.addEventListener('click', ()=>{
     document.querySelectorAll('.hw-panel input[type="checkbox"]').forEach(i=>i.checked=false);
