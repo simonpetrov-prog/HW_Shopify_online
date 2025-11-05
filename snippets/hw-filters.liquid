@@ -1,44 +1,56 @@
 <!-- HW FILTER SECTION -->
 <div class="hw-filter-box">
+  <!-- Tabs -->
   <div class="hw-filter-tabs">
-    <button class="hw-tab" data-filter="price">Preis</button>
+    <button class="hw-tab active" data-filter="price">Preis</button>
     <button class="hw-tab" data-filter="color">Farbe</button>
     <button class="hw-tab" data-filter="brand">Marke</button>
     <button class="hw-tab" data-filter="rarity">Seltenheit</button>
   </div>
 
+  <!-- Panels -->
   <div class="hw-filter-panels">
     <!-- Preis -->
     <div class="hw-panel" data-panel="price">
-      <label>Preis von:</label>
-      <input type="number" id="price-min" placeholder="Min" min="0">
-      <label>bis:</label>
-      <input type="number" id="price-max" placeholder="Max" min="0">
+      <div class="hw-price-row">
+        <label>von</label>
+        <input type="number" name="min_price" step="0.01" min="0" placeholder="2,99">
+      </div>
+      <div class="hw-price-row">
+        <label>bis</label>
+        <input type="number" name="max_price" step="0.01" min="0" placeholder="9,99">
+      </div>
     </div>
 
     <!-- Farbe -->
     <div class="hw-panel" data-panel="color" hidden>
-      <label><input type="checkbox" value="rot"> Rot</label>
-      <label><input type="checkbox" value="blau"> Blau</label>
-      <label><input type="checkbox" value="weiß"> Weiß</label>
-      <label><input type="checkbox" value="schwarz"> Schwarz</label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="rot"><span class="dot"></span><span>Rot</span></label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="blau"><span class="dot"></span><span>Blau</span></label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="weiß"><span class="dot"></span><span>Weiß</span></label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="schwarz"><span class="dot"></span><span>Schwarz</span></label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="orange"><span class="dot"></span><span>Orange</span></label>
+      <label class="hw-chip"><input type="checkbox" name="color" value="grau"><span class="dot"></span><span>Grau</span></label>
     </div>
 
     <!-- Marke -->
     <div class="hw-panel" data-panel="brand" hidden>
-      <label><input type="checkbox" value="porsche"> Porsche</label>
-      <label><input type="checkbox" value="ferrari"> Ferrari</label>
-      <label><input type="checkbox" value="bmw"> BMW</label>
-      <label><input type="checkbox" value="lamborghini"> Lamborghini</label>
+      <label class="hw-chip"><input type="checkbox" name="brand" value="porsche"><span>Porsche</span></label>
+      <label class="hw-chip"><input type="checkbox" name="brand" value="ferrari"><span>Ferrari</span></label>
+      <label class="hw-chip"><input type="checkbox" name="brand" value="bmw"><span>BMW</span></label>
+      <label class="hw-chip"><input type="checkbox" name="brand" value="mercedes"><span>Mercedes</span></label>
+      <label class="hw-chip"><input type="checkbox" name="brand" value="toyota"><span>Toyota</span></label>
+      <label class="hw-chip"><input type="checkbox" name="brand" value="lamborghini"><span>Lamborghini</span></label>
+      <label class="hw-chip"><input type="checkbox" name="brand" value="koenigsegg"><span>Koenigsegg</span></label>
     </div>
 
-    <!-- Seltenheit -->
+    <!-- Seltenheit (Mehrfach-Auswahl erlaubt) -->
     <div class="hw-panel" data-panel="rarity" hidden>
-      <label><input type="checkbox" value="th"> Treasure Hunt</label>
-      <label><input type="checkbox" value="sth"> Super Treasure Hunt</label>
+      <label class="hw-chip"><input type="checkbox" name="rarity" value="th"><span>Treasure Hunt</span></label>
+      <label class="hw-chip"><input type="checkbox" name="rarity" value="sth"><span>Super Treasure Hunt</span></label>
     </div>
   </div>
 
+  <!-- Aktionen -->
   <div class="hw-filter-actions">
     <button class="btn" data-filter-apply>Filter anwenden</button>
     <button class="btn-outline" data-filter-reset>Zurücksetzen</button>
@@ -46,120 +58,99 @@
 </div>
 
 <style>
-/* --- BLAUER FILTER-KASTEN mit Orange-Akzent --- */
+/* Box mit blauem Rand, Orange als Akzent */
 .hw-filter-box{
-  border:3px solid var(--accent, #FF6B00);
+  border:3px solid #0046BE;
   border-radius:16px;
   background:#fff;
   padding:14px 16px 12px;
   margin-bottom:18px;
-  box-shadow:0 4px 18px rgba(0,0,0,.05);
-  transition:border-color .2s ease;
-}
-.hw-filter-box:hover{
-  border-color:#ff7c1a;
-  box-shadow:0 0 0 3px rgba(255,107,0,.1),0 4px 22px rgba(0,0,0,.06);
+  box-shadow:0 4px 16px rgba(0,0,0,.05);
 }
 
-/* --- Tabs --- */
-.hw-filter-tabs{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:12px;
-}
+/* Tabs */
+.hw-filter-tabs{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
 .hw-tab{
-  background:#f5f5f5;
-  border:2px solid #eee;
-  border-radius:8px;
-  padding:7px 14px;
-  font-weight:700;
-  cursor:pointer;
-  transition:all .15s ease;
+  background:#f5f5f5; border:2px solid #eee; border-radius:10px;
+  padding:7px 14px; font-weight:800; cursor:pointer; transition:all .15s;
 }
-.hw-tab:hover{
-  border-color:var(--accent, #FF6B00);
-  color:var(--accent, #FF6B00);
-}
+.hw-tab:hover{ border-color:#FF6B00; color:#FF6B00; }
 .hw-tab.active{
-  background:var(--accent, #FF6B00);
-  color:#fff;
-  border-color:var(--accent, #FF6B00);
-  box-shadow:0 2px 6px rgba(255,107,0,.2);
+  background:#0046BE; color:#fff; border-color:#0046BE;
+  box-shadow:0 2px 6px rgba(0,70,190,.25);
 }
 
-/* --- Panels --- */
+/* Panels */
 .hw-panel{ display:none; margin-bottom:12px; }
-.hw-panel[hidden]{ display:none; }
-.hw-panel:not([hidden]){ display:block; }
+.hw-panel:not([hidden]){ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
 
-/* --- Eingaben & Labels --- */
-.hw-panel label{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  margin-right:10px;
-  margin-bottom:6px;
-  cursor:pointer;
-  font-weight:600;
-}
-.hw-panel input[type="checkbox"]{
-  accent-color:var(--accent, #FF6B00);
-}
-.hw-panel input[type="number"]{
-  width:90px;
-  border:1px solid #ccc;
-  border-radius:6px;
-  padding:4px 6px;
+/* Preis Felder */
+.hw-price-row{ display:flex; flex-direction:column; gap:4px; }
+.hw-price-row input{
+  width:110px; max-width:110px; border:1px solid #d1d5db; border-radius:10px; padding:6px 8px;
 }
 
-/* --- Aktionen --- */
-.hw-filter-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:10px;
-  margin-top:10px;
+/* Chips (Option-Buttons) */
+.hw-chip{
+  display:inline-flex; align-items:center; gap:8px;
+  background:#F2F2F2; border:1px solid #E0E0E0; color:#333;
+  border-radius:999px; padding:8px 14px; font-weight:700; cursor:pointer;
+  transition:all .15s;
 }
+.hw-chip input{ display:none; }
+.hw-chip .dot{ width:14px; height:14px; border-radius:50%; background:#ddd; }
+.hw-chip.is-checked{
+  background:#0046BE; border-color:#0046BE; color:#fff;
+  box-shadow:0 2px 6px rgba(0,70,190,.22);
+}
+.hw-chip.is-checked .dot{ background:#fff; }
+
+/* Actions */
+.hw-filter-actions{ display:flex; justify-content:flex-end; gap:10px; }
 .btn{
-  background:var(--accent, #FF6B00);
-  color:#fff;
-  border:0;
-  border-radius:8px;
-  padding:8px 14px;
-  font-weight:700;
-  transition:filter .15s ease;
+  background:#FF6B00; color:#fff; border:0; border-radius:10px; padding:8px 16px; font-weight:800; cursor:pointer;
 }
-.btn:hover{filter:brightness(.95);}
 .btn-outline{
-  background:#fff;
-  color:var(--accent, #FF6B00);
-  border:2px solid var(--accent, #FF6B00);
-  border-radius:8px;
-  padding:8px 14px;
-  font-weight:700;
+  background:#fff; color:#0046BE; border:2px solid #0046BE; border-radius:10px; padding:8px 16px; font-weight:800; cursor:pointer;
 }
-.btn-outline:hover{background:var(--accent, #FF6B00);color:#fff;}
+.btn:hover{ filter:brightness(.95); }
+.btn-outline:hover{ background:#0046BE; color:#fff; }
+@media (max-width:700px){
+  .hw-panel:not([hidden]){ flex-direction:column; align-items:flex-start; }
+  .hw-price-row input{ width:150px; max-width:150px; }
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
-  // Tabs umschalten
+  // Tabs
   document.querySelectorAll('.hw-tab').forEach(tab=>{
     tab.addEventListener('click',()=>{
       document.querySelectorAll('.hw-tab').forEach(t=>t.classList.remove('active'));
       document.querySelectorAll('.hw-panel').forEach(p=>p.hidden=true);
       tab.classList.add('active');
-      const panel=document.querySelector(`.hw-panel[data-panel="${tab.dataset.filter}"]`);
+      const panel = document.querySelector(`.hw-panel[data-panel="${tab.dataset.filter}"]`);
       if(panel) panel.hidden=false;
     });
   });
 
-  // Zurücksetzen
-  document.querySelector('[data-filter-reset]').addEventListener('click',()=>{
-    document.querySelectorAll('.hw-panel input').forEach(i=>{
-      if(i.type==='checkbox') i.checked=false;
-      if(i.type==='number') i.value='';
-    });
+  // Chip-Optik an echten Zustand koppeln (kein doppel-Toggle)
+  const syncChip = (inp)=>{
+    const chip = inp.closest('.hw-chip');
+    if (!chip) return;
+    chip.classList.toggle('is-checked', inp.checked);
+  };
+  document.querySelectorAll('.hw-chip > input').forEach(inp=>{
+    syncChip(inp);
+    inp.addEventListener('change', ()=>syncChip(inp));
+  });
+
+  // Reset (nur UI – Logik folgt in theme.liquid)
+  const resetBtn = document.querySelector('[data-filter-reset]');
+  if (resetBtn) resetBtn.addEventListener('click', ()=>{
+    document.querySelectorAll('.hw-panel input[type="checkbox"]').forEach(i=>i.checked=false);
+    document.querySelectorAll('.hw-panel input[type="number"]').forEach(i=>i.value='');
+    document.querySelectorAll('.hw-chip').forEach(c=>c.classList.remove('is-checked'));
   });
 });
 </script>
