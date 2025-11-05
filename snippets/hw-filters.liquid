@@ -1,107 +1,148 @@
-{% comment %} HW Filters — CLEAN RESET {% endcomment %}
-
-
-
-  <!-- Tabs -->
+<!-- HW FILTER SECTION -->
+<div class="hw-filter-box">
   <div class="hw-filter-tabs">
-    <button type="button" class="hw-tab is-active" data-panel-target="price">Preis ▾</button>
-    <button type="button" class="hw-tab" data-panel-target="color">Farbe ▾</button>
-    <button type="button" class="hw-tab" data-panel-target="brand">Marke ▾</button>
-    <button type="button" class="hw-tab" data-panel-target="rarity">Seltenheit ▾</button>
+    <button class="hw-tab" data-filter="price">Preis</button>
+    <button class="hw-tab" data-filter="color">Farbe</button>
+    <button class="hw-tab" data-filter="brand">Marke</button>
+    <button class="hw-tab" data-filter="rarity">Seltenheit</button>
   </div>
 
-  <!-- Panels -->
   <div class="hw-filter-panels">
     <!-- Preis -->
-    <div class="hw-panel is-open" data-panel="price">
-      <div class="hw-price-row">
-        <label>von</label>
-        <input type="number" name="min_price" step="0.01" min="0" placeholder="2,99">
-      </div>
-      <div class="hw-price-row">
-        <label>bis</label>
-        <input type="number" name="max_price" step="0.01" min="0" placeholder="9,99">
-      </div>
+    <div class="hw-panel" data-panel="price">
+      <label>Preis von:</label>
+      <input type="number" id="price-min" placeholder="Min" min="0">
+      <label>bis:</label>
+      <input type="number" id="price-max" placeholder="Max" min="0">
     </div>
 
     <!-- Farbe -->
-    <div class="hw-panel" data-panel="color">
-      <div class="hw-chip-list">
-        {% assign colors = 'Blau, Rot, Orange, Schwarz, Weiß, Grau, Türkis' | split: ', ' %}
-        {% for c in colors %}
-          <label class="hw-chip">
-            <input type="checkbox" name="color" value="{{ c }}">
-            <span class="dot"></span>
-            <span class="txt">{{ c }}</span>
-          </label>
-        {% endfor %}
-      </div>
+    <div class="hw-panel" data-panel="color" hidden>
+      <label><input type="checkbox" value="rot"> Rot</label>
+      <label><input type="checkbox" value="blau"> Blau</label>
+      <label><input type="checkbox" value="weiß"> Weiß</label>
+      <label><input type="checkbox" value="schwarz"> Schwarz</label>
     </div>
 
     <!-- Marke -->
-    <div class="hw-panel" data-panel="brand">
-      <div class="hw-chip-list">
-        {% assign brands = 'Ferrari, Porsche, Lamborghini, BMW, Mercedes, Toyota, Koenigsegg' | split: ', ' %}
-        {% for b in brands %}
-          <label class="hw-chip">
-            <input type="checkbox" name="brand" value="{{ b }}">
-            <span class="txt">{{ b }}</span>
-          </label>
-        {% endfor %}
-      </div>
+    <div class="hw-panel" data-panel="brand" hidden>
+      <label><input type="checkbox" value="porsche"> Porsche</label>
+      <label><input type="checkbox" value="ferrari"> Ferrari</label>
+      <label><input type="checkbox" value="bmw"> BMW</label>
+      <label><input type="checkbox" value="lamborghini"> Lamborghini</label>
     </div>
 
     <!-- Seltenheit -->
-    <div class="hw-panel" data-panel="rarity">
-      <div class="hw-chip-list">
-        <label class="hw-chip"><input type="radio" name="rarity" value="TH"><span class="txt">TH</span></label>
-        <label class="hw-chip"><input type="radio" name="rarity" value="STH"><span class="txt">STH</span></label>
-      </div>
+    <div class="hw-panel" data-panel="rarity" hidden>
+      <label><input type="checkbox" value="th"> Treasure Hunt (TH)</label>
+      <label><input type="checkbox" value="sth"> Super Treasure Hunt (STH)</label>
     </div>
   </div>
 
-  <!-- Aktionen -->
   <div class="hw-filter-actions">
-    <button type="button" class="hw-apply" data-filter-apply>Filter anwenden</button>
-    <button type="button" class="hw-reset"  data-filter-reset>Zurücksetzen</button>
+    <button class="btn" data-filter-apply>Filter anwenden</button>
+    <button class="btn-outline" data-filter-reset>Zurücksetzen</button>
   </div>
 </div>
 
 <style>
+/* --- BLAUER FILTER-KASTEN --- */
 .hw-filter-box{
-  border:3px solid #0046BE;   /* Königsblauer Rahmen */
+  border:3px solid #0046BE;         /* Königsblauer Rahmen */
   border-radius:16px;
   background:#fff;
   padding:14px 16px 12px;
   margin-bottom:18px;
-  box-shadow:0 4px 16px rgba(0,0,0,.04); /* optional leichtes Shadow für Tiefe */
+  box-shadow:0 4px 16px rgba(0,0,0,.04);
 }
-.hw-filter-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.hw-filter-head h2{margin:0;font-weight:800;color:#0046BE}
-.hw-filter-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.hw-tab{background:#fff;border:1px solid #d1d5db;border-radius:999px;padding:6px 14px;font-weight:700;cursor:pointer}
-.hw-tab.is-active{background:#0046BE;color:#fff;border-color:#0046BE}
 
-.hw-filter-panels{display:block}
-.hw-panel{display:none}
-.hw-panel.is-open{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
-
-.hw-price-row{display:flex;flex-direction:column;gap:4px}
-.hw-price-row input{width:120px;max-width:120px;border:1px solid #d1d5db;border-radius:10px;padding:6px 8px}
-
-.hw-chip-list{display:flex;gap:8px;flex-wrap:wrap}
-.hw-chip{display:inline-flex;align-items:center;gap:6px;background:#F2F2F2;border:1px solid #E0E0E0;color:#333;border-radius:999px;padding:6px 12px;font-weight:600;cursor:pointer}
-.hw-chip input{display:none}
-.hw-chip .dot{width:14px;height:14px;border-radius:50%;background:#ddd}
-.hw-chip.is-checked{background:#0046BE;border-color:#0046BE;color:#fff}
-.hw-chip.is-checked .dot{background:#fff}
-
-.hw-filter-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
-.hw-apply{background:#FF6B00;color:#fff;border:0;border-radius:10px;padding:8px 16px;font-weight:700;cursor:pointer}
-.hw-reset{background:#eee;border:0;border-radius:10px;padding:8px 14px;font-weight:700;cursor:pointer}
-
-@media (max-width:700px){
-  .hw-panel.is-open{flex-direction:column;align-items:flex-start}
-  .hw-price-row input{width:160px;max-width:160px}
+/* --- Tabs --- */
+.hw-filter-tabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
 }
+.hw-tab{
+  background:#eee;
+  border:1px solid #ddd;
+  border-radius:8px;
+  padding:6px 12px;
+  font-weight:700;
+  cursor:pointer;
+}
+.hw-tab.active{
+  background:#0046BE;
+  color:#fff;
+  border-color:#0046BE;
+}
+
+/* --- Panels --- */
+.hw-panel{ display:none; margin-bottom:12px; }
+.hw-panel[hidden]{ display:none; }
+.hw-panel:not([hidden]){ display:block; }
+
+/* --- Eingaben & Labels --- */
+.hw-panel label{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-right:10px;
+  margin-bottom:6px;
+  cursor:pointer;
+}
+.hw-panel input[type="number"]{
+  width:90px;
+  border:1px solid #ccc;
+  border-radius:6px;
+  padding:4px 6px;
+}
+
+/* --- Aktionen --- */
+.hw-filter-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+.btn{
+  background:#0046BE;
+  color:#fff;
+  border:0;
+  border-radius:8px;
+  padding:8px 14px;
+  font-weight:700;
+}
+.btn-outline{
+  background:#fff;
+  color:#0046BE;
+  border:2px solid #0046BE;
+  border-radius:8px;
+  padding:8px 14px;
+  font-weight:700;
+}
+.btn:hover{filter:brightness(.95);}
+.btn-outline:hover{background:#0046BE;color:#fff;}
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+  // Tabs umschalten
+  document.querySelectorAll('.hw-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.hw-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.hw-panel').forEach(p=>p.hidden=true);
+      tab.classList.add('active');
+      const panel=document.querySelector(`.hw-panel[data-panel="${tab.dataset.filter}"]`);
+      if(panel) panel.hidden=false;
+    });
+  });
+
+  // Zurücksetzen
+  document.querySelector('[data-filter-reset]').addEventListener('click',()=>{
+    document.querySelectorAll('.hw-panel input').forEach(i=>{
+      if(i.type==='checkbox') i.checked=false;
+      if(i.type==='number') i.value='';
+    });
+  });
+});
+</script>
