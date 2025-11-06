@@ -54,18 +54,6 @@
 <!-- Overlay -->
 <div class="hw-m-overlay" data-hw-mclose aria-hidden="true"></div>
 
-<!-- Warenkorb-Button -->
-<a href="{{ routes.cart_url }}"
-   class="cart-btn"
-   data-cart-toggle
-   aria-controls="cart-drawer"
-   aria-expanded="false">
-  <span class="cart-btn__text">Warenkorb</span>
-  <span class="cart-badge" data-cart-count {% unless cart.item_count > 0 %}hidden{% endunless %}>
-    {{ cart.item_count }}
-  </span>
-</a>
-
 <style>
 /* Sichtbarkeit: nur Mobile */
 @media (max-width: 768px){
