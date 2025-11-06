@@ -304,19 +304,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
 .hw-inline-search__btn:hover{ filter:brightness(.95); }
 .hw-inline-search__btn:active{ transform: translateY(1px); }
 
-/* Warenkorb-Button */
-.cart-btn{
-  display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  background: var(--primary,#0046BE); color:#fff; border:0; border-radius:12px;
-  padding:10px 18px; font-weight:800; letter-spacing:.3px; text-decoration:none;
-  transition: background .2s ease, transform .1s ease; margin-left: auto;
-}
-.cart-btn:hover{ background: var(--accent,#FF6B00); transform: translateY(-1px); }
-.cart-btn:active{ transform: translateY(0); }
-.cart-badge{
-  min-width:22px; height:22px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center;
-  background:#000; color:#fff; font-size:12px; font-weight:800; padding:0 6px;
-}
+<!-- Warenkorb-Button -->
+<a href="{{ routes.cart_url }}"
+   class="cart-btn"
+   data-cart-toggle
+   aria-controls="cart-drawer"
+   aria-expanded="false">
+  <span class="cart-btn__text">Warenkorb</span>
+  <span class="cart-badge" data-cart-count {% unless cart.item_count > 0 %}hidden{% endunless %}>
+    {{ cart.item_count }}
+  </span>
+</a>
 
 /* Mobile Verhalten */
 @media (max-width: 768px){
