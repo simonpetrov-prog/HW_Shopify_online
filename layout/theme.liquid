@@ -1522,5 +1522,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Klicke auf /cart Links: auf Mobile NICHT navigieren, sondern Drawer öffnen
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href="/cart"], a[href^="{{ routes.cart_url }}"]');
+    if (!link) return;
+
+    // Mobile / Tablet?
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (!isMobile) return; // Desktop normal navigieren
+
+    e.preventDefault();
+    const drawer = document.getElementById('cart-drawer');
+
+    // Falls es einen markierten Toggle gibt, den auslösen
+    const toggle = document.querySelector('[data-cart-toggle]');
+    if (toggle) {
+      drawer?.classList.add('open');
+      document.documentElement.classList.add('cart-open');
+      try { loadCartDrawer && loadCartDrawer(); } catch(_) {}
+      toggle.setAttribute('aria-expanded', 'true');
+    } else {
+      // Fallback: direkt öffnen
+      drawer?.classList.add('open');
+      document.documentElement.classList.add('cart-open');
+      try { loadCartDrawer && loadCartDrawer(); } catch(_) {}
+    }
+  });
+});
+</script>
+
   </body>
 </html>
