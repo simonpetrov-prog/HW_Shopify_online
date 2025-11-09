@@ -1,66 +1,112 @@
-<footer class="footer">
-  <div class="footer__inner container">
-    <div class="footer__col">
+<footer class="hw-footer">
+  <div class="hw-footer__inner container">
+    <!-- Spalte 1: Branding / Text (wie vorher) -->
+    <div class="hw-footer__col">
       <h3>HW Business</h3>
       <p>Königsblau. Orange. Hot Wheels Liebe.</p>
     </div>
 
-    <div class="footer__col">
+    <!-- Spalte 2: Rechtliches – dynamisches Menü -->
+    <div class="hw-footer__col">
       <h3>Rechtliches</h3>
-      {% if section.settings.menu_legal != blank %}
+      {% if section.settings.menu_legal != blank and linklists[section.settings.menu_legal] %}
         <ul>
           {% for link in linklists[section.settings.menu_legal].links %}
             <li><a href="{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
         </ul>
-      {% else %}
-        <p><em>Kein Menü zugewiesen</em></p>
       {% endif %}
     </div>
 
-    <div class="footer__col">
+    <!-- Spalte 3: Kontakt – dynamisches Menü -->
+    <div class="hw-footer__col">
       <h3>Kontakt</h3>
-      {% if section.settings.menu_contact != blank %}
+      {% if section.settings.menu_contact != blank and linklists[section.settings.menu_contact] %}
         <ul>
           {% for link in linklists[section.settings.menu_contact].links %}
             <li><a href="{{ link.url }}">{{ link.title }}</a></li>
           {% endfor %}
         </ul>
-      {% else %}
-        <p><em>Kein Menü zugewiesen</em></p>
       {% endif %}
     </div>
   </div>
 
-  <div class="footer__bottom">
-    <p>© 2025 HW_Central_seller — Alle Rechte vorbehalten</p>
+  <div class="hw-footer__bottom">
+    <p>© {{ 'now' | date: '%Y' }} HW_Central_seller — Alle Rechte vorbehalten</p>
   </div>
-</footer>
 
-<style>
-.footer { background:#fff; border-top:2px solid var(--accent); padding:30px 0; color:#111; }
-.footer__inner { display:flex; justify-content:space-between; flex-wrap:wrap; gap:40px; }
-.footer__col h3 { color:var(--primary); font-weight:800; margin-bottom:8px; }
-.footer__col ul { list-style:none; padding:0; margin:0; }
-.footer__col ul li a { color:#111; text-decoration:none; }
-.footer__col ul li a:hover { color:var(--accent); }
-.footer__bottom { margin-top:30px; text-align:center; font-size:14px; color:#555; border-top:1px solid #eee; padding-top:14px; }
-</style>
-
-{% schema %}
-{
-  "name": "Footer",
-  "settings": [
-    {
-      "type": "link_list",
-      "id": "menu_legal",
-      "label": "Rechtliches Menü"
-    },
-    {
-      "type": "link_list",
-      "id": "menu_contact",
-      "label": "Kontakt Menü"
+  <style>
+    .hw-footer{
+      background:#ffffff;
+      border-top:1px solid #e5e5e5;
+      margin-top:40px;
+      font-size:14px;
+      color:#111827;
     }
-  ]
-}
-{% endschema %}
+    .hw-footer__inner{
+      max-width:1200px;
+      margin:0 auto;
+      padding:32px 20px 16px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:40px;
+    }
+    .hw-footer__col h3{
+      margin:0 0 8px;
+      font-size:16px;
+      font-weight:700;
+      color:#0046BE;
+    }
+    .hw-footer__col p{
+      margin:0;
+      max-width:260px;
+      line-height:1.5;
+    }
+    .hw-footer__col ul{
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+    .hw-footer__col li{
+      margin:4px 0;
+    }
+    .hw-footer__col a{
+      color:#111827;
+      text-decoration:none;
+    }
+    .hw-footer__col a:hover{
+      color:#FF6B00;
+    }
+    .hw-footer__bottom{
+      border-top:1px solid #e5e5e5;
+      text-align:center;
+      padding:10px 16px 18px;
+      font-size:12px;
+      color:#6b7280;
+    }
+    @media (max-width:768px){
+      .hw-footer__inner{
+        flex-direction:column;
+        gap:24px;
+      }
+    }
+  </style>
+
+  {% schema %}
+  {
+    "name": "Footer",
+    "settings": [
+      {
+        "type": "link_list",
+        "id": "menu_legal",
+        "label": "Rechtliches Menü"
+      },
+      {
+        "type": "link_list",
+        "id": "menu_contact",
+        "label": "Kontakt Menü"
+      }
+    ]
+  }
+  {% endschema %}
+</footer>
