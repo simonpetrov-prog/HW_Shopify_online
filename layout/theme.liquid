@@ -360,6 +360,154 @@ a{color:var(--primary); text-decoration:none;}
   .hw-filter-tabs{ gap:6px; }
 }
 
+/* Collection Page Layout */
+.hw-collection {
+  padding: 10px 0 40px;
+}
+
+.hw-collection__title {
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 6px;
+}
+
+.hw-collection__desc {
+  margin-bottom: 14px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.hw-collection__empty {
+  padding: 24px 0;
+  font-size: 15px;
+}
+
+/* Grid */
+.hw-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+@media (max-width: 900px) {
+  .hw-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .hw-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card */
+.hw-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 12px 12px 14px;
+  border: 1px solid var(--border, #e5e5e5);
+  box-shadow: 0 3px 12px rgba(15, 23, 42, .06);
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+
+.hw-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, .10);
+}
+
+.hw-card__link {
+  display: block;
+  color: inherit;
+}
+
+.hw-card__image-wrap {
+  position: relative;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.hw-card__image {
+  display: block;
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+}
+
+/* Sale Badge */
+.hw-card__badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.hw-card__badge--sale {
+  background: var(--accent, #FF6B00);
+}
+
+/* Text & Price */
+.hw-card__title {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  min-height: 34px;
+}
+
+.hw-card__prices {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.hw-card__price {
+  font-size: 15px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.hw-card__price--old {
+  font-size: 13px;
+  color: #9ca3af;
+  text-decoration: line-through;
+}
+
+/* Add to cart Button */
+.hw-card__form {
+  margin-top: 8px;
+}
+
+.hw-card__btn {
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 999px;
+  border: none;
+  background: var(--primary, #0046BE);
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background .16s ease, transform .06s ease, box-shadow .12s ease;
+  box-shadow: 0 3px 0 rgba(15,23,42,.16);
+}
+
+.hw-card__btn:hover {
+  background: var(--accent, #FF6B00);
+}
+
+.hw-card__btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
 
 </style>
 
