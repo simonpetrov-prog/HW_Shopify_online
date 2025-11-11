@@ -1,31 +1,81 @@
 {% comment %}
-  HW product grid – minimal loop with data attributes for live filtering
+  Produkt-Grids für Collection-Seite
+  - Nutzt das aktuelle Collection-Objekt
+  - Saubere Cards, responsive Grid
 {% endcomment %}
-<div class="product-grid">
-  {% for product in collection.products %}
-    <article
-      class="hw-product-card"
-      data-title="{{ product.title | escape }}"
-      data-price="{{ product.price }}"
-      data-tags="{{ product.tags | join: ',' | escape }}"
-    >
-      <a href="{{ product.url }}">
-        {% if product.featured_image %}
-          <img src="{{ product.featured_image | image_url: width: 600 }}" alt="{{ product.title | escape }}" loading="lazy">
-        {% endif %}
-        <h3 class="hw-product-card__title">{{ product.title }}</h3>
-      </a>
-      <div class="hw-product-card__price">
-        {{ product.price | money }}
-      </div>
-    </article>
-  {% endfor %}
-</div>
 
-<style>
-.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-.hw-product-card{border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff}
-.hw-product-card img{width:100%;height:auto;display:block;border-radius:8px}
-.hw-product-card__title{font-size:14px;font-weight:800;margin:8px 0 4px}
-.hw-product-card__price{font-weight:700}
-</style>
+<section class="hw-collection">
+  {% if collection.title %}
+    <h1 class="hw-collection__title">
+      {{ collection.title }}
+    </h1>
+  {% endif %}
+
+  {% if collection.description != blank %}
+    <div class="hw-collection__desc">
+      {{ collection.description }}
+    </div>
+  {% endif %}
+
+  {% if collection.products_count == 0 %}
+    <p class="hw-collection__empty">
+      Aktuell sind hier keine Produkte verfügbar.
+    </p>
+  {% else %}
+    <div class="hw-grid">
+      {% for product in collection.products %}
+        <article class="hw-card">
+          <a href="{{ product.url }}" class="hw-card__link">
+            <div class="hw-card__image-wrap">
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | img_url: '540x540' }}"
+                  alt="{{ product.featured_image.alt | escape }}"
+                  loading="lazy"
+                  class="hw-card__image"
+                >
+              {% endif %}
+
+              {%- if product.compare_at_price_max > product.price -%}
+                <div class="hw-card__badge hw-card__badge--sale">
+                  Sale
+                </div>
+              {%- endif -%}
+            </div>
+
+            <div class="hw-card__body">
+              <h2 class="hw-card__title">
+                {{ product.title }}
+              </h2>
+
+              <div class="hw-card__prices">
+                {% if product.compare_at_price_max > product.price %}
+                  <span class="hw-card__price--old">
+                    {{ product.compare_at_price_max | money }}
+                  </span>
+                {% endif %}
+                <span class="hw-card__price">
+                  {{ product.price | money }}
+                </span>
+              </div>
+            </div>
+          </a>
+
+          <form method="post" action="/cart/add" class="hw-card__form" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <button type="submit" class="hw-card__btn">
+              In den Warenkorb
+            </button>
+          </form>
+        </article>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Produktgrid",
+  "settings": []
+}
+{% endschema %}
