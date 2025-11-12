@@ -1,29 +1,38 @@
+{%- comment -%}
+Suchseite im Produktlisten-Look.
+Zeigt nur Produkte (keine Seiten/Blogs), nutzt deine Karten.
+{%- endcomment -%}
+
 {% section 'header' %}
 
 <main class="container">
   {% if search.performed %}
-    <h1 class="search-title">
-      Suchergebnisse für „{{ search.terms }}“
-    </h1>
+    <h1 class="search-title">Suchergebnisse für „{{ search.terms }}“</h1>
 
-    {% assign product_results = search.results | where: 'object_type', 'product' %}
+    {%- assign product_results = search.results | where: 'object_type', 'product' -%}
 
     {% if product_results.size > 0 %}
       <div class="product-grid hw-search-grid">
-        {% for item in product_results %}
-          {% assign product = item %}
-          {% render 'reccard', product: product %}
-        {% endfor %}
+        {%- for item in product_results -%}
+          {%- assign product = item -%}
+          {%- if product.available -%}
+            {%- render 'reccard', product: product -%}
+          {%- else -%}
+            {%- render 'reccard', product: product -%}
+          {%- endif -%}
+        {%- endfor -%}
       </div>
     {% else %}
       <p>Keine passenden Produkte gefunden.</p>
-      <p>
-        Tipp: Probier einen allgemeineren Begriff (z. B. „Ferrari“, „Lamborghini“, „Treasure Hunt“).
-      </p>
+      <p style="opacity:.8">Tipp: Versuche allgemeiner zu suchen (z. B. „Ferrari“, „Lambo“, „Treasure Hunt“).</p>
     {% endif %}
   {% else %}
     <h1 class="search-title">Suche</h1>
-    <p>Gib oben einen Suchbegriff ein, um unsere Modelle zu durchsuchen.</p>
+    <form action="/search" method="get" role="search" style="display:flex;gap:10px;max-width:560px">
+      <input type="search" name="q" placeholder="Suche nach Modellen, Marken…"
+             style="flex:1;border:1px solid #ddd;border-radius:12px;padding:12px 14px">
+      <button class="btn btn--primary" type="submit">Suchen</button>
+    </form>
   {% endif %}
 </main>
 
@@ -31,12 +40,7 @@
 {% section 'footer' %}
 
 <style>
-  .search-title{
-    margin:18px 0 14px;
-    font-size:24px;
-    font-weight:800;
-    color:#0046BE;
-  }
+  .search-title{margin:18px 0 14px;font-size:24px;font-weight:800;color:#0046BE;}
   .hw-search-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
