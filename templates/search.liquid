@@ -1,46 +1,46 @@
-{% layout none %}
-<!doctype html>
-<html lang="de">
-  <head>
-    <meta charset="utf-8">
-    <title>Suche – {{ settings.shop_name | default: shop.name }}</title>
-    {{ content_for_header }}
-    {{ 'base.css' | asset_url | stylesheet_tag }}
-  </head>
-  <body>
-    {% section 'header' %}
+{% section 'header' %}
 
-    <main class="container" style="margin:16px auto 24px">
-      <h1 style="margin:0 0 12px;font-weight:900">Suche</h1>
+<main class="container">
+  {% if search.performed %}
+    <h1 class="search-title">
+      Suchergebnisse für „{{ search.terms }}“
+    </h1>
 
-      {% if search.performed and search.results_count > 0 %}
-        <p style="opacity:.7;margin:0 0 10px">{{ search.results_count }} Ergebnis(se) für „{{ search.terms }}“</p>
-        <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(180px,1fr));gap:16px">
-          {% for item in search.results %}
-            {% if item.object_type == 'product' %}
-              <a href="{{ item.url }}" class="product-card" style="display:block;border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff">
-                <img src="{{ item.featured_image | image_url: width: 360 }}" alt="{{ item.title | escape }}" style="width:100%;height:160px;object-fit:cover;border-radius:8px;background:#fff">
-                <div style="margin-top:8px;font-weight:800">{{ item.title }}</div>
-                <div style="color:#111;font-weight:800">
-                  {%- if item.compare_at_price > item.price -%}<s>{{ item.compare_at_price | money }}</s> {%- endif -%}
-                  {{ item.price | money }}
-                </div>
-              </a>
-            {% else %}
-              <a href="{{ item.url }}" style="display:block;padding:10px 12px;border:1px solid #eee;border-radius:10px;background:#fff">{{ item.title }}</a>
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% elsif search.performed %}
-        <p>Keine Ergebnisse für „{{ search.terms }}“.</p>
-      {% else %}
-        <form action="/search" method="get" role="search" style="display:flex;gap:10px;margin-top:10px">
-          <input type="search" name="q" placeholder="Suche nach Modellen, Marken…" style="flex:1;border:1px solid #ddd;border-radius:12px;padding:12px 14px">
-          <button class="btn btn--primary" type="submit">Suchen</button>
-        </form>
-      {% endif %}
-    </main>
+    {% assign product_results = search.results | where: 'object_type', 'product' %}
 
-    {% section 'footer' %}
-  </body>
-</html>
+    {% if product_results.size > 0 %}
+      <div class="product-grid hw-search-grid">
+        {% for item in product_results %}
+          {% assign product = item %}
+          {% render 'reccard', product: product %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Keine passenden Produkte gefunden.</p>
+      <p>
+        Tipp: Probier einen allgemeineren Begriff (z. B. „Ferrari“, „Lamborghini“, „Treasure Hunt“).
+      </p>
+    {% endif %}
+  {% else %}
+    <h1 class="search-title">Suche</h1>
+    <p>Gib oben einen Suchbegriff ein, um unsere Modelle zu durchsuchen.</p>
+  {% endif %}
+</main>
+
+{% section 'cart-drawer' %}
+{% section 'footer' %}
+
+<style>
+  .search-title{
+    margin:18px 0 14px;
+    font-size:24px;
+    font-weight:800;
+    color:#0046BE;
+  }
+  .hw-search-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+    gap:18px;
+    margin-bottom:40px;
+  }
+</style>
