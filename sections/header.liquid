@@ -4,7 +4,11 @@
     <div class="header__logo">
       {% if section.settings.logo %}
         <a href="/" class="header__heading-link">
-          <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}">
+          <img 
+  src="{{ section.settings.logo | image_url: width: 240 }}" 
+  alt="{{ shop.name }}" 
+  class="shop-logo"
+/>
         </a>
       {% else %}
         <a href="/" class="header__heading-link">{{ shop.name }}</a>
