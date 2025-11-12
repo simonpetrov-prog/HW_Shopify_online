@@ -1,383 +1,134 @@
-{% comment %}
-  HW Central Seller – Header (Logo • Menü • Suche • Warenkorb)
-  Section: sections/header.liquid
-{% endcomment %}
-
-{%- comment -%} HW MOBILE HEADER + DRAWER {%- endcomment -%}
-
-{%- comment -%} HW Central – Inline-Suche (Desktop & Mobile) {%- endcomment -%}
-<div class="hw-search-wrap">
-  <form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
-    <input
-      class="hw-inline-search__input"
-      type="search"
-      name="q"
-      placeholder="Suche…"
-      autocomplete="off"
-      aria-label="Suche"
-    >
-    <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">Suchen</button>
-  </form>
-</div>
-
-<style>
-/* Container verhindert Verschachtelungsprobleme */
-.hw-search-wrap{ display:flex; align-items:center; max-width:520px; width:100%; }
-
-/* Desktop */
-.hw-inline-search{
-  display:flex; align-items:center; gap:8px;
-  width:100%;
-}
-.hw-inline-search__input{
-  flex:1 1 auto; min-width:0;
-  border:1px solid var(--border,#e5e5e5);
-  border-radius:12px; padding:10px 12px;
-  font:inherit;
-}
-.hw-inline-search__btn{
-  border:0; border-radius:12px; padding:10px 14px;
-  font-weight:800; cursor:pointer;
-  background:var(--primary,#0046BE); color:#fff;
-}
-.hw-inline-search__btn:hover{ background:var(--accent,#FF6B00); }
-
-/* Mobile kompakter */
-@media (max-width: 768px){
-  .hw-search-wrap{ max-width:100%; }
-  .hw-inline-search__input{ padding:9px 10px; }
-  .hw-inline-search__btn{ padding:9px 12px; }
-}
-</style>
-
-
-
-<script>
-document.addEventListener('DOMContentLoaded', ()=>{
-  const drawer = document.getElementById('hw-mobile-drawer');
-  const openBtn = document.querySelector('[data-hw-mopen]');
-  const closeEls = document.querySelectorAll('[data-hw-mclose], .hw-m-overlay');
-  const overlay = document.querySelector('.hw-m-overlay');
-
-  function openMenu(){
-    drawer.classList.add('open');
-    overlay.classList.add('show');
-    document.documentElement.classList.add('menu-open');
-    document.body.classList.add('menu-open');
-    openBtn?.setAttribute('aria-expanded','true');
-    drawer?.setAttribute('aria-hidden','false');
-  }
-  function closeMenu(){
-    drawer.classList.remove('open');
-    overlay.classList.remove('show');
-    document.documentElement.classList.remove('menu-open');
-    document.body.classList.remove('menu-open');
-    openBtn?.setAttribute('aria-expanded','false');
-    drawer?.setAttribute('aria-hidden','true');
-  }
-
-  openBtn?.addEventListener('click', openMenu);
-  closeEls.forEach(el=> el.addEventListener('click', closeMenu));
-  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
-
-  // Cart-Badge aktuell halten (falls dein Cart-Event schon existiert)
-  document.addEventListener('hw:cart-updated', (ev)=>{
-    const count = ev?.detail?.item_count ?? null;
-    const badge = document.querySelector('[data-cart-count]');
-    if (!badge) return;
-    if (typeof count === 'number'){
-      badge.textContent = count;
-      if (count > 0) badge.removeAttribute('hidden'); else badge.setAttribute('hidden','hidden');
-    }
-  });
-});
-</script>
-
 <header class="header" role="banner">
-  <div class="header__inner">
-
-    {%- comment -%} Logo {%- endcomment -%}
-    <a class="header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
-      {% if section.settings.logo != blank %}
-        <img
-          src="{{ section.settings.logo | image_url: width: 300 }}"
-          alt="{{ shop.name | escape }}"
-          style="height: {{ section.settings.logo_height | default: 36 }}px; width: auto;"
-          loading="eager"
-        >
+  <div class="header__inner container">
+    <!-- 🔹 Logo -->
+    <div class="header__logo">
+      {% if section.settings.logo %}
+        <a href="/" class="header__heading-link">
+          <img src="{{ section.settings.logo | image_url: width: 200 }}" alt="{{ shop.name }}">
+        </a>
       {% else %}
-        <span class="header__logo-text">{{ shop.name }}</span>
+        <a href="/" class="header__heading-link">{{ shop.name }}</a>
       {% endif %}
-    </a>
+    </div>
 
-    {%- comment -%} Hauptmenü {%- endcomment -%}
-    <nav class="header__inline-menu" role="navigation" aria-label="Hauptmenü">
-  <ul class="list-menu">
-    <!-- Feste Buttons -->
-    <li>
-      <a href="/"
-         class="nav__link {% if template.name == 'index' %}is-active{% endif %}">
-        Startseite
-      </a>
-    </li>
-    <li>
-      <a href="/collections/all"
-         class="nav__link {% if template.name == 'collection' or request.path contains '/collections' %}is-active{% endif %}">
-        Produkte
-      </a>
-    </li>
+    <!-- 🔹 Navigation -->
+    <nav class="header__nav">
+      <a href="/" class="nav__link {% if template == 'index' %}is-active{% endif %}">Startseite</a>
+      <a href="/collections/all" class="nav__link {% if template contains 'collection' %}is-active{% endif %}">Produkte</a>
+    </nav>
 
-    <!-- Optional: zusätzlich ausgewähltes Menü anhängen -->
-    {% if section.settings.main_menu != blank %}
-      {% for link in section.settings.main_menu.links %}
-        <li>
-          <a class="nav__link{% if link.active %} is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
-        </li>
-      {% endfor %}
-    {% endif %}
-  </ul>
-</nav>
+    <!-- 🔹 Suchleiste -->
+    <div class="hw-search-wrap">
+      <form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
+        <input
+          class="hw-inline-search__input"
+          type="search"
+          name="q"
+          placeholder="Suche nach Modellen, Marken…"
+          autocomplete="off"
+          aria-label="Suche"
+        >
+        <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">Suchen</button>
+      </form>
+    </div>
 
-    {%- comment -%} Suche (zwischen Menü und Warenkorb) {%- endcomment -%}
-    <form class="hw-inline-search" action="/collections/all" method="get" ...>
-      <input
-        class="hw-inline-search__input"
-        type="search"
-        name="q"
-        placeholder="Suche…"
-        autocomplete="off"
-        aria-label="Suche"
-      >
-      <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">Suchen</button>
-    </form>
-
-    {%- comment -%} Warenkorb-Button (Badge nutzt data-cart-count) {%- endcomment -%}
-<button
-  type="button"
-  class="cart-btn"
-  data-cart-toggle
-  aria-label="Warenkorb öffnen">
-  <span class="cart-btn__text">Warenkorb</span>
-  <span class="cart-badge"
-        data-cart-count
-        {% unless cart.item_count > 0 %}hidden{% endunless %}>
-    {{ cart.item_count }}
-  </span>
-</button>
-
+    <!-- 🔹 Warenkorb-Button -->
+    <button
+      class="cart-btn"
+      data-cart-toggle
+      aria-label="Warenkorb öffnen">
+      <span class="cart-btn__text">Warenkorb</span>
+      <span class="cart-badge" data-cart-count {% unless cart.item_count > 0 %}hidden{% endunless %}>
+        {{ cart.item_count }}
+      </span>
+    </button>
   </div>
 </header>
 
 <style>
-/* ===== Header Layout & Basics ===== */
-.header{
-  position: sticky; top: 0; z-index: 30; background: #fff;
-  border-bottom: 1px solid var(--border, #e5e5e5);
+/* === HEADER BASE === */
+.header {
+  position: sticky; top: 0; z-index: 50;
+  background: #fff; border-bottom: 1px solid var(--border, #e5e5e5);
   transition: box-shadow .2s ease;
 }
-.header.is-scrolled{ box-shadow: 0 6px 22px rgba(0,0,0,.06); }
-
-.header__inner{
-  max-width: 1200px; margin: 0 auto; padding: 12px 20px;
-  display: flex; align-items: center; gap: 16px;
+.header.is-scrolled { box-shadow: 0 6px 22px rgba(0,0,0,.06); }
+.header__inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; padding: 12px 20px;
 }
 
-/* Logo */
-.header__logo{ display:inline-flex; align-items:center; min-width: 0; }
-.header__logo img{ display:block; height:auto; }
-.header__logo-text{ font-weight: 900; font-size: 18px; color: #111; }
-
-/* Menü */
-.header__inline-menu{ flex: 0 1 auto; }
-.header__inline-menu .list-menu{
-  display:flex; gap: 8px; align-items:center; margin:0; padding:0; list-style:none;
-  overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+/* === NAVIGATION === */
+.header__nav {
+  display: flex; align-items: center; gap: 12px;
 }
-.header__inline-menu .list-menu::-webkit-scrollbar{ display:none; }
-
-.nav__link{
-  padding:8px 12px; border-radius:10px; font-weight:800; color:#111;
-  position:relative; white-space:nowrap; display:inline-block;
+.nav__link {
+  padding: 8px 14px; border-radius: 10px; font-weight: 800; color: #111;
+  position: relative; text-decoration: none;
 }
-.nav__link:hover{ background: rgba(0,70,190,.08); color: var(--primary,#0046BE); }
-.nav__link.is-active{ color:#fff; background: var(--primary,#0046BE); }
-.nav__link.is-active::after{
-  content:''; position:absolute; left:0; right:0; margin:auto; bottom:-6px;
-  width:24px; height:3px; border-radius:2px; background: var(--accent,#FF6B00);
+.nav__link:hover { background: rgba(0,70,190,.08); color: var(--primary, #0046BE); }
+.nav__link.is-active { background: var(--primary, #0046BE); color: #fff; }
+.nav__link.is-active::after {
+  content: ''; position: absolute; bottom: -6px; left: 0; right: 0;
+  height: 3px; border-radius: 2px; background: var(--accent, #FF6B00);
+  width: 26px; margin: 0 auto;
 }
 
-/* Suche (zwischen Menü & Warenkorb) */
-.hw-inline-search{
-  display:flex; align-items:center; gap:8px;
-  background:#f6f7fb; border:1px solid #e5e7eb; border-radius:999px;
-  padding:6px 8px; min-width:220px; max-width:360px; flex: 0 1 360px;
+/* === SEARCH === */
+.hw-search-wrap { flex: 1 1 auto; max-width: 400px; }
+.hw-inline-search {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
 }
-.hw-inline-search:focus-within{ border-color: var(--primary,#0046BE); box-shadow: 0 0 0 3px rgba(0,70,190,.12); }
-.hw-inline-search__input{
-  flex:1; border:0; background:transparent; outline:none;
-  font-size:14px; color:#111; min-width:120px;
+.hw-inline-search__input {
+  flex: 1; border: 1px solid var(--border,#e5e5e5);
+  border-radius: 12px; padding: 9px 12px; font-size: 15px;
 }
-.hw-inline-search__input::placeholder{ color:#6b7280; }
-.hw-inline-search__btn{
-  background: var(--primary,#0046BE); color:#fff; border:0; border-radius:999px;
-  padding:8px 12px; font-weight:800; cursor:pointer; transition:.15s;
+.hw-inline-search__btn {
+  border: 0; border-radius: 12px; padding: 9px 14px;
+  background: var(--primary,#0046BE); color: #fff; font-weight: 800; cursor: pointer;
 }
-.hw-inline-search__btn:hover{ filter:brightness(.95); }
-.hw-inline-search__btn:active{ transform: translateY(1px); }
+.hw-inline-search__btn:hover { background: var(--accent,#FF6B00); }
 
-
-/* Mobile Verhalten */
-@media (max-width: 768px){
-  .header__inner{ gap: 10px; padding: 10px 12px; }
-  .hw-inline-search{
-    min-width:0; width:42px; padding:6px; gap:0; overflow:hidden;
-    border-radius:12px; transition: width .18s ease, padding .18s ease;
-  }
-  .hw-inline-search__input{ width:0; opacity:0; transition: opacity .12s; }
-  .hw-inline-search.hw--open{ width:min(76vw,420px); padding:6px 8px; gap:8px; }
-  .hw-inline-search.hw--open .hw-inline-search__input{ width:auto; opacity:1; }
-  .cart-btn{ padding:8px 14px; border-radius:10px; }
-  .cart-btn__text{ font-size:14px; }
-}
-
-/* Menü-Links: Basis + Unterstrich immer exakt zentriert */
-.header__inline-menu .list-menu a.nav__link{
+/* === CART BUTTON === */
+.cart-btn {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--primary,#0046BE); color: #fff;
+  border: 0; border-radius: 12px; padding: 9px 14px;
+  font-weight: 800; cursor: pointer;
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 12px 10px;     /* etwas Platz unten für die Linie */
-  border-radius: 10px;
-  font-weight: 800;
-  color: #111;
-  white-space: nowrap;
 }
-
-.header__inline-menu .list-menu a.nav__link:hover{
-  background: rgba(0,70,190,.08);
-  color: var(--primary,#0046BE);
+.cart-btn:hover { filter: brightness(.96); }
+.cart-badge {
+  position: absolute; right: -6px; top: -8px;
+  background: var(--accent,#FF6B00); color: #fff;
+  border-radius: 999px; padding: 2px 6px;
+  font-size: 12px; font-weight: 800; display: inline-flex;
+  align-items: center; justify-content: center;
 }
+.cart-badge[hidden] { display: none !important; }
 
-/* Aktiver Zustand + Mini-Leiste perfekt mittig */
-.header__inline-menu .list-menu a.nav__link.is-active{
-  color: #fff;
-  background: var(--primary,#0046BE);
-}
-
-.header__inline-menu .list-menu a.nav__link.is-active::after{
-  content: "";
-  position: absolute;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: -6px;               /* Abstand unter dem Chip */
-  margin: 0 auto !important;  /* zentriert */
-  width: 24px;                /* kurze, elegante Linie */
-  height: 3px;
-  border-radius: 2px;
-  background: var(--accent,#FF6B00);
-  transform: none !important; /* alte translate-Fixes aushebeln */
-}
-
+/* === MOBILE LAYOUT === */
 @media (max-width: 768px){
-  .hw-inline-search{
-    min-width:0;
-    width:36px; /* kleiner */
-    padding:4px;
-    gap:0;
-    overflow:hidden;
-    border-radius:10px;
-    transition: width .18s ease, padding .18s ease;
-  }
-  .hw-inline-search__btn{
-    padding:6px 8px;
-    font-size:12px;
-  }
-  .hw-inline-search.hw--open{
-    width:min(72vw, 320px);
-    padding:6px 8px;
-    gap:6px;
-  }
-  .hw-inline-search__input{ font-size:13px; }
+  .header__inner { flex-wrap: wrap; gap: 10px; }
+  .header__nav { order: 3; width: 100%; justify-content: center; }
+  .hw-search-wrap { order: 2; width: 100%; max-width: 100%; }
+  .cart-btn { order: 1; margin-left: auto; }
 }
-
-/* --- Desktop Layout justieren --- */
-.header__inner{
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start; /* Start, damit Logo links bleibt */
-  gap: 16px;
-}
-
-/* Menü & Suche weiter rechts positionieren */
-.header__inline-menu{
-  margin-left: auto; /* Menü rückt auf rechte Seite */
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.hw-inline-search{
-  flex: 0 1 280px;
-  margin-left: 10px;
-}
-
-<!-- Warenkorb-Button -->
-<a href="{{ routes.cart_url }}"
-   class="cart-btn"
-   data-cart-toggle
-   aria-controls="cart-drawer"
-   aria-expanded="false">
-  <span class="cart-btn__text">Warenkorb</span>
-  <span class="cart-badge" data-cart-count {% unless cart.item_count > 0 %}hidden{% endunless %}>
-    {{ cart.item_count }}
-  </span>
-</a>
-
 </style>
 
 <script>
-/* Shadow beim Scrollen */
-document.addEventListener('scroll', function(){
-  var h = document.querySelector('.header');
-  if(!h) return;
-  h.classList.toggle('is-scrolled', window.scrollY > 8);
+document.addEventListener('scroll',()=>{
+  const h=document.querySelector('.header');
+  if(h){h.classList.toggle('is-scrolled',window.scrollY>8);}
 });
-
-/* Mobile: Suchleiste aufklappen */
-(function(){
-  var form = document.querySelector('.hw-inline-search');
-  if(!form) return;
-  var input = form.querySelector('.hw-inline-search__input');
-  var btn = form.querySelector('.hw-inline-search__btn');
-
-  function isMobile(){ return window.matchMedia('(max-width: 768px)').matches; }
-  function open(){ form.classList.add('hw--open'); setTimeout(function(){ input && input.focus(); }, 30); }
-  function close(){ form.classList.remove('hw--open'); }
-
-  btn.addEventListener('click', function(e){
-    if(isMobile() && !form.classList.contains('hw--open')){
-      e.preventDefault(); open();
-    }
-  });
-  input.addEventListener('focus', function(){ if(isMobile()) open(); });
-  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
-  document.addEventListener('click', function(e){
-    if(isMobile() && !form.contains(e.target)) close();
-  });
-})();
 </script>
 
 {% schema %}
 {
   "name": "Header",
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo" },
-    { "type": "range", "id": "logo_height", "label": "Logo-Höhe", "min": 24, "max": 64, "step": 4, "unit": "px", "default": 36 },
-    { "type": "link_list", "id": "main_menu", "label": "Hauptmenü" }
+    { "type": "image_picker", "id": "logo", "label": "Logo" }
   ]
 }
 {% endschema %}
