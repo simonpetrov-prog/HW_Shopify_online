@@ -5,6 +5,52 @@
 
 {%- comment -%} HW MOBILE HEADER + DRAWER {%- endcomment -%}
 
+{%- comment -%} HW Central – Inline-Suche (Desktop & Mobile) {%- endcomment -%}
+<div class="hw-search-wrap">
+  <form class="hw-inline-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
+    <input
+      class="hw-inline-search__input"
+      type="search"
+      name="q"
+      placeholder="Suche…"
+      autocomplete="off"
+      aria-label="Suche"
+    >
+    <button class="hw-inline-search__btn" type="submit" aria-label="Suchen">Suchen</button>
+  </form>
+</div>
+
+<style>
+/* Container verhindert Verschachtelungsprobleme */
+.hw-search-wrap{ display:flex; align-items:center; max-width:520px; width:100%; }
+
+/* Desktop */
+.hw-inline-search{
+  display:flex; align-items:center; gap:8px;
+  width:100%;
+}
+.hw-inline-search__input{
+  flex:1 1 auto; min-width:0;
+  border:1px solid var(--border,#e5e5e5);
+  border-radius:12px; padding:10px 12px;
+  font:inherit;
+}
+.hw-inline-search__btn{
+  border:0; border-radius:12px; padding:10px 14px;
+  font-weight:800; cursor:pointer;
+  background:var(--primary,#0046BE); color:#fff;
+}
+.hw-inline-search__btn:hover{ background:var(--accent,#FF6B00); }
+
+/* Mobile kompakter */
+@media (max-width: 768px){
+  .hw-search-wrap{ max-width:100%; }
+  .hw-inline-search__input{ padding:9px 10px; }
+  .hw-inline-search__btn{ padding:9px 12px; }
+}
+</style>
+
+
 <!-- Mobile Header (nur ≤768px sichtbar) -->
 <header class="hw-m-header" role="banner" aria-label="Mobile Header">
   <div class="hw-m-header__inner">
