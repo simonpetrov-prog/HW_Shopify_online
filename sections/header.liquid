@@ -61,7 +61,6 @@
 </header>
 
 <style>
-/* Basisfarben (nutzt deine Theme-Variablen, falls vorhanden) */
 :root{
   --primary:#0046BE;
   --accent:#FF6B00;
@@ -70,7 +69,8 @@
   --bg:#ffffff;
 }
 
-/* Header-Rahmen & Shadow beim Scrollen (JS in theme.liquid nutzt .header) */
+/* DEBUG: falls du checken willst, ob dieses CSS geladen wird, 
+   kannst du kurz border:2px solid red aktivieren */
 .header{
   position:sticky;
   top:0;
@@ -83,38 +83,40 @@
   box-shadow:0 6px 22px rgba(0,0,0,.08);
 }
 
-/* Innenaufbau */
+/* Grundlayout */
 .header__inner{
   max-width:1200px;
   margin:0 auto;
-  padding:10px 16px;
+  padding:8px 12px;
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:12px;
 }
 
-/* Logo */
+/* Logo immer klein halten */
+.header__logo{
+  flex:0 0 auto;
+}
 .header__logo img{
   display:block;
   max-height:40px;
+  max-width:120px;
   width:auto;
-}
-.logo-text{
-  font-weight:900;
-  font-size:18px;
+  height:auto;
 }
 
-/* Tabs Startseite / Produkte */
+/* Tabs */
 .header__nav{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
+  flex:0 0 auto;
 }
 .nav__link{
-  padding:8px 18px;
+  padding:7px 16px;
   border-radius:999px;
   font-weight:800;
-  font-size:15px;
+  font-size:14px;
   color:var(--text);
   position:relative;
   cursor:pointer;
@@ -133,14 +135,14 @@
   position:absolute;
   left:50%;
   transform:translateX(-50%);
-  bottom:-6px;
-  width:28px;
+  bottom:-5px;
+  width:26px;
   height:3px;
   border-radius:2px;
   background:var(--accent);
 }
 
-/* Suche im Header */
+/* Suche */
 .hw-inline-search{
   display:flex;
   align-items:center;
@@ -152,7 +154,7 @@
   flex:1 1 auto;
   border:1px solid var(--border);
   border-radius:999px;
-  padding:9px 14px;
+  padding:8px 14px;
   font-size:14px;
   outline:none;
 }
@@ -163,12 +165,12 @@
 .hw-inline-search__btn{
   border-radius:999px;
   border:0;
-  padding:8px 16px;
+  padding:7px 14px;
   font-weight:800;
   background:var(--primary);
   color:#fff;
   cursor:pointer;
-  transition:filter .12s ease, transform .06s ease;
+  white-space:nowrap;
 }
 .hw-inline-search__btn:hover{
   filter:brightness(.96);
@@ -179,9 +181,9 @@
   position:relative;
   display:inline-flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
   border-radius:999px;
-  padding:8px 14px;
+  padding:7px 13px;
   background:var(--primary);
   color:#fff;
   border:0;
@@ -193,38 +195,41 @@
   filter:brightness(.96);
 }
 .cart-badge{
-  min-width:22px;
-  height:22px;
+  min-width:20px;
+  height:20px;
   border-radius:999px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   background:#000;
   color:#fff;
-  font-size:12px;
-  padding:0 6px;
+  font-size:11px;
+  padding:0 5px;
 }
 .cart-badge.is-hidden{
   display:none;
 }
 
-/* ===== Responsive Layout ===== */
-
-/* Tablet: Header in zwei Zeilen, Suche mittig */
+/* ================== Tablet (<= 900px) ================== */
 @media (max-width: 900px){
   .header__inner{
     flex-wrap:wrap;
     row-gap:8px;
   }
 
-  .header__logo{
-    flex:0 0 auto;
+  .header__logo img{
+    max-height:32px;
+    max-width:96px;
   }
 
+  /* Tabs mittig in eigener Zeile */
   .header__nav{
-    flex:0 0 auto;
+    order:2;
+    width:100%;
+    justify-content:center;
   }
 
+  /* Suche volle Breite darunter */
   .hw-inline-search{
     order:3;
     width:100%;
@@ -236,34 +241,29 @@
   }
 }
 
-/* Phone: Logo klein, Suche kompakter, Tabs zentriert */
+/* ================== Handy (<= 640px) ================== */
 @media (max-width: 640px){
   .header__inner{
-    flex-wrap:wrap;
-    justify-content:space-between;
+    padding:8px 10px;
   }
 
   .header__logo img{
-    max-height:30px;
+    max-height:26px;
+    max-width:80px;
   }
 
-  .hw-inline-search{
-    order:3;
-    width:100%;
+  .nav__link{
+    font-size:13px;
+    padding:6px 14px;
   }
 
   .hw-inline-search__input{
-    font-size:15px;
-    padding:8px 12px;
+    font-size:14px;
+    padding:7px 12px;
   }
 
-  .header__nav{
-    order:2;
-    width:100%;
-    justify-content:center;
-  }
-
-  .cart-btn .cart-btn__text{
+  /* Warenkorb kompakter, Text ausblenden, nur Icon/Text kurz */
+  .cart-btn__text{
     display:none;
   }
 }
