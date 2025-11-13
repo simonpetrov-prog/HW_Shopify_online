@@ -96,6 +96,80 @@
 
 /* no horizontal jiggle on iOS */
 html,body{overflow-x:hidden}
+
+/* ===== HW Header: Tablet/Mobile Fix ===== */
+
+/* Tablet: Header in 2 Zeilen, Logo klein, Suche volle Breite */
+@media (max-width: 1024px){
+  .header__inner{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap: wrap;      /* bricht um */
+  }
+
+  /* Logo kleiner halten */
+  .header__logo img{
+    max-height: 36px !important;
+    height:auto;
+    width:auto;
+  }
+
+  /* Warenkorb / Aktionen rechts oben halten */
+  .header__icons,
+  .header-actions,
+  .cart-btn{
+    margin-left:auto;
+  }
+
+  /* Suche in eigene Zeile, volle Breite */
+  .hw-inline-search{
+    order: 3;
+    width: 100%;
+    display:flex;
+    gap:8px;
+  }
+  .hw-inline-search__input{
+    flex:1 1 auto;
+    height: 44px;
+  }
+
+  /* Navi mittig in Zeile darunter */
+  .header__inline-menu,
+  .header__nav{
+    order: 4;
+    width: 100%;
+    display:flex;
+    justify-content:center;
+  }
+}
+
+/* Phone: noch kompakter */
+@media (max-width: 680px){
+  .header__logo img{
+    max-height: 28px !important;
+  }
+
+  /* Suche kompakter */
+  .hw-inline-search__input{ height: 40px; font-size: 16px; }
+  .hw-inline-search__btn{ padding: 8px 12px; }
+
+  /* Cart-Badge im Button, Text ausblenden falls eng */
+  .cart-btn .cart-btn__text{ display:none; }
+  .cart-badge{
+    position:absolute; right:-6px; top:-6px;
+    min-width:20px; height:20px; font-size:11px;
+  }
+
+  /* Tabs: aktiver Mini-Strich exakt zentriert */
+  .nav__link.is-active::after{
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 24px; height:3px; border-radius:2px;
+  }
+}
+
 </style>
 
 <script>
