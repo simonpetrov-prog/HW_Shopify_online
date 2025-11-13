@@ -69,8 +69,7 @@
   --bg:#ffffff;
 }
 
-/* DEBUG: falls du checken willst, ob dieses CSS geladen wird, 
-   kannst du kurz border:2px solid red aktivieren */
+/* Header-Grundlayout */
 .header{
   position:sticky;
   top:0;
@@ -83,29 +82,29 @@
   box-shadow:0 6px 22px rgba(0,0,0,.08);
 }
 
-/* Grundlayout */
 .header__inner{
   max-width:1200px;
   margin:0 auto;
   padding:8px 12px;
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
+  flex-wrap:nowrap; /* alles in EINER Zeile halten */
 }
 
-/* Logo immer klein halten */
+/* Logo */
 .header__logo{
   flex:0 0 auto;
 }
 .header__logo img{
   display:block;
-  max-height:40px;
-  max-width:120px;
+  max-height:34px;
+  max-width:110px;
   width:auto;
   height:auto;
 }
 
-/* Tabs */
+/* Tabs Startseite / Produkte */
 .header__nav{
   display:flex;
   align-items:center;
@@ -113,7 +112,7 @@
   flex:0 0 auto;
 }
 .nav__link{
-  padding:7px 16px;
+  padding:6px 14px;
   border-radius:999px;
   font-weight:800;
   font-size:14px;
@@ -135,26 +134,26 @@
   position:absolute;
   left:50%;
   transform:translateX(-50%);
-  bottom:-5px;
-  width:26px;
+  bottom:-4px;
+  width:24px;
   height:3px;
   border-radius:2px;
   background:var(--accent);
 }
 
-/* Suche */
+/* Suche in der Mitte */
 .hw-inline-search{
   display:flex;
   align-items:center;
-  gap:8px;
-  flex:1 1 auto;
-  max-width:420px;
+  gap:6px;
+  flex:0 1 260px;          /* kleiner & flexibler */
+  max-width:280px;
 }
 .hw-inline-search__input{
   flex:1 1 auto;
   border:1px solid var(--border);
   border-radius:999px;
-  padding:8px 14px;
+  padding:6px 12px;
   font-size:14px;
   outline:none;
 }
@@ -165,7 +164,7 @@
 .hw-inline-search__btn{
   border-radius:999px;
   border:0;
-  padding:7px 14px;
+  padding:6px 12px;
   font-weight:800;
   background:var(--primary);
   color:#fff;
@@ -176,20 +175,21 @@
   filter:brightness(.96);
 }
 
-/* Warenkorb-Button */
+/* Warenkorb-Button rechts */
 .cart-btn{
   position:relative;
   display:inline-flex;
   align-items:center;
   gap:8px;
   border-radius:999px;
-  padding:7px 13px;
+  padding:6px 12px;
   background:var(--primary);
   color:#fff;
   border:0;
   font-weight:800;
   cursor:pointer;
   white-space:nowrap;
+  flex:0 0 auto;
 }
 .cart-btn:hover{
   filter:brightness(.96);
@@ -213,31 +213,15 @@
 /* ================== Tablet (<= 900px) ================== */
 @media (max-width: 900px){
   .header__inner{
-    flex-wrap:wrap;
-    row-gap:8px;
+    gap:8px;
   }
-
   .header__logo img{
-    max-height:32px;
+    max-height:30px;
     max-width:96px;
   }
-
-  /* Tabs mittig in eigener Zeile */
-  .header__nav{
-    order:2;
-    width:100%;
-    justify-content:center;
-  }
-
-  /* Suche volle Breite darunter */
   .hw-inline-search{
-    order:3;
-    width:100%;
-    max-width:none;
-  }
-
-  .cart-btn{
-    margin-left:auto;
+    flex:1 1 180px;
+    max-width:220px;
   }
 }
 
@@ -245,6 +229,7 @@
 @media (max-width: 640px){
   .header__inner{
     padding:8px 10px;
+    gap:8px;
   }
 
   .header__logo img{
@@ -252,17 +237,18 @@
     max-width:80px;
   }
 
-  .nav__link{
-    font-size:13px;
-    padding:6px 14px;
+  /* Tabs auf Handy ausblenden → Burger übernimmt Navigation */
+  .header__nav{
+    display:none;
   }
 
-  .hw-inline-search__input{
-    font-size:14px;
-    padding:7px 12px;
+  /* Suche etwas breiter, aber eine Zeile */
+  .hw-inline-search{
+    flex:1 1 auto;
+    max-width:none;
   }
 
-  /* Warenkorb kompakter, Text ausblenden, nur Icon/Text kurz */
+  /* Warenkorb kompakter: nur Icon / kurzer Text */
   .cart-btn__text{
     display:none;
   }
