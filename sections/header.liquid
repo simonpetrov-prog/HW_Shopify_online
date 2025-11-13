@@ -1,189 +1,283 @@
-{% comment %} HW Central Seller – Custom Header {% endcomment %}
-<header class="hw-header" role="banner">
-  <div class="hw-header__inner">
-
-    <!-- Logo -->
-    <a class="hw-logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
-      {% if section.settings.logo != blank %}
-        <img class="hw-logo__img"
-             src="{{ section.settings.logo | image_url: width: 240 }}"
-             alt="{{ shop.name }}">
+<header class="header">
+  <div class="header__inner">
+    {%- comment -%} Logo {%- endcomment -%}
+    <a href="/" class="header__logo">
+      {% if section.settings.logo %}
+        <img
+          src="{{ section.settings.logo | image_url: width: 200 }}"
+          alt="{{ shop.name }}"
+          loading="lazy"
+        >
       {% else %}
-        <span class="hw-logo__text">{{ shop.name }}</span>
+        <span class="logo-text">{{ shop.name }}</span>
       {% endif %}
     </a>
 
-    <!-- Nav -->
-    <nav class="hw-nav" aria-label="Hauptmenü">
-      {% assign on_home = template.name == 'index' %}
-      {% assign on_products = template.name == 'collection' or request.path contains '/collections' %}
-      <a href="{{ routes.root_url }}" class="hw-nav__link {% if on_home %}is-active{% endif %}">Startseite</a>
-      <a href="/collections/all" class="hw-nav__link {% if on_products %}is-active{% endif %}">Produkte</a>
+    {%- comment -%} Navigation: Startseite / Produkte {%- endcomment -%}
+    <nav class="header__nav">
+      <a href="/"
+         class="nav__link{% if template == 'index' %} is-active{% endif %}">
+        Startseite
+      </a>
+      <a href="/collections/all"
+         class="nav__link{% if template contains 'collection' %} is-active{% endif %}">
+        Produkte
+      </a>
     </nav>
 
-    <!-- Suche -->
-    <form class="hw-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
-      <input class="hw-search__input" type="search" name="q" placeholder="Suche…" autocomplete="off">
-      <button class="hw-search__btn" type="submit">Suchen</button>
+    {%- comment -%} Suche {%- endcomment -%}
+    <form class="hw-inline-search"
+          action="/search"
+          method="get"
+          role="search"
+          aria-label="Shop-Suche">
+      <input
+        class="hw-inline-search__input"
+        type="search"
+        name="q"
+        placeholder="Suche nach Modellen, Marken…"
+        autocomplete="off"
+        aria-label="Suche"
+        value="{{ search.terms | escape }}"
+      >
+      <button class="hw-inline-search__btn" type="submit">
+        Suchen
+      </button>
     </form>
 
-    <!-- Warenkorb -->
-    <button class="hw-cart" type="button" aria-label="Warenkorb öffnen" data-cart-toggle>
-      <span class="hw-cart__label">Warenkorb</span>
-      <span class="hw-cart__badge" data-cart-count {% unless cart.item_count > 0 %}hidden{% endunless %}>
+    {%- comment -%} Warenkorb-Button (öffnet Drawer via data-cart-toggle) {%- endcomment -%}
+    <button
+      type="button"
+      class="cart-btn"
+      data-cart-toggle
+      aria-label="Warenkorb öffnen">
+      <span class="cart-btn__text">Warenkorb</span>
+      <span class="cart-badge{% if cart.item_count == 0 %} is-hidden{% endif %}"
+            data-cart-count>
         {{ cart.item_count }}
       </span>
     </button>
-
   </div>
 </header>
 
 <style>
-/* ==== Layout ==== */
-.hw-header{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--border, #e5e5e5);z-index:40;transition:box-shadow .2s}
-.hw-header.is-scrolled{box-shadow:0 6px 22px rgba(0,0,0,.06)}
-.hw-header__inner{max-width:1200px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px}
+/* Basisfarben (nutzt deine Theme-Variablen, falls vorhanden) */
+:root{
+  --primary:#0046BE;
+  --accent:#FF6B00;
+  --text:#111111;
+  --border:#e5e5e5;
+  --bg:#ffffff;
+}
+
+/* Header-Rahmen & Shadow beim Scrollen (JS in theme.liquid nutzt .header) */
+.header{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  transition:box-shadow .2s ease;
+}
+.header.is-scrolled{
+  box-shadow:0 6px 22px rgba(0,0,0,.08);
+}
+
+/* Innenaufbau */
+.header__inner{
+  max-width:1200px;
+  margin:0 auto;
+  padding:10px 16px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
 
 /* Logo */
-.hw-logo{display:block;flex:0 0 auto}
-.hw-logo__img{max-height:56px;width:auto;object-fit:contain}
-.hw-logo__text{font-weight:900;font-size:18px}
-
-/* Nav */
-.hw-nav{display:flex;gap:10px;align-items:center}
-.hw-nav__link{position:relative;padding:8px 12px;border-radius:999px;font-weight:800;color:#111}
-.hw-nav__link:hover{background:rgba(0,70,190,.08);color:var(--primary,#0046BE)}
-/* Mini-Strich perfekt zentriert */
-.hw-nav__link.is-active{background:var(--primary,#0046BE);color:#fff}
-.hw-nav__link.is-active::after{
-  content:"";position:absolute;left:0;right:0;bottom:-6px;margin:0 auto;width:24px;height:3px;border-radius:2px;
-  background:var(--accent,#FF6B00);
+.header__logo img{
+  display:block;
+  max-height:40px;
+  width:auto;
+}
+.logo-text{
+  font-weight:900;
+  font-size:18px;
 }
 
-/* Suche */
-.hw-search{display:flex;align-items:center;gap:8px;flex:1 1 420px;min-width:220px}
-.hw-search__input{
-  flex:1;border:1px solid var(--border,#e5e5e5);border-radius:14px;padding:10px 12px;outline:none
+/* Tabs Startseite / Produkte */
+.header__nav{
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
-.hw-search__input:focus{border-color:var(--primary,#0046BE)}
-.hw-search__btn{
-  border:1px solid var(--primary,#0046BE);background:#fff;color:var(--primary,#0046BE);
-  border-radius:12px;padding:8px 12px;font-weight:800;cursor:pointer
+.nav__link{
+  padding:8px 18px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:15px;
+  color:var(--text);
+  position:relative;
+  cursor:pointer;
+  white-space:nowrap;
+  background:#f3f4f6;
 }
-.hw-search__btn:hover{background:var(--primary,#0046BE);color:#fff}
-
-/* Cart */
-.hw-cart{
-  display:inline-flex;align-items:center;gap:10px;background:var(--primary,#0046BE);color:#fff;
-  border:0;border-radius:12px;padding:9px 14px;font-weight:800;cursor:pointer
+.nav__link:hover{
+  background:rgba(0,70,190,.08);
 }
-.hw-cart:hover{filter:brightness(.96)}
-.hw-cart__badge{
-  min-width:22px;height:22px;border-radius:999px;background:#000;color:#fff;
-  display:inline-flex;align-items:center;justify-content:center;font-size:12px;padding:0 6px
+.nav__link.is-active{
+  background:var(--primary);
+  color:#fff;
 }
-
-/* ==== Mobile ==== */
-@media (max-width: 768px){
-  .hw-header__inner{gap:10px;padding:10px 12px}
-  .hw-logo__img{max-height:40px}
-  .hw-search{flex:1 1 40%;min-width:120px}
-  .hw-search__input{padding:8px 10px}
-  .hw-nav{gap:6px}
-  .hw-nav__link{padding:6px 10px}
-  .hw-cart{padding:8px 12px}
+.nav__link.is-active::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%);
+  bottom:-6px;
+  width:28px;
+  height:3px;
+  border-radius:2px;
+  background:var(--accent);
 }
 
-/* no horizontal jiggle on iOS */
-html,body{overflow-x:hidden}
+/* Suche im Header */
+.hw-inline-search{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex:1 1 auto;
+  max-width:420px;
+}
+.hw-inline-search__input{
+  flex:1 1 auto;
+  border:1px solid var(--border);
+  border-radius:999px;
+  padding:9px 14px;
+  font-size:14px;
+  outline:none;
+}
+.hw-inline-search__input:focus{
+  border-color:var(--primary);
+  box-shadow:0 0 0 1px rgba(0,70,190,.15);
+}
+.hw-inline-search__btn{
+  border-radius:999px;
+  border:0;
+  padding:8px 16px;
+  font-weight:800;
+  background:var(--primary);
+  color:#fff;
+  cursor:pointer;
+  transition:filter .12s ease, transform .06s ease;
+}
+.hw-inline-search__btn:hover{
+  filter:brightness(.96);
+}
 
-/* ===== HW Header: Tablet/Mobile Fix ===== */
+/* Warenkorb-Button */
+.cart-btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  border-radius:999px;
+  padding:8px 14px;
+  background:var(--primary);
+  color:#fff;
+  border:0;
+  font-weight:800;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.cart-btn:hover{
+  filter:brightness(.96);
+}
+.cart-badge{
+  min-width:22px;
+  height:22px;
+  border-radius:999px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+  color:#fff;
+  font-size:12px;
+  padding:0 6px;
+}
+.cart-badge.is-hidden{
+  display:none;
+}
 
-/* Tablet: Header in 2 Zeilen, Logo klein, Suche volle Breite */
-@media (max-width: 1024px){
+/* ===== Responsive Layout ===== */
+
+/* Tablet: Header in zwei Zeilen, Suche mittig */
+@media (max-width: 900px){
   .header__inner{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-wrap: wrap;      /* bricht um */
+    flex-wrap:wrap;
+    row-gap:8px;
   }
 
-  /* Logo kleiner halten */
-  .header__logo img{
-    max-height: 36px !important;
-    height:auto;
-    width:auto;
+  .header__logo{
+    flex:0 0 auto;
   }
 
-  /* Warenkorb / Aktionen rechts oben halten */
-  .header__icons,
-  .header-actions,
+  .header__nav{
+    flex:0 0 auto;
+  }
+
+  .hw-inline-search{
+    order:3;
+    width:100%;
+    max-width:none;
+  }
+
   .cart-btn{
     margin-left:auto;
   }
+}
 
-  /* Suche in eigene Zeile, volle Breite */
+/* Phone: Logo klein, Suche kompakter, Tabs zentriert */
+@media (max-width: 640px){
+  .header__inner{
+    flex-wrap:wrap;
+    justify-content:space-between;
+  }
+
+  .header__logo img{
+    max-height:30px;
+  }
+
   .hw-inline-search{
-    order: 3;
-    width: 100%;
-    display:flex;
-    gap:8px;
-  }
-  .hw-inline-search__input{
-    flex:1 1 auto;
-    height: 44px;
+    order:3;
+    width:100%;
   }
 
-  /* Navi mittig in Zeile darunter */
-  .header__inline-menu,
+  .hw-inline-search__input{
+    font-size:15px;
+    padding:8px 12px;
+  }
+
   .header__nav{
-    order: 4;
-    width: 100%;
-    display:flex;
+    order:2;
+    width:100%;
     justify-content:center;
   }
-}
 
-/* Phone: noch kompakter */
-@media (max-width: 680px){
-  .header__logo img{
-    max-height: 28px !important;
-  }
-
-  /* Suche kompakter */
-  .hw-inline-search__input{ height: 40px; font-size: 16px; }
-  .hw-inline-search__btn{ padding: 8px 12px; }
-
-  /* Cart-Badge im Button, Text ausblenden falls eng */
-  .cart-btn .cart-btn__text{ display:none; }
-  .cart-badge{
-    position:absolute; right:-6px; top:-6px;
-    min-width:20px; height:20px; font-size:11px;
-  }
-
-  /* Tabs: aktiver Mini-Strich exakt zentriert */
-  .nav__link.is-active::after{
-    left: 50% !important;
-    right: auto !important;
-    transform: translateX(-50%) !important;
-    width: 24px; height:3px; border-radius:2px;
+  .cart-btn .cart-btn__text{
+    display:none;
   }
 }
-
 </style>
-
-<script>
-document.addEventListener('scroll',()=>{
-  const h=document.querySelector('.hw-header');
-  if(h) h.classList.toggle('is-scrolled', window.scrollY>8);
-});
-</script>
 
 {% schema %}
 {
   "name": "Header",
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo" }
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    }
   ]
 }
 {% endschema %}
