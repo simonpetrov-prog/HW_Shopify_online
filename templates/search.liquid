@@ -1,95 +1,151 @@
 {% comment %}
-Suchseite im Produktlisten-Look:
-- Zeigt nur Produkte (object_type == 'product')
-- Titel & Treffertext stehen ÜBER dem Grid
-- Unten: "Was interessant sein könnte" (Empfehlungen)
+  Suche = gleiche Optik wie Produktseite
+
+  - Wenn ein Suchbegriff da ist → nur passende Produkte
+  - Wenn kein Suchbegriff / Seite frisch geladen → alle Produkte aus der Haupt-Collection
 {% endcomment %}
 
-{% section 'header' %}
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8">
+    <title>Produkte – {{ settings.shop_name | default: shop.name }}</title>
+    {{ content_for_header }}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+  </head>
+  <body>
+    {% section 'header' %}
 
-<main class="container" style="margin:16px auto 32px">
-  {% if search.performed %}
-    <h1 class="search-title" style="margin:0 0 6px; font-size:26px; font-weight:900; color:#0046BE;">
-      Suchergebnisse für „{{ search.terms }}“
-    </h1>
+    <main class="container" style="margin:16px auto 32px">
+      {%- comment -%} Überschrift immer gleich wie Produktseite {%- endcomment -%}
+      <h1 style="margin:0 0 12px;font-weight:900;font-size:26px;">Produkte</h1>
 
-    {% paginate search.results by 24 %}
-      {% assign product_results = search.results | where: 'object_type', 'product' %}
+      {%- comment -%}
+        Suchleiste oben – dieselbe Logik wie im Header,
+        aber zusätzlich direkt auf der Seite.
+      {%- endcomment -%}
+      <form action="/search" method="get" role="search" style="display:flex;gap:10px;margin:10px 0 18px;">
+        <input
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="Suche nach Modellen, Marken…"
+          style="flex:1;border:1px solid #ddd;border-radius:999px;padding:10px 14px;"
+        >
+        <button class="btn btn--primary" type="submit">Suchen</button>
+      </form>
 
-      {% if product_results.size > 0 %}
-        <p class="search-meta" style="opacity:.75; margin:0 0 14px;">
-          {{ product_results.size }} passende Produkt{{ product_results.size == 1 ? '' : 'e' }}
-        </p>
+      {%- comment -%}
+        Wenn eine Suche ausgeführt wurde UND ein Begriff drin ist → nur Treffer
+      {%- endcomment -%}
+      {% if search.performed and search.terms != blank %}
+        {% assign product_results = search.results | where: "object_type", "product" %}
 
-        <div class="product-grid hw-search-grid" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;">
-          {% for item in product_results %}
-            {% assign product = item %}
-            {% if template contains 'reccard' %}
-              {% render 'reccard', product: product %}
-            {% else %}
-              <a href="{{ product.url }}" class="product-card" style="display:block;border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff">
-                {% if product.featured_image %}
-                  <img src="{{ product.featured_image | img_url: '540x540' }}" alt="{{ product.title | escape }}" style="width:100%;height:210px;object-fit:cover;border-radius:8px;background:#fff">
-                {% endif %}
-                <div style="margin-top:8px;font-weight:800">{{ product.title }}</div>
-                <div style="color:#111;font-weight:800">
-                  {%- if product.compare_at_price_max > product.price -%}
-                    <s style="color:#9ca3af">{{ product.compare_at_price_max | money }}</s>
+        {% if product_results.size > 0 %}
+          <p style="margin:0 0 12px;opacity:.7;">
+            {{ product_results.size }} Produkt(e) für „{{ search.terms }}“
+          </p>
+
+          <div class="product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;">
+            {% for item in product_results %}
+              <a href="{{ item.url }}" class="product-card" style="display:block;border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff;transition:transform .12s ease,box-shadow .12s ease;">
+                <div style="border-radius:10px;overflow:hidden;background:#fff;">
+                  {% if item.featured_image %}
+                    <img
+                      src="{{ item.featured_image | image_url: width: 600 }}"
+                      alt="{{ item.title | escape }}"
+                      style="width:100%;height:180px;object-fit:cover;display:block;"
+                    >
+                  {% endif %}
+                </div>
+                <div style="margin-top:8px;font-weight:800;">
+                  {{ item.title }}
+                </div>
+                <div style="margin-top:4px;color:#111;font-weight:800;">
+                  {%- if item.compare_at_price > item.price -%}
+                    <s style="opacity:.6;margin-right:4px;">{{ item.compare_at_price | money }}</s>
                   {%- endif -%}
+                  {{ item.price | money }}
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+
+          <h2 style="margin:28px 0 10px;font-size:20px;font-weight:800;">
+            Was interessant sein könnte
+          </h2>
+          <div class="product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;">
+            {% for product in collections['all'].products limit: 4 %}
+              <a href="{{ product.url }}" class="product-card" style="display:block;border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff;">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.title | escape }}"
+                    style="width:100%;height:160px;object-fit:cover;border-radius:8px;background:#fff;"
+                  >
+                {% endif %}
+                <div style="margin-top:8px;font-weight:800;">{{ product.title }}</div>
+                <div style="margin-top:4px;">
                   {{ product.price | money }}
                 </div>
               </a>
-            {% endif %}
+            {% endfor %}
+          </div>
+
+        {% else %}
+          <p style="margin-top:10px;">Keine Produkte gefunden für „{{ search.terms }}“.</p>
+
+          <h2 style="margin:24px 0 10px;font-size:20px;font-weight:800;">
+            Unsere Produkte
+          </h2>
+          <div class="product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;">
+            {% for product in collections['all'].products %}
+              <a href="{{ product.url }}" class="product-card" style="display:block;border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff;">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 600 }}"
+                    alt="{{ product.title | escape }}"
+                    style="width:100%;height:160px;object-fit:cover;border-radius:8px;background:#fff;"
+                  >
+                {% endif %}
+                <div style="margin-top:8px;font-weight:800;">{{ product.title }}</div>
+                <div style="margin-top:4px;">
+                  {{ product.price | money }}
+                </div>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+      {%- else -%}
+        {%- comment -%}
+          KEINE Suche → zeig einfach wie die normale Produktseite:
+          alle Produkte (oder deine Main-Collection).
+        {%- endcomment -%}
+
+        <p style="margin:0 0 10px;opacity:.7;">Alle verfügbaren Produkte</p>
+
+        <div class="product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:18px;">
+          {% for product in collections['all'].products %}
+            <a href="{{ product.url }}" class="product-card" style="display:block;border:1px solid #e5e5e5;border-radius:12px;padding:10px;background:#fff;">
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | image_url: width: 600 }}"
+                  alt="{{ product.title | escape }}"
+                  style="width:100%;height:160px;object-fit:cover;border-radius:8px;background:#fff;"
+                >
+              {% endif %}
+              <div style="margin-top:8px;font-weight:800;">{{ product.title }}</div>
+              <div style="margin-top:4px;">
+                {{ product.price | money }}
+              </div>
+            </a>
           {% endfor %}
         </div>
 
-        {% if paginate.pages > 1 %}
-          <nav class="pagination" style="display:flex;gap:10px;justify-content:center;margin-top:18px;">
-            {% if paginate.previous %}
-              <a class="btn btn-outline" href="{{ paginate.previous.url }}">Zurück</a>
-            {% endif %}
-            {% if paginate.next %}
-              <a class="btn" href="{{ paginate.next.url }}">Weiter</a>
-            {% endif %}
-          </nav>
-        {% endif %}
-      {% else %}
-        <p style="margin:10px 0 18px;">Keine passenden Produkte gefunden.</p>
-      {% endif %}
-    {% endpaginate %}
-  {% else %}
-    <h1 class="search-title" style="margin:0 0 10px; font-size:26px; font-weight:900; color:#0046BE;">
-      Suche
-    </h1>
-    <form action="/search" method="get" role="search" style="display:flex;gap:10px;max-width:560px">
-      <input type="search" name="q" placeholder="Suche nach Modellen, Marken…" style="flex:1;border:1px solid #ddd;border-radius:12px;padding:12px 14px">
-      <button class="btn btn--primary" type="submit">Suchen</button>
-    </form>
-  {% endif %}
-
-  <!-- Empfehlungen -->
-  <section aria-labelledby="hw-suggested" style="margin-top:36px;">
-    <h2 id="hw-suggested" style="font-size:22px;font-weight:900;margin:0 0 12px;">Was interessant sein könnte</h2>
-    <div class="product-grid" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;">
-      {%- assign pool = collections['all'].products -%}
-      {%- if pool.size == 0 -%}
-        {%- assign pool = collections.first.products -%}
       {%- endif -%}
-      {%- for p in pool limit: 8 -%}
-        {% render 'reccard', product: p %}
-      {%- endfor -%}
-    </div>
-  </section>
-</main>
+    </main>
 
-{% section 'cart-drawer' %}
-{% section 'footer' %}
-
-<style>
-  @media (max-width: 900px){
-    .hw-search-grid{ grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
-  }
-  @media (max-width: 640px){
-    .hw-search-grid{ grid-template-columns:1fr !important; }
-  }
-</style>
+    {% section 'footer' %}
+  </body>
+</html>
