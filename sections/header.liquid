@@ -1,359 +1,214 @@
 <header class="hw-header">
-  <div class="hw-header__bar">
-    <!-- Logo -->
-    <a href="{{ routes.root_url }}" class="hw-header__logo">
-      {% if settings.logo != blank %}
-        <img src="{{ settings.logo | image_url: width: 220 }}"
-             alt="{{ shop.name }}"
-             loading="lazy">
+  <div class="hw-header__inner">
+    <!-- Logo links -->
+    <a href="/" class="hw-logo" aria-label="Startseite">
+      {% if section.settings.logo != blank %}
+        <img
+          src="{{ section.settings.logo | image_url: width: 220 }}"
+          alt="{{ shop.name }}"
+          loading="lazy"
+        >
       {% else %}
-        <span class="hw-header__logo-text">HW Central Seller</span>
+        <span class="hw-logo__text">HW Central Seller</span>
       {% endif %}
     </a>
 
-    <!-- Desktop / Tablet Navigation -->
-    <nav class="hw-header__nav">
-      <a href="{{ routes.root_url }}"
-         class="hw-nav__link {% if request.page_type == 'index' %}is-active{% endif %}">
-        Startseite
-      </a>
-      <a href="/collections/all"
-         class="hw-nav__link {% if request.page_type == 'collection' or request.page_type == 'search' %}is-active{% endif %}">
-        Produkte
-      </a>
-    </nav>
+    <!-- Suche mittig -->
+    <form class="hw-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
+      <input
+        class="hw-search__input"
+        type="search"
+        name="q"
+        placeholder="Suche nach Modellen, Marken…"
+        autocomplete="off"
+      >
+      <button class="hw-search__btn" type="submit">Suchen</button>
+    </form>
 
-    <!-- Suche + Warenkorb + Burger -->
-    <div class="hw-header__right">
-      <!-- Inline-Suche (Desktop / Tablet) -->
-      <form class="hw-header__search" action="/search" method="get" role="search">
-        <input
-          class="hw-header__search-input"
-          type="search"
-          name="q"
-          value="{{ search.terms | escape }}"
-          placeholder="Suche nach Modellen, Marken…"
-          autocomplete="off"
-          aria-label="Suche"
-        >
-        <button class="hw-header__search-btn" type="submit">
-          Suchen
-        </button>
-      </form>
-
-      <!-- Warenkorb-Button -> öffnet Cart-Drawer -->
-      <button class="hw-cart-btn" type="button" data-cart-toggle aria-label="Warenkorb öffnen">
-        <span class="hw-cart-btn__label">Warenkorb</span>
-        <span class="hw-cart-badge" data-cart-count {% unless cart.item_count > 0 %}hidden{% endunless %}>
-          {{ cart.item_count }}
-        </span>
-      </button>
-
-      <!-- Burger nur Mobile -->
-      <button class="header-burger" id="burger-btn" type="button" aria-label="Menü öffnen">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/>
-          <line x1="3" y1="12" x2="21" y2="12"/>
-          <line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
-    </div>
+    <!-- Burger rechts -->
+    <button
+      class="hw-burger"
+      type="button"
+      aria-label="Menü öffnen"
+      aria-expanded="false"
+      aria-controls="hw-nav"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
   </div>
 
-  <!-- Mobile-Navi, die per Burger aufgeklappt wird -->
-  <div class="hw-mobile-menu" id="mobile-menu">
-    <a href="{{ routes.root_url }}"
-       class="hw-mobile-link {% if request.page_type == 'index' %}is-active{% endif %}">
-      Startseite
-    </a>
-    <a href="/collections/all"
-       class="hw-mobile-link {% if request.page_type == 'collection' or request.page_type == 'search' %}is-active{% endif %}">
-      Produkte
-    </a>
-  </div>
+  <!-- Ausklapp-Menü (Startseite / Produkte / Warenkorb) -->
+  <nav id="hw-nav" class="hw-nav" hidden>
+    <a href="/" class="hw-nav__link">Startseite</a>
+    <a href="/collections/all" class="hw-nav__link">Produkte</a>
+    <a href="/cart" class="hw-nav__link">Warenkorb</a>
+  </nav>
 </header>
 
-<!-- Mobile Suche -->
-<div class="hw-mobile-search">
-  <form action="/search" method="get" role="search" class="hw-mobile-search-form">
-    <input
-      type="search"
-      name="q"
-      placeholder="Suche nach Modellen, Marken…"
-      class="hw-mobile-search-input"
-      autocomplete="off"
-    >
-    <button type="submit" class="hw-mobile-search-btn">Suchen</button>
-  </form>
-</div>
-
 <style>
-  :root{
-    --primary:#0046BE;
-    --accent:#FF6B00;
-    --border:#e5e5e5;
-  }
-
-  .hw-header{
-    position:sticky;
-    top:0;
-    z-index:40;
-    background:#fff;
-    border-bottom:1px solid var(--border);
-  }
-
-  .hw-header__bar{
-    max-width:1200px;
-    margin:0 auto;
-    padding:10px 16px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-  }
-
-  .hw-header__logo img{
-    height:32px;
-    width:auto;
-    display:block;
-  }
-  .hw-header__logo-text{
-    font-weight:900;
-    font-size:18px;
-  }
-
-  .hw-header__nav{
-    display:flex;
-    gap:10px;
-    margin:0 auto;
-  }
-  .hw-nav__link{
-    position:relative;
-    padding:7px 18px;
-    border-radius:999px;
-    font-weight:800;
-    color:#111;
-    text-decoration:none;
-    white-space:nowrap;
-  }
-  .hw-nav__link:hover{
-    background:rgba(0,70,190,.06);
-    color:var(--primary);
-  }
-  .hw-nav__link.is-active{
-    background:var(--primary);
-    color:#fff;
-  }
-  .hw-nav__link.is-active::after{
-    content:'';
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%);
-    bottom:-6px;
-    width:26px;
-    height:3px;
-    border-radius:2px;
-    background:var(--accent);
-  }
-
-  .hw-header__right{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
-
-  /* Suche Desktop/Tablet */
-  .hw-header__search{
-    display:flex;
-    align-items:center;
-    gap:6px;
-    background:#f5f5f5;
-    padding:4px 6px 4px 12px;
-    border-radius:999px;
-  }
-  .hw-header__search-input{
-    border:none;
-    background:transparent;
-    outline:none;
-    min-width:220px;
-    font-size:14px;
-  }
-  .hw-header__search-btn{
-    border:none;
-    border-radius:999px;
-    padding:6px 12px;
-    font-size:14px;
-    font-weight:800;
-    cursor:pointer;
-    background:var(--primary);
-    color:#fff;
-  }
-  .hw-header__search-btn:hover{
-    filter:brightness(.94);
-  }
-
-  /* Warenkorb-Button */
-  .hw-cart-btn{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    padding:8px 14px;
-    border-radius:999px;
-    border:none;
-    cursor:pointer;
-    font-weight:800;
-    background:var(--primary);
-    color:#fff;
-  }
-  .hw-cart-btn:hover{ filter:brightness(.96); }
-
-  .hw-cart-badge{
-    min-width:22px;
-    height:22px;
-    border-radius:999px;
-    background:#000;
-    color:#fff;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    font-size:12px;
-    padding:0 6px;
-  }
-
-  /* Burger default verstecken */
-  .header-burger{
-    background:none;
-    border:none;
-    padding:4px;
-    cursor:pointer;
-    display:none;
-  }
-  .header-burger svg{
-    stroke:var(--primary);
-  }
-
-  /* Mobile Menu (Burger) */
-  .hw-mobile-menu{
-    display:none;
-    flex-direction:column;
-    padding:8px 16px 12px;
-    border-bottom:1px solid var(--border);
-    background:#fff;
-  }
-  .hw-mobile-link{
-    padding:8px 0;
-    font-weight:800;
-    text-decoration:none;
-    color:#111;
-  }
-  .hw-mobile-link.is-active{
-    color:var(--primary);
-  }
-
-  /* --- Responsive --- */
-  @media (max-width: 900px){
-    .hw-header__bar{
-      padding:8px 10px;
-      gap:10px;
-    }
-    .hw-header__nav{
-      margin:0;
-    }
-  }
-
-  @media (max-width: 768px){
-    .hw-header__bar{
-      justify-content:space-between;
-    }
-
-    /* Logo kleiner */
-    .hw-header__logo img{
-      height:28px;
-    }
-
-    /* Navigation in die Mobile-Leiste verlagern */
-    .hw-header__nav{
-      display:none;
-    }
-
-    /* Suche kompakt + unter den Header verschoben */
-    .hw-header__search{
-      display:none; /* im Header ausgeblendet, Mobile-Suche kommt woanders falls du willst */
-    }
-
-    .header-burger{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .hw-header__right{
-      gap:6px;
-    }
-    .hw-cart-btn{
-      padding:6px 10px;
-    }
-    .hw-cart-btn__label{
-      font-size:13px;
-    }
-  }
-
-/* --- Mobile Suchleiste --- */
-.hw-mobile-search{
-  display:none;
-  padding:10px 14px;
-  background:#fff;
+.hw-header{
+  position:sticky;
+  top:0;
+  z-index:40;
+  background:#ffffff;
   border-bottom:1px solid #e5e5e5;
 }
 
-.hw-mobile-search-form{
+/* Zeile: Logo | Suche | Burger */
+.hw-header__inner{
+  max-width:1200px;
+  margin:0 auto;
+  padding:8px 14px;
   display:flex;
-  gap:8px;
-  background:#f5f5f5;
-  padding:6px 10px;
-  border-radius:999px;
+  align-items:center;
+  gap:10px;
+}
+
+/* Logo links, nicht zu groß */
+.hw-logo{
+  flex:0 0 auto;
+  display:flex;
   align-items:center;
 }
-
-.hw-mobile-search-input{
-  flex:1;
-  border:none;
-  background:transparent;
-  font-size:15px;
-  outline:none;
+.hw-logo img{
+  height:34px;
+  width:auto;
+  display:block;
+}
+.hw-logo__text{
+  font-weight:900;
+  font-size:18px;
 }
 
-.hw-mobile-search-btn{
-  background:var(--primary);
-  color:#fff;
-  border:none;
-  padding:6px 14px;
+/* Suche nimmt die Mitte ein */
+.hw-search{
+  flex:1 1 auto;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  max-width:600px;
+}
+.hw-search__input{
+  flex:1;
+  border:1px solid #ddd;
   border-radius:999px;
+  padding:8px 12px;
+  font-size:14px;
+  outline:none;
+  background:#f7f7f7;
+}
+.hw-search__input:focus{
+  border-color:var(--primary, #0046BE);
+  background:#fff;
+}
+.hw-search__btn{
+  border-radius:999px;
+  border:none;
+  padding:7px 14px;
+  font-size:14px;
   font-weight:800;
+  background:var(--primary, #0046BE);
+  color:#fff;
   cursor:pointer;
 }
-
-/* Nur auf Handy anzeigen */
-@media (max-width: 768px){
-  .hw-mobile-search{
-    display:block;
-  }
+.hw-search__btn:hover{
+  filter:brightness(.95);
 }
 
+/* Burger rechts */
+.hw-burger{
+  flex:0 0 auto;
+  width:36px;
+  height:30px;
+  border-radius:8px;
+  border:1px solid #ddd;
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  cursor:pointer;
+  padding:0;
+}
+.hw-burger span{
+  width:18px;
+  height:2px;
+  border-radius:999px;
+  background:#111;
+  transition:transform .15s ease, opacity .15s ease;
+}
+.hw-burger.is-open span:nth-child(1){
+  transform:translateY(6px) rotate(45deg);
+}
+.hw-burger.is-open span:nth-child(2){
+  opacity:0;
+}
+.hw-burger.is-open span:nth-child(3){
+  transform:translateY(-6px) rotate(-45deg);
+}
+
+/* Ausklapp-Menü unter dem Header */
+.hw-nav{
+  border-top:1px solid #eee;
+  border-bottom:1px solid #eee;
+  background:#fff;
+}
+.hw-nav__link{
+  display:block;
+  padding:10px 18px;
+  font-weight:700;
+  text-decoration:none;
+  color:#111;
+}
+.hw-nav__link + .hw-nav__link{
+  border-top:1px solid #f1f1f1;
+}
+.hw-nav__link:hover{
+  background:#f5f5f5;
+  color:var(--primary, #0046BE);
+}
+
+/* Desktop-Feintuning */
+@media (min-width: 900px){
+  .hw-header__inner{
+    padding:10px 20px;
+    gap:16px;
+  }
+  .hw-logo img{ height:38px; }
+  .hw-search__input{ padding:9px 14px; font-size:15px; }
+}
+
+/* Tablet/Handy: alles bleibt in EINER Zeile */
+@media (max-width: 768px){
+  .hw-header__inner{
+    padding:8px 10px;
+    gap:8px;
+  }
+  .hw-logo img{
+    height:30px;
+  }
+  .hw-search__btn{
+    padding:6px 10px;
+    font-size:13px;
+  }
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  var burger = document.getElementById('burger-btn');
-  var mobileMenu = document.getElementById('mobile-menu');
-  if (!burger || !mobileMenu) return;
+  const burger = document.querySelector('.hw-burger');
+  const nav    = document.getElementById('hw-nav');
+  if(!burger || !nav) return;
 
   burger.addEventListener('click', function(){
-    if (mobileMenu.style.display === 'flex'){
-      mobileMenu.style.display = 'none';
-    } else {
-      mobileMenu.style.display = 'flex';
-    }
+    const open = !nav.classList.contains('is-open');
+    nav.classList.toggle('is-open', open);
+    burger.classList.toggle('is-open', open);
+    nav.hidden = !open;
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
 });
 </script>
@@ -362,7 +217,11 @@ document.addEventListener('DOMContentLoaded', function(){
 {
   "name": "Header",
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo" }
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    }
   ]
 }
 {% endschema %}
