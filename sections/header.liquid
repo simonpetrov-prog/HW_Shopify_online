@@ -297,6 +297,49 @@
       font-size:13px;
     }
   }
+
+/* --- Mobile Suchleiste --- */
+.hw-mobile-search{
+  display:none;
+  padding:10px 14px;
+  background:#fff;
+  border-bottom:1px solid #e5e5e5;
+}
+
+.hw-mobile-search-form{
+  display:flex;
+  gap:8px;
+  background:#f5f5f5;
+  padding:6px 10px;
+  border-radius:999px;
+  align-items:center;
+}
+
+.hw-mobile-search-input{
+  flex:1;
+  border:none;
+  background:transparent;
+  font-size:15px;
+  outline:none;
+}
+
+.hw-mobile-search-btn{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:6px 14px;
+  border-radius:999px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* Nur auf Handy anzeigen */
+@media (max-width: 768px){
+  .hw-mobile-search{
+    display:block;
+  }
+}
+
 </style>
 
 <script>
