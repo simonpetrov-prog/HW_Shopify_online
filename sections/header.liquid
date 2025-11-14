@@ -1,269 +1,311 @@
-<header class="header">
-  <div class="header__inner">
-    {%- comment -%} Logo {%- endcomment -%}
-    <a href="/" class="header__logo">
-      {% if section.settings.logo %}
-        <img
-          src="{{ section.settings.logo | image_url: width: 200 }}"
-          alt="{{ shop.name }}"
-          loading="lazy"
-        >
+<header class="hw-header">
+  <div class="hw-header__bar">
+    <!-- Logo -->
+    <a href="{{ routes.root_url }}" class="hw-header__logo">
+      {% if settings.logo != blank %}
+        <img src="{{ settings.logo | image_url: width: 220 }}"
+             alt="{{ shop.name }}"
+             loading="lazy">
       {% else %}
-        <span class="logo-text">{{ shop.name }}</span>
+        <span class="hw-header__logo-text">HW Central Seller</span>
       {% endif %}
     </a>
 
-    {%- comment -%} Navigation: Startseite / Produkte {%- endcomment -%}
-    <nav class="header__nav">
-      <a href="/"
-         class="nav__link{% if template == 'index' %} is-active{% endif %}">
+    <!-- Desktop / Tablet Navigation -->
+    <nav class="hw-header__nav">
+      <a href="{{ routes.root_url }}"
+         class="hw-nav__link {% if request.page_type == 'index' %}is-active{% endif %}">
         Startseite
       </a>
       <a href="/collections/all"
-         class="nav__link{% if template contains 'collection' %} is-active{% endif %}">
+         class="hw-nav__link {% if request.page_type == 'collection' or request.page_type == 'search' %}is-active{% endif %}">
         Produkte
       </a>
     </nav>
 
-    {%- comment -%} Suche {%- endcomment -%}
-    <form class="hw-inline-search"
-          action="/search"
-          method="get"
-          role="search"
-          aria-label="Shop-Suche">
-      <input
-        class="hw-inline-search__input"
-        type="search"
-        name="q"
-        placeholder="Suche nach Modellen, Marken…"
-        autocomplete="off"
-        aria-label="Suche"
-        value="{{ search.terms | escape }}"
-      >
-      <button class="hw-inline-search__btn" type="submit">
-        Suchen
-      </button>
-    </form>
+    <!-- Suche + Warenkorb + Burger -->
+    <div class="hw-header__right">
+      <!-- Inline-Suche (Desktop / Tablet) -->
+      <form class="hw-header__search" action="/search" method="get" role="search">
+        <input
+          class="hw-header__search-input"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="Suche nach Modellen, Marken…"
+          autocomplete="off"
+          aria-label="Suche"
+        >
+        <button class="hw-header__search-btn" type="submit">
+          Suchen
+        </button>
+      </form>
 
-    {%- comment -%} Warenkorb-Button (öffnet Drawer via data-cart-toggle) {%- endcomment -%}
-    <button
-      type="button"
-      class="cart-btn"
-      data-cart-toggle
-      aria-label="Warenkorb öffnen">
-      <span class="cart-btn__text">Warenkorb</span>
-      <span class="cart-badge{% if cart.item_count == 0 %} is-hidden{% endif %}"
-            data-cart-count>
-        {{ cart.item_count }}
-      </span>
-    </button>
+      <!-- Warenkorb-Button -> öffnet Cart-Drawer -->
+      <button class="hw-cart-btn" type="button" data-cart-toggle aria-label="Warenkorb öffnen">
+        <span class="hw-cart-btn__label">Warenkorb</span>
+        <span class="hw-cart-badge" data-cart-count {% unless cart.item_count > 0 %}hidden{% endunless %}>
+          {{ cart.item_count }}
+        </span>
+      </button>
+
+      <!-- Burger nur Mobile -->
+      <button class="header-burger" id="burger-btn" type="button" aria-label="Menü öffnen">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile-Navi, die per Burger aufgeklappt wird -->
+  <div class="hw-mobile-menu" id="mobile-menu">
+    <a href="{{ routes.root_url }}"
+       class="hw-mobile-link {% if request.page_type == 'index' %}is-active{% endif %}">
+      Startseite
+    </a>
+    <a href="/collections/all"
+       class="hw-mobile-link {% if request.page_type == 'collection' or request.page_type == 'search' %}is-active{% endif %}">
+      Produkte
+    </a>
   </div>
 </header>
 
 <style>
-:root{
-  --primary:#0046BE;
-  --accent:#FF6B00;
-  --text:#111111;
-  --border:#e5e5e5;
-  --bg:#ffffff;
-}
+  :root{
+    --primary:#0046BE;
+    --accent:#FF6B00;
+    --border:#e5e5e5;
+  }
 
-/* Header-Grundlayout */
-.header{
-  position:sticky;
-  top:0;
-  z-index:30;
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  transition:box-shadow .2s ease;
-}
-.header.is-scrolled{
-  box-shadow:0 6px 22px rgba(0,0,0,.08);
-}
+  .hw-header{
+    position:sticky;
+    top:0;
+    z-index:40;
+    background:#fff;
+    border-bottom:1px solid var(--border);
+  }
 
-.header__inner{
-  max-width:1200px;
-  margin:0 auto;
-  padding:8px 12px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:nowrap; /* alles in EINER Zeile halten */
-}
+  .hw-header__bar{
+    max-width:1200px;
+    margin:0 auto;
+    padding:10px 16px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
 
-/* Logo */
-.header__logo{
-  flex:0 0 auto;
-}
-.header__logo img{
-  display:block;
-  max-height:34px;
-  max-width:110px;
-  width:auto;
-  height:auto;
-}
+  .hw-header__logo img{
+    height:32px;
+    width:auto;
+    display:block;
+  }
+  .hw-header__logo-text{
+    font-weight:900;
+    font-size:18px;
+  }
 
-/* Tabs Startseite / Produkte */
-.header__nav{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  flex:0 0 auto;
-}
-.nav__link{
-  padding:6px 14px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:14px;
-  color:var(--text);
-  position:relative;
-  cursor:pointer;
-  white-space:nowrap;
-  background:#f3f4f6;
-}
-.nav__link:hover{
-  background:rgba(0,70,190,.08);
-}
-.nav__link.is-active{
-  background:var(--primary);
-  color:#fff;
-}
-.nav__link.is-active::after{
-  content:"";
-  position:absolute;
-  left:50%;
-  transform:translateX(-50%);
-  bottom:-4px;
-  width:24px;
-  height:3px;
-  border-radius:2px;
-  background:var(--accent);
-}
+  .hw-header__nav{
+    display:flex;
+    gap:10px;
+    margin:0 auto;
+  }
+  .hw-nav__link{
+    position:relative;
+    padding:7px 18px;
+    border-radius:999px;
+    font-weight:800;
+    color:#111;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .hw-nav__link:hover{
+    background:rgba(0,70,190,.06);
+    color:var(--primary);
+  }
+  .hw-nav__link.is-active{
+    background:var(--primary);
+    color:#fff;
+  }
+  .hw-nav__link.is-active::after{
+    content:'';
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:-6px;
+    width:26px;
+    height:3px;
+    border-radius:2px;
+    background:var(--accent);
+  }
 
-/* Suche in der Mitte */
-.hw-inline-search{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  flex:0 1 260px;          /* kleiner & flexibler */
-  max-width:280px;
-}
-.hw-inline-search__input{
-  flex:1 1 auto;
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:6px 12px;
-  font-size:14px;
-  outline:none;
-}
-.hw-inline-search__input:focus{
-  border-color:var(--primary);
-  box-shadow:0 0 0 1px rgba(0,70,190,.15);
-}
-.hw-inline-search__btn{
-  border-radius:999px;
-  border:0;
-  padding:6px 12px;
-  font-weight:800;
-  background:var(--primary);
-  color:#fff;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.hw-inline-search__btn:hover{
-  filter:brightness(.96);
-}
+  .hw-header__right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
 
-/* Warenkorb-Button rechts */
-.cart-btn{
-  position:relative;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  border-radius:999px;
-  padding:6px 12px;
-  background:var(--primary);
-  color:#fff;
-  border:0;
-  font-weight:800;
-  cursor:pointer;
-  white-space:nowrap;
-  flex:0 0 auto;
-}
-.cart-btn:hover{
-  filter:brightness(.96);
-}
-.cart-badge{
-  min-width:20px;
-  height:20px;
-  border-radius:999px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  background:#000;
-  color:#fff;
-  font-size:11px;
-  padding:0 5px;
-}
-.cart-badge.is-hidden{
-  display:none;
-}
+  /* Suche Desktop/Tablet */
+  .hw-header__search{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:#f5f5f5;
+    padding:4px 6px 4px 12px;
+    border-radius:999px;
+  }
+  .hw-header__search-input{
+    border:none;
+    background:transparent;
+    outline:none;
+    min-width:220px;
+    font-size:14px;
+  }
+  .hw-header__search-btn{
+    border:none;
+    border-radius:999px;
+    padding:6px 12px;
+    font-size:14px;
+    font-weight:800;
+    cursor:pointer;
+    background:var(--primary);
+    color:#fff;
+  }
+  .hw-header__search-btn:hover{
+    filter:brightness(.94);
+  }
 
-/* ================== Tablet (<= 900px) ================== */
-@media (max-width: 900px){
-  .header__inner{
+  /* Warenkorb-Button */
+  .hw-cart-btn{
+    display:inline-flex;
+    align-items:center;
     gap:8px;
+    padding:8px 14px;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    font-weight:800;
+    background:var(--primary);
+    color:#fff;
   }
-  .header__logo img{
-    max-height:30px;
-    max-width:96px;
-  }
-  .hw-inline-search{
-    flex:1 1 180px;
-    max-width:220px;
-  }
-}
+  .hw-cart-btn:hover{ filter:brightness(.96); }
 
-/* ================== Handy (<= 640px) ================== */
-@media (max-width: 640px){
-  .header__inner{
-    padding:8px 10px;
-    gap:8px;
+  .hw-cart-badge{
+    min-width:22px;
+    height:22px;
+    border-radius:999px;
+    background:#000;
+    color:#fff;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    padding:0 6px;
   }
 
-  .header__logo img{
-    max-height:26px;
-    max-width:80px;
-  }
-
-  /* Tabs auf Handy ausblenden → Burger übernimmt Navigation */
-  .header__nav{
+  /* Burger default verstecken */
+  .header-burger{
+    background:none;
+    border:none;
+    padding:4px;
+    cursor:pointer;
     display:none;
   }
-
-  /* Suche etwas breiter, aber eine Zeile */
-  .hw-inline-search{
-    flex:1 1 auto;
-    max-width:none;
+  .header-burger svg{
+    stroke:var(--primary);
   }
 
-  /* Warenkorb kompakter: nur Icon / kurzer Text */
-  .cart-btn__text{
+  /* Mobile Menu (Burger) */
+  .hw-mobile-menu{
     display:none;
+    flex-direction:column;
+    padding:8px 16px 12px;
+    border-bottom:1px solid var(--border);
+    background:#fff;
   }
-}
+  .hw-mobile-link{
+    padding:8px 0;
+    font-weight:800;
+    text-decoration:none;
+    color:#111;
+  }
+  .hw-mobile-link.is-active{
+    color:var(--primary);
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 900px){
+    .hw-header__bar{
+      padding:8px 10px;
+      gap:10px;
+    }
+    .hw-header__nav{
+      margin:0;
+    }
+  }
+
+  @media (max-width: 768px){
+    .hw-header__bar{
+      justify-content:space-between;
+    }
+
+    /* Logo kleiner */
+    .hw-header__logo img{
+      height:28px;
+    }
+
+    /* Navigation in die Mobile-Leiste verlagern */
+    .hw-header__nav{
+      display:none;
+    }
+
+    /* Suche kompakt + unter den Header verschoben */
+    .hw-header__search{
+      display:none; /* im Header ausgeblendet, Mobile-Suche kommt woanders falls du willst */
+    }
+
+    .header-burger{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .hw-header__right{
+      gap:6px;
+    }
+    .hw-cart-btn{
+      padding:6px 10px;
+    }
+    .hw-cart-btn__label{
+      font-size:13px;
+    }
+  }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var burger = document.getElementById('burger-btn');
+  var mobileMenu = document.getElementById('mobile-menu');
+  if (!burger || !mobileMenu) return;
+
+  burger.addEventListener('click', function(){
+    if (mobileMenu.style.display === 'flex'){
+      mobileMenu.style.display = 'none';
+    } else {
+      mobileMenu.style.display = 'flex';
+    }
+  });
+});
+</script>
 
 {% schema %}
 {
   "name": "Header",
   "settings": [
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo"
-    }
+    { "type": "image_picker", "id": "logo", "label": "Logo" }
   ]
 }
 {% endschema %}
