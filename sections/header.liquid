@@ -1,49 +1,45 @@
 <header class="hw-header">
   <div class="hw-header__inner">
     <!-- Logo links -->
-    <a href="/" class="hw-logo" aria-label="Startseite">
-      {% if section.settings.logo != blank %}
-        <img
-          src="{{ section.settings.logo | image_url: width: 220 }}"
-          alt="{{ shop.name }}"
-          loading="lazy"
-        >
+    <a href="/" class="hw-header__logo">
+      {% if section.settings.logo %}
+        {{ section.settings.logo | image_url: width: 180 | image_tag: alt: shop.name }}
       {% else %}
-        <span class="hw-logo__text">HW Central Seller</span>
+        <span class="hw-header__logo-text">{{ shop.name }}</span>
       {% endif %}
     </a>
 
-    <!-- Suche mittig -->
-    <form class="hw-search" action="/search" method="get" role="search" aria-label="Shop-Suche">
+    <!-- Kleine Suchzeile in der Mitte -->
+    <form class="hw-header__search" action="/search" method="get" role="search" aria-label="Shop-Suche">
       <input
-        class="hw-search__input"
+        class="hw-header__search-input"
         type="search"
         name="q"
-        placeholder="Suche nach Modellen, Marken…"
+        value="{{ search.terms | escape }}"
+        placeholder="Suche nach Modellen, Marken..."
         autocomplete="off"
       >
-      <button class="hw-search__btn" type="submit">Suchen</button>
+      <button class="hw-header__search-btn" type="submit">Suchen</button>
     </form>
 
     <!-- Burger rechts -->
     <button
-      class="hw-burger"
+      class="hw-header__burger"
       type="button"
       aria-label="Menü öffnen"
       aria-expanded="false"
-      aria-controls="hw-nav"
-    >
+      aria-controls="hw-mobile-nav">
       <span></span>
       <span></span>
       <span></span>
     </button>
   </div>
 
-  <!-- Ausklapp-Menü (Startseite / Produkte / Warenkorb) -->
-  <nav id="hw-nav" class="hw-nav" hidden>
-    <a href="/" class="hw-nav__link">Startseite</a>
-    <a href="/collections/all" class="hw-nav__link">Produkte</a>
-    <a href="/cart" class="hw-nav__link">Warenkorb</a>
+  <!-- Menü, das sich über den Burger öffnet -->
+  <nav id="hw-mobile-nav" class="hw-header__nav">
+    <a href="/" class="hw-nav__link{% if template.name == 'index' %} is-active{% endif %}">Startseite</a>
+    <a href="/collections/all" class="hw-nav__link{% if template.name == 'collection' %} is-active{% endif %}">Produkte</a>
+    <a href="{{ routes.cart_url }}" class="hw-nav__link">Warenkorb</a>
   </nav>
 </header>
 
@@ -52,176 +48,156 @@
   position:sticky;
   top:0;
   z-index:40;
-  background:#ffffff;
-  border-bottom:1px solid #e5e5e5;
+  background:#fff;
+  border-bottom:1px solid #f1f1f1;
 }
 
-/* Zeile: Logo | Suche | Burger */
+/* Grundlayout Header-Zeile */
 .hw-header__inner{
-  max-width:1200px;
-  margin:0 auto;
-  padding:8px 14px;
   display:flex;
   align-items:center;
   gap:10px;
+  padding:8px 12px;
 }
 
-/* Logo links, nicht zu groß */
-.hw-logo{
-  flex:0 0 auto;
-  display:flex;
-  align-items:center;
-}
-.hw-logo img{
-  height:34px;
+/* Logo */
+.hw-header__logo img{
+  max-height:32px;
   width:auto;
   display:block;
 }
-.hw-logo__text{
+.hw-header__logo-text{
   font-weight:900;
-  font-size:18px;
+  font-size:16px;
 }
 
-/* Suche nimmt die Mitte ein */
-.hw-search{
-  flex:1 1 auto;
+/* Suche in der Mitte – eher klein */
+.hw-header__search{
+  flex:1;
   display:flex;
   align-items:center;
   gap:6px;
-  max-width:600px;
 }
-.hw-search__input{
+.hw-header__search-input{
   flex:1;
-  border:1px solid #ddd;
+  border:1px solid #e5e7eb;
   border-radius:999px;
-  padding:8px 12px;
-  font-size:14px;
-  outline:none;
-  background:#f7f7f7;
+  padding:6px 10px;
+  font-size:13px;
 }
-.hw-search__input:focus{
-  border-color:var(--primary, #0046BE);
-  background:#fff;
-}
-.hw-search__btn{
+.hw-header__search-btn{
   border-radius:999px;
-  border:none;
-  padding:7px 14px;
-  font-size:14px;
+  border:0;
+  padding:6px 11px;
+  font-size:12px;
   font-weight:800;
-  background:var(--primary, #0046BE);
+  background:var(--accent, #FF6B00);
   color:#fff;
   cursor:pointer;
 }
-.hw-search__btn:hover{
+.hw-header__search-btn:hover{
   filter:brightness(.95);
 }
 
 /* Burger rechts */
-.hw-burger{
-  flex:0 0 auto;
-  width:36px;
-  height:30px;
-  border-radius:8px;
-  border:1px solid #ddd;
+.hw-header__burger{
+  margin-left:4px;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  border:1px solid #e5e7eb;
   background:#fff;
-  display:flex;
+  display:inline-flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
   gap:4px;
-  cursor:pointer;
   padding:0;
+  cursor:pointer;
 }
-.hw-burger span{
-  width:18px;
+.hw-header__burger span{
+  width:16px;
   height:2px;
-  border-radius:999px;
   background:#111;
-  transition:transform .15s ease, opacity .15s ease;
-}
-.hw-burger.is-open span:nth-child(1){
-  transform:translateY(6px) rotate(45deg);
-}
-.hw-burger.is-open span:nth-child(2){
-  opacity:0;
-}
-.hw-burger.is-open span:nth-child(3){
-  transform:translateY(-6px) rotate(-45deg);
+  border-radius:999px;
 }
 
-/* Ausklapp-Menü unter dem Header */
-.hw-nav{
-  border-top:1px solid #eee;
-  border-bottom:1px solid #eee;
+/* Menü unter dem Header (mobile) */
+.hw-header__nav{
+  display:none;
+  padding:8px 12px 10px;
   background:#fff;
-}
-.hw-nav__link{
-  display:block;
-  padding:10px 18px;
-  font-weight:700;
-  text-decoration:none;
-  color:#111;
-}
-.hw-nav__link + .hw-nav__link{
   border-top:1px solid #f1f1f1;
 }
+.hw-nav__link{
+  display:inline-block;
+  margin-right:8px;
+  padding:6px 13px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:14px;
+  color:#111;
+  background:#f3f4f6;
+  text-decoration:none;
+}
+.hw-nav__link.is-active{
+  background:var(--primary, #0046BE);
+  color:#fff;
+}
 .hw-nav__link:hover{
-  background:#f5f5f5;
-  color:var(--primary, #0046BE);
+  background:#FFF4EB;
+  color:var(--accent, #FF6B00);
 }
 
-/* Desktop-Feintuning */
+/* Wenn Burger offen → Menü anzeigen + Burger leicht orange */
+.hw-header.is-open #hw-mobile-nav{
+  display:block;
+}
+.hw-header.is-open .hw-header__burger{
+  border-color:var(--accent, #FF6B00);
+}
+
+/* Desktop: Burger ausblenden, Menü als Leiste anzeigen */
 @media (min-width: 900px){
   .hw-header__inner{
-    padding:10px 20px;
-    gap:16px;
+    max-width:1200px;
+    margin:0 auto;
   }
-  .hw-logo img{ height:38px; }
-  .hw-search__input{ padding:9px 14px; font-size:15px; }
-}
-
-/* Tablet/Handy: alles bleibt in EINER Zeile */
-@media (max-width: 768px){
-  .hw-header__inner{
-    padding:8px 10px;
+  .hw-header__search{
+    max-width:420px;
+  }
+  .hw-header__burger{
+    display:none;
+  }
+  .hw-header__nav{
+    display:flex !important;
+    align-items:center;
     gap:8px;
-  }
-  .hw-logo img{
-    height:30px;
-  }
-  .hw-search__btn{
-    padding:6px 10px;
-    font-size:13px;
+    padding:6px 12px 10px;
+    max-width:1200px;
+    margin:0 auto;
   }
 }
 </style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  const burger = document.querySelector('.hw-burger');
-  const nav    = document.getElementById('hw-nav');
-  if(!burger || !nav) return;
-
-  burger.addEventListener('click', function(){
-    const open = !nav.classList.contains('is-open');
-    nav.classList.toggle('is-open', open);
-    burger.classList.toggle('is-open', open);
-    nav.hidden = !open;
-    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-});
-</script>
 
 {% schema %}
 {
   "name": "Header",
   "settings": [
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo"
-    }
+    { "type": "image_picker", "id": "logo", "label": "Logo" }
   ]
 }
 {% endschema %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var header = document.querySelector('.hw-header');
+  var burger = document.querySelector('.hw-header__burger');
+  if(!header || !burger) return;
+
+  burger.addEventListener('click', function(){
+    var open = header.classList.toggle('is-open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+});
+</script>
