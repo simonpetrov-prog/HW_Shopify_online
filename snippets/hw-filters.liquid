@@ -241,4 +241,60 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.querySelectorAll('.hw-chip').forEach(c=>c.classList.remove('is-checked'));
   });
 });
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const applyBtn = document.querySelector(".hw-apply");
+  const resetBtn = document.querySelector(".hw-reset");
+
+  if (!applyBtn) return;
+
+  // Sammle alle Filter-Optionen
+  function getSelectedFilters() {
+    const params = new URLSearchParams();
+
+    document.querySelectorAll(".hw-filter-group").forEach(group => {
+      const key = group.dataset.filter;
+      const checked = [...group.querySelectorAll("input:checked")].map(i => i.value);
+
+      if (checked.length > 0) {
+        params.append(key, checked.join(","));
+      }
+    });
+
+    // Preis extra sammeln
+    const min = document.getElementById("price-min")?.value;
+    const max = document.getElementById("price-max")?.value;
+
+    if (min) params.append("price_min", min);
+    if (max) params.append("price_max", max);
+
+    return params;
+  }
+
+  // Anwenden → Seite neu laden
+  applyBtn.addEventListener("click", () => {
+    const params = getSelectedFilters();
+    const base = window.location.pathname;
+
+    window.location = base + (params.toString() ? "?" + params.toString() : "");
+  });
+
+  // Zurücksetzen
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      const base = window.location.pathname;
+      window.location = base; // komplette URL ohne Filter
+    });
+  }
+
+  // Buttons Blau / Grau toggeln
+  document.querySelectorAll(".hw-chip input").forEach(input => {
+    input.addEventListener("change", () => {
+      input.closest("label").classList.toggle("active", input.checked);
+    });
+  });
+});
+</script>
+
 </script>
