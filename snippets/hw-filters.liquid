@@ -210,39 +210,6 @@
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
-  // Tabs
-  document.querySelectorAll('.hw-tab').forEach(tab=>{
-    tab.addEventListener('click',()=>{
-      document.querySelectorAll('.hw-tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.hw-panel').forEach(p=>p.hidden=true);
-      tab.classList.add('active');
-      const panel=document.querySelector(`.hw-panel[data-panel="${tab.dataset.filter}"]`);
-      if(panel) panel.hidden=false;
-    });
-  });
-
-  // Chip-Optik koppeln
-  const syncChip = (inp)=>{
-    const chip = inp.closest('.hw-chip');
-    if (!chip) return;
-    chip.classList.toggle('is-checked', inp.checked);
-  };
-  document.querySelectorAll('.hw-chip > input').forEach(inp=>{
-    syncChip(inp);
-    inp.addEventListener('change', ()=>syncChip(inp));
-  });
-
-  // Reset Button
-  const resetBtn = document.querySelector('[data-filter-reset]');
-  if (resetBtn) resetBtn.addEventListener('click', ()=>{
-    document.querySelectorAll('.hw-panel input[type="checkbox"]').forEach(i=>i.checked=false);
-    document.querySelectorAll('.hw-panel input[type="number"]').forEach(i=>i.value='');
-    document.querySelectorAll('.hw-chip').forEach(c=>c.classList.remove('is-checked'));
-  });
-});
-
-<script>
 document.addEventListener("DOMContentLoaded", () => {
   const applyBtn = document.querySelector(".hw-apply");
   const resetBtn = document.querySelector(".hw-reset");
@@ -295,6 +262,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
-</script>
-
 </script>
