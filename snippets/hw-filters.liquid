@@ -1,197 +1,328 @@
-<div class="hw-filter-wrapper">
+{%- comment -%}
+HW Central Seller – Filterbox
+Nutzt die data-Attribute aus product-grid.liquid:
+- data-color="{{ hw_color }}"
+- data-brand="{{ hw_brand }}"
+- data-rare="{{ hw_rare }}"
+- data-price="{{ hw_price_cents }}" (in Cent)
+{%- endcomment -%}
 
-  <!-- Tabs oben -->
+<div class="hw-filters-box">
+  <div class="hw-filters-head">
+    <h2>Filter</h2>
+    <button type="button" class="hw-filter-reset">Zurücksetzen</button>
+  </div>
+
+  <!-- Tabs -->
   <div class="hw-filter-tabs">
-    <button data-tab="color" class="hw-tab active">Farbe</button>
-    <button data-tab="brand" class="hw-tab">Marke</button>
-    <button data-tab="rare" class="hw-tab">Seltenheit</button>
-    <button data-tab="price" class="hw-tab">Preis</button>
+    <button type="button" class="hw-filter-tab is-active" data-panel="price">Preis</button>
+    <button type="button" class="hw-filter-tab" data-panel="color">Farbe</button>
+    <button type="button" class="hw-filter-tab" data-panel="brand">Marke</button>
+    <button type="button" class="hw-filter-tab" data-panel="rare">Seltenheit</button>
   </div>
 
-  <!-- Inhalt Farbe -->
-  <div class="hw-filter-group" data-filter="color" data-panel>
-    {% assign colors = "Rot,Blau,Orange,Schwarz,Weiß,Grau,Grün,Gelb,Lila,Pink" | split: "," %}
-    {% for c in colors %}
-      <label class="hw-chip">
-        <input type="checkbox" value="{{ c }}">
-        {{ c }}
-      </label>
-    {% endfor %}
-  </div>
+  <!-- Panels -->
+  <div class="hw-filter-panels">
+    <!-- Preis -->
+    <div class="hw-filter-panel" data-panel="price">
+      <div class="hw-filter-row">
+        <label>
+          Min (€)
+          <input type="number" id="hw-price-min" min="0" step="0.5" placeholder="z. B. 2">
+        </label>
+        <label>
+          Max (€)
+          <input type="number" id="hw-price-max" min="0" step="0.5" placeholder="z. B. 10">
+        </label>
+      </div>
+      <p class="hw-filter-hint">Filtert nach aktuellem Produktpreis.</p>
+    </div>
 
-  <!-- Inhalt Marke -->
-  <div class="hw-filter-group" data-filter="brand" data-panel hidden>
-    {% assign brands = "Porsche,BMW,Mercedes,Ferrari,Audi,Toyota,Lamborghini,McLaren,Koenigsegg" | split: "," %}
-    {% for b in brands %}
-      <label class="hw-chip">
-        <input type="checkbox" value="{{ b }}">
-        {{ b }}
-      </label>
-    {% endfor %}
-  </div>
+    <!-- Farbe -->
+    <div class="hw-filter-panel" data-panel="color" hidden>
+      <div class="hw-chip-row">
+        {% assign colors = "Rot,Blau,Orange,Schwarz,Weiß,Grau,Grün,Gelb,Lila,Pink" | split: "," %}
+        {% for c in colors %}
+          <label class="hw-chip">
+            <input type="checkbox" value="{{ c }}" data-group="color">
+            {{ c }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
 
-  <!-- Inhalt Seltenheit -->
-  <div class="hw-filter-group" data-filter="rare" data-panel hidden>
-    {% assign rares = "TH,STH" | split: "," %}
-    {% for r in rares %}
-      <label class="hw-chip">
-        <input type="checkbox" value="{{ r }}">
-        {{ r }}
-      </label>
-    {% endfor %}
-  </div>
+    <!-- Marke -->
+    <div class="hw-filter-panel" data-panel="brand" hidden>
+      <div class="hw-chip-row">
+        {% assign brands = "Porsche,Ferrari,BMW,Mercedes,Lamborghini,Toyota,Nissan,Audi,McLaren,Koenigsegg" | split: "," %}
+        {% for b in brands %}
+          <label class="hw-chip">
+            <input type="checkbox" value="{{ b }}" data-group="brand">
+            {{ b }}
+          </label>
+        {% endfor %}
+      </div>
+    </div>
 
-  <!-- Inhalt Preis -->
-  <div class="hw-filter-group" data-filter="price" data-panel hidden>
-    <div class="hw-price-row">
-      <input id="price-min" type="number" placeholder="Min €" min="0">
-      <span>-</span>
-      <input id="price-max" type="number" placeholder="Max €" min="0">
+    <!-- Seltenheit -->
+    <div class="hw-filter-panel" data-panel="rare" hidden>
+      <div class="hw-chip-row">
+        {% assign rares = "Mainline,TH,STH" | split: "," %}
+        {% for r in rares %}
+          <label class="hw-chip">
+            <input type="checkbox" value="{{ r }}" data-group="rare">
+            {{ r }}
+          </label>
+        {% endfor %}
+      </div>
     </div>
   </div>
 
-  <!-- Buttons unten -->
   <div class="hw-filter-actions">
-    <button class="hw-apply">Filter anwenden</button>
-    <button class="hw-reset">Zurücksetzen</button>
+    <button type="button" class="hw-filter-apply">Filter anwenden</button>
   </div>
 </div>
 
 <style>
-.hw-filter-wrapper{
-  padding:14px;
-  border:2px solid var(--primary);
-  border-radius:14px;
-  background:white;
-  margin-bottom:20px;
+.hw-filters-box{
+  border:2px solid #0046BE;
+  border-radius:16px;
+  padding:12px 12px 14px;
+  margin:10px 0 18px;
+  background:#F7F9FF;
 }
 
+/* Kopf */
+.hw-filters-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.hw-filters-head h2{
+  margin:0;
+  font-size:16px;
+  font-weight:800;
+}
+.hw-filter-reset{
+  border:0;
+  background:transparent;
+  color:#6b7280;
+  font-size:13px;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+/* Tabs */
 .hw-filter-tabs{
   display:flex;
-  gap:8px;
-  margin-bottom:14px;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-bottom:8px;
 }
-
-.hw-tab{
-  padding:8px 14px;
-  border-radius:8px;
-  background:#eee;
-  border:1px solid #ddd;
-  cursor:pointer;
+.hw-filter-tab{
+  border-radius:999px;
+  border:1px solid #d1d5db;
+  padding:5px 12px;
+  font-size:13px;
   font-weight:700;
+  background:#fff;
+  cursor:pointer;
+}
+.hw-filter-tab.is-active{
+  background:#0046BE;
+  color:#fff;
+  border-color:#0046BE;
 }
 
-.hw-tab.active{
-  background:var(--primary);
-  color:white;
+/* Panel-Container */
+.hw-filter-panels{
+  border-radius:12px;
+  background:#fff;
+  padding:10px;
+  border:1px solid #e5e7eb;
+}
+.hw-filter-panel[hidden]{ display:none; }
+
+/* Preis-Row */
+.hw-filter-row{
+  display:flex;
+  gap:10px;
+}
+.hw-filter-row label{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  font-size:13px;
+  gap:4px;
+}
+.hw-filter-row input{
+  border-radius:8px;
+  border:1px solid #d1d5db;
+  padding:6px 8px;
 }
 
+.hw-filter-hint{
+  margin:6px 0 0;
+  font-size:12px;
+  color:#6b7280;
+}
+
+/* Chips */
+.hw-chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
 .hw-chip{
   display:inline-flex;
   align-items:center;
-  padding:6px 12px;
-  border:1px solid #ddd;
-  margin:4px;
-  border-radius:8px;
-  cursor:pointer;
-  background:#f1f1f1;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid #d1d5db;
+  background:#f9fafb;
+  font-size:13px;
   font-weight:600;
+  cursor:pointer;
+}
+.hw-chip input{ display:none; }
+.hw-chip.is-active{
+  background:#0046BE;
+  border-color:#0046BE;
+  color:#fff;
 }
 
-.hw-chip.active{
-  background:var(--primary);
-  color:white;
-  border-color:var(--primary);
-}
-
-.hw-chip input{
-  display:none;
-}
-
-.hw-price-row{
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.hw-price-row input{
-  width:100%;
-  padding:8px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
-
+/* Actions */
 .hw-filter-actions{
-  margin-top:16px;
+  margin-top:10px;
   display:flex;
-  justify-content:space-between;
+  justify-content:flex-end;
+}
+.hw-filter-apply{
+  border-radius:999px;
+  border:0;
+  padding:7px 14px;
+  font-size:13px;
+  font-weight:800;
+  background:#FF6B00;
+  color:#fff;
+  cursor:pointer;
+}
+.hw-filter-apply:hover{
+  filter:brightness(.95);
 }
 
-.hw-apply{
-  background:var(--primary);
-  color:white;
-  border:none;
-  padding:10px 16px;
-  border-radius:10px;
-  font-weight:700;
-}
-
-.hw-reset{
-  background:white;
-  border:2px solid var(--primary);
-  padding:10px 16px;
-  border-radius:10px;
-  font-weight:700;
-  color:var(--primary);
+/* Mobile */
+@media (max-width: 640px){
+  .hw-filter-row{
+    flex-direction:column;
+  }
 }
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', function(){
+  // Tabs schalten Panels um
+  const tabs   = Array.from(document.querySelectorAll('.hw-filter-tab'));
+  const panels = Array.from(document.querySelectorAll('.hw-filter-panel'));
 
-  /* Tabs */
-  document.querySelectorAll(".hw-tab").forEach(tab=>{
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".hw-tab").forEach(t=>t.classList.remove("active"));
-      tab.classList.add("active");
-
-      document.querySelectorAll("[data-panel]").forEach(p=>p.hidden = true);
-      document.querySelector(`[data-filter="${tab.dataset.tab}"]`).hidden = false;
+  function showPanel(id){
+    panels.forEach(p => {
+      p.hidden = p.dataset.panel !== id;
     });
-  });
-
-  /* Chip Toggle */
-  document.querySelectorAll(".hw-chip").forEach(chip=>{
-    const input = chip.querySelector("input");
-    chip.addEventListener("click", () => {
-      input.checked = !input.checked;
-      chip.classList.toggle("active", input.checked);
+    tabs.forEach(t => {
+      t.classList.toggle('is-active', t.dataset.panel === id);
     });
+  }
+
+  tabs.forEach(t => {
+    t.addEventListener('click', () => showPanel(t.dataset.panel));
+  });
+  if (tabs.length){ showPanel(tabs[0].dataset.panel); }
+
+  // Chips (blau / grau)
+  const chipInputs = Array.from(document.querySelectorAll('.hw-chip input[type="checkbox"]'));
+  chipInputs.forEach(input => {
+    const label = input.closest('.hw-chip');
+    if (!label) return;
+    const sync = () => label.classList.toggle('is-active', input.checked);
+    input.addEventListener('change', sync);
+    sync();
   });
 
-  /* Filter anwenden */
-  const applyBtn = document.querySelector(".hw-apply");
-  applyBtn.addEventListener("click", () => {
-    const params = new URLSearchParams();
+  // Produkte sammeln
+  const cards = Array.from(document.querySelectorAll('.product-card'));
 
-    document.querySelectorAll(".hw-filter-group").forEach(group=>{
-      const key = group.dataset.filter;
-      const checked = [...group.querySelectorAll("input:checked")].map(x=>x.value);
-      if(checked.length) params.append(key, checked.join(","));
+  function getSelectedValues(group){
+    return chipInputs
+      .filter(i => i.dataset.group === group && i.checked)
+      .map(i => i.value.toLowerCase());
+  }
+
+  function applyFilters(){
+    const selectedColors = getSelectedValues('color');
+    const selectedBrands = getSelectedValues('brand');
+    const selectedRares  = getSelectedValues('rare');
+
+    const minInput = document.getElementById('hw-price-min');
+    const maxInput = document.getElementById('hw-price-max');
+    const min = minInput && minInput.value ? parseFloat(minInput.value.replace(',', '.')) : null;
+    const max = maxInput && maxInput.value ? parseFloat(maxInput.value.replace(',', '.')) : null;
+
+    cards.forEach(card => {
+      let visible = true;
+
+      const color = (card.dataset.color || '').toLowerCase();
+      const brand = (card.dataset.brand || '').toLowerCase();
+      const rare  = (card.dataset.rare  || '').toLowerCase();
+      const priceCents = card.dataset.price ? parseInt(card.dataset.price, 10) : null;
+      const price = priceCents !== null ? priceCents / 100 : null;
+
+      if (selectedColors.length && (!color || !selectedColors.includes(color))) {
+        visible = false;
+      }
+      if (selectedBrands.length && (!brand || !selectedBrands.includes(brand))) {
+        visible = false;
+      }
+      if (selectedRares.length && (!rare || !selectedRares.includes(rare))) {
+        visible = false;
+      }
+      if (price !== null){
+        if (min !== null && price < min) visible = false;
+        if (max !== null && price > max) visible = false;
+      }
+
+      card.style.display = visible ? '' : 'none';
     });
+  }
 
-    const min = document.getElementById("price-min").value;
-    const max = document.getElementById("price-max").value;
-    if(min) params.append("min", min);
-    if(max) params.append("max", max);
+  const applyBtn = document.querySelector('.hw-filter-apply');
+  const resetBtn = document.querySelector('.hw-filter-reset');
 
-    const url = window.location.pathname + "?" + params.toString();
-    window.location = url;
-  });
+  if (applyBtn){
+    applyBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      applyFilters();
+    });
+  }
 
-  /* Reset */
-  document.querySelector(".hw-reset").addEventListener("click", ()=>{
-    window.location = window.location.pathname;
-  });
+  if (resetBtn){
+    resetBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      // Chips resetten
+      chipInputs.forEach(i => {
+        i.checked = false;
+        i.dispatchEvent(new Event('change'));
+      });
+      // Preis reset
+      const minInput = document.getElementById('hw-price-min');
+      const maxInput = document.getElementById('hw-price-max');
+      if (minInput) minInput.value = '';
+      if (maxInput) maxInput.value = '';
+      // alles wieder anzeigen
+      cards.forEach(card => { card.style.display = ''; });
+    });
+  }
 });
 </script>
