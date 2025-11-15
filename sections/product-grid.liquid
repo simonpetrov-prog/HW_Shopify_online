@@ -1,103 +1,197 @@
-{% comment %}
-  Produkt-Grids für Collection-Seite
-  - Nutzt das aktuelle Collection-Objekt
-  - Saubere Cards, responsive Grid
-{% endcomment %}
+<div class="hw-filter-wrapper">
 
-<section class="hw-collection">
-  {% if collection.title %}
-    <h1 class="hw-collection__title">
-      {{ collection.title }}
-    </h1>
-  {% endif %}
+  <!-- Tabs oben -->
+  <div class="hw-filter-tabs">
+    <button data-tab="color" class="hw-tab active">Farbe</button>
+    <button data-tab="brand" class="hw-tab">Marke</button>
+    <button data-tab="rare" class="hw-tab">Seltenheit</button>
+    <button data-tab="price" class="hw-tab">Preis</button>
+  </div>
 
-  {% if collection.description != blank %}
-    <div class="hw-collection__desc">
-      {{ collection.description }}
+  <!-- Inhalt Farbe -->
+  <div class="hw-filter-group" data-filter="color" data-panel>
+    {% assign colors = "Rot,Blau,Orange,Schwarz,Weiß,Grau,Grün,Gelb,Lila,Pink" | split: "," %}
+    {% for c in colors %}
+      <label class="hw-chip">
+        <input type="checkbox" value="{{ c }}">
+        {{ c }}
+      </label>
+    {% endfor %}
+  </div>
+
+  <!-- Inhalt Marke -->
+  <div class="hw-filter-group" data-filter="brand" data-panel hidden>
+    {% assign brands = "Porsche,BMW,Mercedes,Ferrari,Audi,Toyota,Lamborghini,McLaren,Koenigsegg" | split: "," %}
+    {% for b in brands %}
+      <label class="hw-chip">
+        <input type="checkbox" value="{{ b }}">
+        {{ b }}
+      </label>
+    {% endfor %}
+  </div>
+
+  <!-- Inhalt Seltenheit -->
+  <div class="hw-filter-group" data-filter="rare" data-panel hidden>
+    {% assign rares = "TH,STH" | split: "," %}
+    {% for r in rares %}
+      <label class="hw-chip">
+        <input type="checkbox" value="{{ r }}">
+        {{ r }}
+      </label>
+    {% endfor %}
+  </div>
+
+  <!-- Inhalt Preis -->
+  <div class="hw-filter-group" data-filter="price" data-panel hidden>
+    <div class="hw-price-row">
+      <input id="price-min" type="number" placeholder="Min €" min="0">
+      <span>-</span>
+      <input id="price-max" type="number" placeholder="Max €" min="0">
     </div>
-  {% endif %}
+  </div>
 
-  {% if collection.products_count == 0 %}
-    <p class="hw-collection__empty">
-      Aktuell sind hier keine Produkte verfügbar.
-    </p>
-  {% else %}
-    <div class="hw-grid">
-      {% for product in collection.products %}
-        {%- assign hw_color = '' -%}
-{%- assign hw_brand = '' -%}
-{%- assign hw_rare  = '' -%}
-{%- for t in product.tags -%}
-  {%- if t contains 'Farbe:' -%}
-    {%- assign hw_color = t | remove: 'Farbe:' | strip -%}
-  {%- endif -%}
-  {%- if t contains 'Marke:' -%}
-    {%- assign hw_brand = t | remove: 'Marke:' | strip -%}
-  {%- endif -%}
-  {%- if t contains 'Seltenheit:' -%}
-    {%- assign hw_rare = t | remove: 'Seltenheit:' | strip -%}
-  {%- endif -%}
-{%- endfor -%}
-{%- assign hw_price_cents = product.price | divided_by: 1 -%}
+  <!-- Buttons unten -->
+  <div class="hw-filter-actions">
+    <button class="hw-apply">Filter anwenden</button>
+    <button class="hw-reset">Zurücksetzen</button>
+  </div>
+</div>
 
-<article
-  class="product-card"
-  data-color="{{ hw_color }}"
-  data-brand="{{ hw_brand }}"
-  data-rare="{{ hw_rare }}"
-  data-price="{{ hw_price_cents }}"
->
-          <a href="{{ product.url }}" class="hw-card__link">
-            <div class="hw-card__image-wrap">
-              {% if product.featured_image %}
-                <img
-                  src="{{ product.featured_image | img_url: '540x540' }}"
-                  alt="{{ product.featured_image.alt | escape }}"
-                  loading="lazy"
-                  class="hw-card__image"
-                >
-              {% endif %}
-
-              {%- if product.compare_at_price_max > product.price -%}
-                <div class="hw-card__badge hw-card__badge--sale">
-                  Sale
-                </div>
-              {%- endif -%}
-            </div>
-
-            <div class="hw-card__body">
-              <h2 class="hw-card__title">
-                {{ product.title }}
-              </h2>
-
-              <div class="hw-card__prices">
-                {% if product.compare_at_price_max > product.price %}
-                  <span class="hw-card__price--old">
-                    {{ product.compare_at_price_max | money }}
-                  </span>
-                {% endif %}
-                <span class="hw-card__price">
-                  {{ product.price | money }}
-                </span>
-              </div>
-            </div>
-          </a>
-
-          <form method="post" action="/cart/add" class="hw-card__form" enctype="multipart/form-data">
-            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-            <button type="submit" class="hw-card__btn">
-              In den Warenkorb
-            </button>
-          </form>
-        </article>
-      {% endfor %}
-    </div>
-  {% endif %}
-</section>
-
-{% schema %}
-{
-  "name": "Produktgrid",
-  "settings": []
+<style>
+.hw-filter-wrapper{
+  padding:14px;
+  border:2px solid var(--primary);
+  border-radius:14px;
+  background:white;
+  margin-bottom:20px;
 }
-{% endschema %}
+
+.hw-filter-tabs{
+  display:flex;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.hw-tab{
+  padding:8px 14px;
+  border-radius:8px;
+  background:#eee;
+  border:1px solid #ddd;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.hw-tab.active{
+  background:var(--primary);
+  color:white;
+}
+
+.hw-chip{
+  display:inline-flex;
+  align-items:center;
+  padding:6px 12px;
+  border:1px solid #ddd;
+  margin:4px;
+  border-radius:8px;
+  cursor:pointer;
+  background:#f1f1f1;
+  font-weight:600;
+}
+
+.hw-chip.active{
+  background:var(--primary);
+  color:white;
+  border-color:var(--primary);
+}
+
+.hw-chip input{
+  display:none;
+}
+
+.hw-price-row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.hw-price-row input{
+  width:100%;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.hw-filter-actions{
+  margin-top:16px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.hw-apply{
+  background:var(--primary);
+  color:white;
+  border:none;
+  padding:10px 16px;
+  border-radius:10px;
+  font-weight:700;
+}
+
+.hw-reset{
+  background:white;
+  border:2px solid var(--primary);
+  padding:10px 16px;
+  border-radius:10px;
+  font-weight:700;
+  color:var(--primary);
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* Tabs */
+  document.querySelectorAll(".hw-tab").forEach(tab=>{
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".hw-tab").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+
+      document.querySelectorAll("[data-panel]").forEach(p=>p.hidden = true);
+      document.querySelector(`[data-filter="${tab.dataset.tab}"]`).hidden = false;
+    });
+  });
+
+  /* Chip Toggle */
+  document.querySelectorAll(".hw-chip").forEach(chip=>{
+    const input = chip.querySelector("input");
+    chip.addEventListener("click", () => {
+      input.checked = !input.checked;
+      chip.classList.toggle("active", input.checked);
+    });
+  });
+
+  /* Filter anwenden */
+  const applyBtn = document.querySelector(".hw-apply");
+  applyBtn.addEventListener("click", () => {
+    const params = new URLSearchParams();
+
+    document.querySelectorAll(".hw-filter-group").forEach(group=>{
+      const key = group.dataset.filter;
+      const checked = [...group.querySelectorAll("input:checked")].map(x=>x.value);
+      if(checked.length) params.append(key, checked.join(","));
+    });
+
+    const min = document.getElementById("price-min").value;
+    const max = document.getElementById("price-max").value;
+    if(min) params.append("min", min);
+    if(max) params.append("max", max);
+
+    const url = window.location.pathname + "?" + params.toString();
+    window.location = url;
+  });
+
+  /* Reset */
+  document.querySelector(".hw-reset").addEventListener("click", ()=>{
+    window.location = window.location.pathname;
+  });
+});
+</script>
