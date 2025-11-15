@@ -24,7 +24,29 @@
   {% else %}
     <div class="hw-grid">
       {% for product in collection.products %}
-        <article class="hw-card">
+        {%- assign hw_color = '' -%}
+{%- assign hw_brand = '' -%}
+{%- assign hw_rare  = '' -%}
+{%- for t in product.tags -%}
+  {%- if t contains 'Farbe:' -%}
+    {%- assign hw_color = t | remove: 'Farbe:' | strip -%}
+  {%- endif -%}
+  {%- if t contains 'Marke:' -%}
+    {%- assign hw_brand = t | remove: 'Marke:' | strip -%}
+  {%- endif -%}
+  {%- if t contains 'Seltenheit:' -%}
+    {%- assign hw_rare = t | remove: 'Seltenheit:' | strip -%}
+  {%- endif -%}
+{%- endfor -%}
+{%- assign hw_price_cents = product.price | divided_by: 1 -%}
+
+<article
+  class="product-card"
+  data-color="{{ hw_color }}"
+  data-brand="{{ hw_brand }}"
+  data-rare="{{ hw_rare }}"
+  data-price="{{ hw_price_cents }}"
+>
           <a href="{{ product.url }}" class="hw-card__link">
             <div class="hw-card__image-wrap">
               {% if product.featured_image %}
