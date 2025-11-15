@@ -1,265 +1,396 @@
-<!-- HW FILTER SECTION -->
-<div class="hw-filter-box">
-  <!-- Tabs -->
-  <div class="hw-filter-tabs">
-    <button class="hw-tab active" data-filter="price">Preis</button>
-    <button class="hw-tab" data-filter="color">Farbe</button>
-    <button class="hw-tab" data-filter="brand">Marke</button>
-    <button class="hw-tab" data-filter="rarity">Seltenheit</button>
+{%- comment -%}
+  HW Central Seller – Filter
+
+  Konvention für Produkt-Tags (damit die Filter sauber greifen):
+  - Farbe: Rot, Blau, Schwarz, Weiß, Gelb, Grün, Orange, ...
+    → Tag im Produkt: "Farbe: Rot"
+  - Marke: Porsche, Ferrari, BMW, Mercedes, ...
+    → Tag im Produkt: "Marke: Porsche"
+  - Seltenheit: TH, STH, Mainline
+    → Tag im Produkt: "Seltenheit: TH" / "Seltenheit: STH" / "Seltenheit: Mainline"
+{%- endcomment -%}
+
+<div class="hw-filters-box">
+  <div class="hw-filters-head">
+    <h2>Filter</h2>
+    <button type="button" class="hw-filter-reset">Zurücksetzen</button>
   </div>
 
-  <!-- Panels -->
+  <!-- Tabs oben -->
+  <div class="hw-filter-tabs">
+    <button type="button" class="hw-filter-tab is-active" data-panel="price">Preis</button>
+    <button type="button" class="hw-filter-tab" data-panel="color">Farbe</button>
+    <button type="button" class="hw-filter-tab" data-panel="brand">Marke</button>
+    <button type="button" class="hw-filter-tab" data-panel="rare">Seltenheit</button>
+  </div>
+
+  <!-- Panels unten -->
   <div class="hw-filter-panels">
+
     <!-- Preis -->
-    <div class="hw-panel" data-panel="price">
-      <div class="hw-price-row">
-        <label>von</label>
-        <input type="number" name="min_price" step="0.01" min="0" placeholder="2,99">
+    <div class="hw-filter-panel" data-panel="price">
+      <div class="hw-filter-row">
+        <label>
+          Min (€)
+          <input type="number" id="hw-price-min" min="0" step="0.5" placeholder="z. B. 2">
+        </label>
+        <label>
+          Max (€)
+          <input type="number" id="hw-price-max" min="0" step="0.5" placeholder="z. B. 10">
+        </label>
       </div>
-      <div class="hw-price-row">
-        <label>bis</label>
-        <input type="number" name="max_price" step="0.01" min="0" placeholder="9,99">
-      </div>
+      <p class="hw-filter-hint">Der Preis bezieht sich auf den aktuellen Produktpreis.</p>
     </div>
 
     <!-- Farbe -->
-    <div class="hw-panel hw-scroll" data-panel="color" hidden>
-      <label class="hw-chip"><input type="checkbox" name="color" value="rot"><span class="dot"></span><span>Rot</span></label>
-      <label class="hw-chip"><input type="checkbox" name="color" value="blau"><span class="dot"></span><span>Blau</span></label>
-      <label class="hw-chip"><input type="checkbox" name="color" value="weiß"><span class="dot"></span><span>Weiß</span></label>
-      <label class="hw-chip"><input type="checkbox" name="color" value="schwarz"><span class="dot"></span><span>Schwarz</span></label>
-      <label class="hw-chip"><input type="checkbox" name="color" value="orange"><span class="dot"></span><span>Orange</span></label>
-      <label class="hw-chip"><input type="checkbox" name="color" value="grau"><span class="dot"></span><span>Grau</span></label>
-      <label class="hw-chip"><input type="checkbox" name="color" value="grün"><span class="dot"></span><span>Grün</span></label>
-      <label class="hw-chip"><input type="checkbox" name="color" value="gelb"><span class="dot"></span><span>Gelb</span></label>
+    <div class="hw-filter-panel" data-panel="color" hidden>
+      <div class="hw-chip-row">
+        <label class="hw-chip">
+          <input type="checkbox" value="Rot" data-group="color">
+          <span class="dot" style="background:#e11d48;"></span>
+          Rot
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Blau" data-group="color">
+          <span class="dot" style="background:#1e3a8a;"></span>
+          Blau
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Schwarz" data-group="color">
+          <span class="dot" style="background:#111827;"></span>
+          Schwarz
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Weiß" data-group="color">
+          <span class="dot" style="background:#ffffff;border:1px solid #ddd;"></span>
+          Weiß
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Gelb" data-group="color">
+          <span class="dot" style="background:#fbbf24;"></span>
+          Gelb
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Orange" data-group="color">
+          <span class="dot" style="background:#f97316;"></span>
+          Orange
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Grün" data-group="color">
+          <span class="dot" style="background:#16a34a;"></span>
+          Grün
+        </label>
+      </div>
     </div>
 
     <!-- Marke -->
-    <div class="hw-panel hw-scroll" data-panel="brand" hidden>
-      <label class="hw-chip"><input type="checkbox" name="brand" value="porsche"><span>Porsche</span></label>
-      <label class="hw-chip"><input type="checkbox" name="brand" value="ferrari"><span>Ferrari</span></label>
-      <label class="hw-chip"><input type="checkbox" name="brand" value="bmw"><span>BMW</span></label>
-      <label class="hw-chip"><input type="checkbox" name="brand" value="mercedes"><span>Mercedes</span></label>
-      <label class="hw-chip"><input type="checkbox" name="brand" value="toyota"><span>Toyota</span></label>
-      <label class="hw-chip"><input type="checkbox" name="brand" value="lamborghini"><span>Lamborghini</span></label>
-      <label class="hw-chip"><input type="checkbox" name="brand" value="koenigsegg"><span>Koenigsegg</span></label>
+    <div class="hw-filter-panel" data-panel="brand" hidden>
+      <div class="hw-chip-row">
+        <label class="hw-chip">
+          <input type="checkbox" value="Porsche" data-group="brand">
+          Porsche
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Ferrari" data-group="brand">
+          Ferrari
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="BMW" data-group="brand">
+          BMW
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Mercedes" data-group="brand">
+          Mercedes
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Lamborghini" data-group="brand">
+          Lamborghini
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Toyota" data-group="brand">
+          Toyota
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Nissan" data-group="brand">
+          Nissan
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="Audi" data-group="brand">
+          Audi
+        </label>
+      </div>
     </div>
 
     <!-- Seltenheit -->
-    <div class="hw-panel hw-scroll" data-panel="rarity" hidden>
-      <label class="hw-chip"><input type="checkbox" name="rarity" value="th"><span>Treasure Hunt</span></label>
-      <label class="hw-chip"><input type="checkbox" name="rarity" value="sth"><span>Super Treasure Hunt</span></label>
+    <div class="hw-filter-panel" data-panel="rare" hidden>
+      <div class="hw-chip-row">
+        <label class="hw-chip">
+          <input type="checkbox" value="Mainline" data-group="rare">
+          Mainline
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="TH" data-group="rare">
+          Treasure Hunt (TH)
+        </label>
+        <label class="hw-chip">
+          <input type="checkbox" value="STH" data-group="rare">
+          Super Treasure Hunt (STH)
+        </label>
+      </div>
     </div>
+
   </div>
 
-  <!-- Aktionen -->
   <div class="hw-filter-actions">
-    <button class="btn" data-filter-apply>Filter anwenden</button>
-    <button class="btn-outline" data-filter-reset>Zurücksetzen</button>
+    <button type="button" class="hw-filter-apply">Filter anwenden</button>
   </div>
 </div>
 
 <style>
-/* ---- Container ---- */
-.hw-filter-box{
-  border:3px solid #0046BE;
+.hw-filters-box{
+  border:2px solid #0046BE;
   border-radius:16px;
-  background:#fff;
-  padding:14px 16px 12px;
-  margin-bottom:18px;
-  box-shadow:0 4px 16px rgba(0,0,0,.05);
+  padding:12px 12px 14px;
+  margin:10px 0 18px;
+  background:#F7F9FF;
 }
 
-/* ---- Tabs ---- */
+.hw-filters-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:8px;
+}
+.hw-filters-head h2{
+  margin:0;
+  font-size:16px;
+  font-weight:800;
+}
+.hw-filter-reset{
+  border:0;
+  background:transparent;
+  color:#6b7280;
+  font-size:13px;
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+/* Tabs */
 .hw-filter-tabs{
   display:flex;
-  gap:10px;
   flex-wrap:wrap;
-  margin-bottom:12px;
+  gap:6px;
+  margin-bottom:8px;
 }
-.hw-tab{
-  background:#f5f5f5;
-  border:2px solid #eee;
-  border-radius:10px;
-  padding:7px 14px;
-  font-weight:800;
+.hw-filter-tab{
+  border-radius:999px;
+  border:1px solid #d1d5db;
+  padding:5px 12px;
+  font-size:13px;
+  font-weight:700;
+  background:#fff;
   cursor:pointer;
-  transition:all .15s;
 }
-.hw-tab:hover{
-  border-color:#FF6B00;
-  color:#FF6B00;
-}
-.hw-tab.active{
+.hw-filter-tab.is-active{
   background:#0046BE;
   color:#fff;
   border-color:#0046BE;
-  box-shadow:0 2px 6px rgba(0,70,190,.25);
 }
 
-/* ---- Panels ---- */
-.hw-panel{ display:none; margin-bottom:12px; }
-.hw-panel:not([hidden]){
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+/* Panels */
+.hw-filter-panels{
+  border-radius:12px;
+  background:#fff;
+  padding:10px;
+  border:1px solid #e5e7eb;
+}
+.hw-filter-panel[hidden]{ display:none; }
+
+.hw-filter-row{
+  display:flex;
   gap:10px;
-  align-items:center;
 }
-
-/* Preis-Panel */
-.hw-price-row{
+.hw-filter-row label{
+  flex:1;
   display:flex;
   flex-direction:column;
+  font-size:13px;
   gap:4px;
 }
-.hw-price-row input{
-  width:110px;
-  max-width:110px;
+.hw-filter-row input{
+  border-radius:8px;
   border:1px solid #d1d5db;
-  border-radius:10px;
   padding:6px 8px;
 }
 
-/* ---- Scrollbare Panels ---- */
-.hw-scroll{
-  max-height:160px;
-  overflow:auto;
-  padding-right:6px;
-}
-.hw-scroll::-webkit-scrollbar{
-  width:8px;
-  height:8px;
-}
-.hw-scroll::-webkit-scrollbar-thumb{
-  background:rgba(0,0,0,.2);
-  border-radius:6px;
-}
-.hw-scroll::-webkit-scrollbar-track{
-  background:transparent;
+.hw-filter-hint{
+  margin:6px 0 0;
+  font-size:12px;
+  color:#6b7280;
 }
 
-/* ---- Chips ---- */
+/* Chips */
+.hw-chip-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
 .hw-chip{
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  background:#F2F2F2;
-  border:1px solid #E0E0E0;
-  color:#333;
-  border-radius:999px;
+  gap:6px;
   padding:6px 10px;
-  font-weight:700;
-  font-size:14px;
+  border-radius:999px;
+  border:1px solid #d1d5db;
+  background:#f9fafb;
+  font-size:13px;
+  font-weight:600;
   cursor:pointer;
-  transition:all .15s;
 }
 .hw-chip input{ display:none; }
 .hw-chip .dot{
   width:14px;
   height:14px;
   border-radius:50%;
-  background:#ddd;
+  border:1px solid rgba(0,0,0,.2);
 }
-.hw-chip.is-checked{
+.hw-chip.is-active{
   background:#0046BE;
   border-color:#0046BE;
   color:#fff;
-  box-shadow:0 2px 6px rgba(0,70,190,.22);
 }
-.hw-chip.is-checked .dot{ background:#fff; }
 
-/* ---- Aktionen ---- */
+/* Actions */
 .hw-filter-actions{
+  margin-top:10px;
   display:flex;
   justify-content:flex-end;
-  gap:10px;
-  margin-top:8px;
 }
-.btn{
+.hw-filter-apply{
+  border-radius:999px;
+  border:0;
+  padding:7px 14px;
+  font-size:13px;
+  font-weight:800;
   background:#FF6B00;
   color:#fff;
-  border:0;
-  border-radius:10px;
-  padding:8px 16px;
-  font-weight:800;
   cursor:pointer;
 }
-.btn-outline{
-  background:#fff;
-  color:#0046BE;
-  border:2px solid #0046BE;
-  border-radius:10px;
-  padding:8px 16px;
-  font-weight:800;
-  cursor:pointer;
+.hw-filter-apply:hover{
+  filter:brightness(.95);
 }
-.btn:hover{ filter:brightness(.95); }
-.btn-outline:hover{ background:#0046BE; color:#fff; }
 
-/* ---- Mobile ---- */
-@media (max-width:700px){
-  .hw-panel:not([hidden]){
-    display:flex;
-    flex-wrap:wrap;
-    align-items:flex-start;
-  }
-  .hw-scroll{
-    max-height:200px;
+/* Mobile */
+@media (max-width: 640px){
+  .hw-filter-row{
+    flex-direction:column;
   }
 }
 </style>
 
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-  const applyBtn = document.querySelector(".hw-apply");
-  const resetBtn = document.querySelector(".hw-reset");
+document.addEventListener('DOMContentLoaded', function(){
+  // Tabs (Preis / Farbe / Marke / Seltenheit)
+  const tabs   = Array.from(document.querySelectorAll('.hw-filter-tab'));
+  const panels = Array.from(document.querySelectorAll('.hw-filter-panel'));
 
-  if (!applyBtn) return;
+  function showPanel(id){
+    panels.forEach(p => {
+      p.hidden = p.dataset.panel !== id;
+    });
+    tabs.forEach(t => {
+      t.classList.toggle('is-active', t.dataset.panel === id);
+    });
+  }
 
-  // Sammle alle Filter-Optionen
-  function getSelectedFilters() {
-    const params = new URLSearchParams();
+  tabs.forEach(t => {
+    t.addEventListener('click', () => showPanel(t.dataset.panel));
+  });
+  if (tabs.length){ showPanel(tabs[0].dataset.panel); }
 
-    document.querySelectorAll(".hw-filter-group").forEach(group => {
-      const key = group.dataset.filter;
-      const checked = [...group.querySelectorAll("input:checked")].map(i => i.value);
+  // Chips (blau/grau umschalten)
+  const chipInputs = Array.from(document.querySelectorAll('.hw-chip input[type="checkbox"]'));
+  chipInputs.forEach(input => {
+    const label = input.closest('.hw-chip');
+    if (!label) return;
+    const sync = () => label.classList.toggle('is-active', input.checked);
+    input.addEventListener('change', sync);
+    sync();
+  });
 
-      if (checked.length > 0) {
-        params.append(key, checked.join(","));
+  // Produkte einsammeln (alle Cards mit class="product-card")
+  const cards = Array.from(document.querySelectorAll('.product-card'));
+
+  function getSelectedValues(group){
+    return chipInputs
+      .filter(i => i.dataset.group === group && i.checked)
+      .map(i => i.value.toLowerCase());
+  }
+
+  function applyFilters(){
+    const selectedColors = getSelectedValues('color');
+    const selectedBrands = getSelectedValues('brand');
+    const selectedRares  = getSelectedValues('rare');
+
+    const minInput = document.getElementById('hw-price-min');
+    const maxInput = document.getElementById('hw-price-max');
+    const min = minInput && minInput.value ? parseFloat(minInput.value.replace(',', '.')) : null;
+    const max = maxInput && maxInput.value ? parseFloat(maxInput.value.replace(',', '.')) : null;
+
+    cards.forEach(card => {
+      let visible = true;
+
+      const color = (card.dataset.color || '').toLowerCase();
+      const brand = (card.dataset.brand || '').toLowerCase();
+      const rare  = (card.dataset.rare  || '').toLowerCase();
+      const priceCents = card.dataset.price ? parseInt(card.dataset.price, 10) : null;
+      const price = priceCents !== null ? priceCents / 100 : null;
+
+      if (selectedColors.length && (!color || !selectedColors.includes(color))) {
+        visible = false;
       }
-    });
+      if (selectedBrands.length && (!brand || !selectedBrands.includes(brand))) {
+        visible = false;
+      }
+      if (selectedRares.length && (!rare || !selectedRares.includes(rare))) {
+        visible = false;
+      }
+      if (price !== null){
+        if (min !== null && price < min) visible = false;
+        if (max !== null && price > max) visible = false;
+      }
 
-    // Preis extra sammeln
-    const min = document.getElementById("price-min")?.value;
-    const max = document.getElementById("price-max")?.value;
-
-    if (min) params.append("price_min", min);
-    if (max) params.append("price_max", max);
-
-    return params;
-  }
-
-  // Anwenden → Seite neu laden
-  applyBtn.addEventListener("click", () => {
-    const params = getSelectedFilters();
-    const base = window.location.pathname;
-
-    window.location = base + (params.toString() ? "?" + params.toString() : "");
-  });
-
-  // Zurücksetzen
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      const base = window.location.pathname;
-      window.location = base; // komplette URL ohne Filter
+      card.style.display = visible ? '' : 'none';
     });
   }
 
-  // Buttons Blau / Grau toggeln
-  document.querySelectorAll(".hw-chip input").forEach(input => {
-    input.addEventListener("change", () => {
-      input.closest("label").classList.toggle("active", input.checked);
+  const applyBtn = document.querySelector('.hw-filter-apply');
+  const resetBtn = document.querySelector('.hw-filter-reset');
+
+  if (applyBtn){
+    applyBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      applyFilters();
     });
-  });
+  }
+
+  if (resetBtn){
+    resetBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      // Chips reset
+      chipInputs.forEach(i => {
+        i.checked = false;
+        i.dispatchEvent(new Event('change'));
+      });
+      // Preis reset
+      if (minInput) minInput.value = '';
+      if (maxInput) maxInput.value = '';
+      // Alles wieder anzeigen
+      cards.forEach(card => { card.style.display = ''; });
+    });
+  }
+
+  const minInput = document.getElementById('hw-price-min');
+  const maxInput = document.getElementById('hw-price-max');
 });
 </script>
