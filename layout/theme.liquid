@@ -1706,5 +1706,64 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+  // Globales AJAX-Add-to-Cart + Drawer öffnen
+  document.addEventListener('DOMContentLoaded', () => {
+    const drawer = document.getElementById('cart-drawer');
+
+    async function fetchCart() {
+      const res = await fetch('/cart.js', { credentials: 'same-origin' });
+      return res.json();
+    }
+
+    async function handleAjaxAddToCart(form) {
+      const formData = new FormData(form);
+
+      // Produkt hinzufügen
+      await fetch('/cart/add.js', {
+        method: 'POST',
+        body: formData,
+        credentials: 'same-origin',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      // Cart neu holen
+      const cart = await fetchCart();
+
+      // Drawer öffnen + Inhalt nachladen (Funktion kommt aus cart-drawer.liquid)
+      if (drawer) {
+        drawer.classList.add('open');
+        document.documentElement.classList.add('cart-open');
+        if (typeof loadCartDrawer === 'function') {
+          loadCartDrawer();
+        }
+      }
+
+      // Header-Badge aktualisieren
+      const badge = document.querySelector('[data-cart-count]');
+      if (badge) {
+        badge.textContent = cart.item_count;
+        badge.classList.toggle('is-hidden', cart.item_count === 0);
+      }
+
+      // Event für andere Skripte (Toast etc.)
+      document.dispatchEvent(
+        new CustomEvent('hw:cart-updated', { detail: { item_count: cart.item_count } })
+      );
+    }
+
+    // Alle /cart/add-Formulare abfangen
+    document.addEventListener('submit', (event) => {
+      const form = event.target;
+      if (!form.matches('form[action^="/cart/add"]')) return;
+
+      event.preventDefault();
+      handleAjaxAddToCart(form).catch(console.error);
+    });
+  });
+</script>
+
   </body>
 </html>
