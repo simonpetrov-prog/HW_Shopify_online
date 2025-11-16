@@ -1,203 +1,282 @@
 <header class="hw-header">
   <div class="hw-header__inner">
     <!-- Logo links -->
-    <a href="/" class="hw-header__logo">
+    <a href="{{ routes.root_url }}" class="hw-header__logo" aria-label="{{ shop.name }}">
       {% if section.settings.logo %}
-        {{ section.settings.logo | image_url: width: 180 | image_tag: alt: shop.name }}
+        <img
+          src="{{ section.settings.logo | img_url: '200x' }}"
+          alt="{{ shop.name }}"
+          loading="lazy"
+        >
       {% else %}
-        <span class="hw-header__logo-text">{{ shop.name }}</span>
+        {{ shop.name }}
       {% endif %}
     </a>
 
-    <!-- Kleine Suchzeile in der Mitte -->
-    <form class="hw-header__search" action="/search" method="get" role="search" aria-label="Shop-Suche">
+    <!-- Burger nur auf Mobile sichtbar -->
+    <button class="hw-header__burger" type="button" aria-label="Menü öffnen">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Hauptnavigation (Desktop, und im Mobile-Slideout wiederverwendet) -->
+    <nav class="hw-header__nav" aria-label="Hauptnavigation">
+      <a
+        href="{{ routes.root_url }}"
+        class="hw-nav__link {% if template.name == 'index' %}is-active{% endif %}"
+      >
+        Startseite
+      </a>
+      <a
+        href="{{ routes.collections_url }}/all"
+        class="hw-nav__link {% if template contains 'collection' %}is-active{% endif %}"
+      >
+        Produkte
+      </a>
+    </nav>
+
+    <!-- Suche (Desktop: in einer Linie, Mobile: eigene Zeile) -->
+    <form
+      class="hw-header__search"
+      action="/search"
+      method="get"
+      role="search"
+      aria-label="Shop-Suche"
+    >
       <input
         class="hw-header__search-input"
         type="search"
         name="q"
+        placeholder="Suche nach Modellen, Marken…"
         value="{{ search.terms | escape }}"
-        placeholder="Suche nach Modellen, Marken..."
-        autocomplete="off"
       >
-      <button class="hw-header__search-btn" type="submit">Suchen</button>
+      <button class="hw-header__search-btn" type="submit">
+        Suchen
+      </button>
     </form>
 
-    <!-- Burger rechts -->
+    <!-- Warenkorb-Button (öffnet Drawer) -->
     <button
-      class="hw-header__burger"
+      class="cart-btn"
       type="button"
-      aria-label="Menü öffnen"
-      aria-expanded="false"
-      aria-controls="hw-mobile-nav">
-      <span></span>
-      <span></span>
-      <span></span>
+      data-cart-toggle
+      aria-label="Warenkorb öffnen"
+    >
+      <span class="cart-btn__text">Warenkorb</span>
+      <span
+        class="cart-badge {% if cart.item_count == 0 %}is-hidden{% endif %}"
+        data-cart-count
+      >
+        {{ cart.item_count }}
+      </span>
     </button>
   </div>
 
-  <!-- Menü, das sich über den Burger öffnet -->
-  <nav id="hw-mobile-nav" class="hw-header__nav">
-    <a href="/" class="hw-nav__link{% if template.name == 'index' %} is-active{% endif %}">Startseite</a>
-    <a href="/collections/all" class="hw-nav__link{% if template.name == 'collection' %} is-active{% endif %}">Produkte</a>
-    <a href="{{ routes.cart_url }}" class="hw-nav__link">Warenkorb</a>
-  </nav>
+  <!-- Mobile-Slideout-Menü -->
+  <div class="hw-header__mobile-menu" aria-label="Mobiles Menü">
+    <nav class="hw-header__mobile-nav">
+      <a
+        href="{{ routes.root_url }}"
+        class="hw-nav__link {% if template.name == 'index' %}is-active{% endif %}"
+      >
+        Startseite
+      </a>
+      <a
+        href="{{ routes.collections_url }}/all"
+        class="hw-nav__link {% if template contains 'collection' %}is-active{% endif %}"
+      >
+        Produkte
+      </a>
+    </nav>
+  </div>
 </header>
 
 <style>
-.hw-header{
-  position:sticky;
-  top:0;
-  z-index:40;
-  background:#fff;
-  border-bottom:1px solid #f1f1f1;
-}
-
-/* Grundlayout Header-Zeile */
-.hw-header__inner{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:8px 12px;
-}
-
-/* Logo */
-.hw-header__logo img{
-  max-height:32px;
-  width:auto;
-  display:block;
-}
-.hw-header__logo-text{
-  font-weight:900;
-  font-size:16px;
-}
-
-/* Suche in der Mitte – eher klein */
-.hw-header__search{
-  flex:1;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.hw-header__search-input{
-  flex:1;
-  border:1px solid #e5e7eb;
-  border-radius:999px;
-  padding:6px 10px;
-  font-size:13px;
-}
-.hw-header__search-btn{
-  border-radius:999px;
-  border:0;
-  padding:6px 11px;
-  font-size:12px;
-  font-weight:800;
-  background:var(--accent, #FF6B00);
-  color:#fff;
-  cursor:pointer;
-}
-.hw-header__search-btn:hover{
-  filter:brightness(.95);
-}
-
-/* Burger rechts */
-.hw-header__burger{
-  margin-left:4px;
-  width:34px;
-  height:34px;
-  border-radius:999px;
-  border:1px solid #e5e7eb;
-  background:#fff;
-  display:inline-flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:4px;
-  padding:0;
-  cursor:pointer;
-}
-.hw-header__burger span{
-  width:16px;
-  height:2px;
-  background:#111;
-  border-radius:999px;
-}
-
-/* Menü unter dem Header (mobile) */
-.hw-header__nav{
-  display:none;
-  padding:8px 12px 10px;
-  background:#fff;
-  border-top:1px solid #f1f1f1;
-}
-.hw-nav__link{
-  display:inline-block;
-  margin-right:8px;
-  padding:6px 13px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:14px;
-  color:#111;
-  background:#f3f4f6;
-  text-decoration:none;
-}
-.hw-nav__link.is-active{
-  background:var(--primary, #0046BE);
-  color:#fff;
-}
-.hw-nav__link:hover{
-  background:#FFF4EB;
-  color:var(--accent, #FF6B00);
-}
-
-/* Wenn Burger offen → Menü anzeigen + Burger leicht orange */
-.hw-header.is-open #hw-mobile-nav{
-  display:block;
-}
-.hw-header.is-open .hw-header__burger{
-  border-color:var(--accent, #FF6B00);
-}
-
-/* Desktop: Burger ausblenden, Menü als Leiste anzeigen */
-@media (min-width: 900px){
+  .hw-header{
+    position:sticky;
+    top:0;
+    z-index:40;
+    background:#fff;
+    border-bottom:1px solid var(--border, #e5e5e5);
+  }
   .hw-header__inner{
     max-width:1200px;
     margin:0 auto;
+    padding:8px 16px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px;
   }
+  .hw-header__logo img{
+    display:block;
+    height:32px;
+    width:auto;
+  }
+
+  /* Suche */
   .hw-header__search{
-    max-width:420px;
-  }
-  .hw-header__burger{
-    display:none;
-  }
-  .hw-header__nav{
-    display:flex !important;
+    display:flex;
     align-items:center;
     gap:8px;
-    padding:6px 12px 10px;
+    flex:1 0 100%;
+    order:3;
+  }
+  .hw-header__search-input{
+    flex:1;
+    border-radius:999px;
+    border:1px solid #ddd;
+    padding:9px 14px;
+    font-size:14px;
+  }
+  .hw-header__search-btn{
+    border-radius:999px;
+    padding:9px 16px;
+    border:none;
+    background:var(--accent, #FF6B00);
+    color:#fff;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  /* Nav links */
+  .hw-header__nav{
+    display:none; /* Desktop: sichtbar, Mobile: im Slideout */
+    gap:8px;
+    align-items:center;
+  }
+  .hw-nav__link{
+    position:relative;
+    padding:6px 14px;
+    border-radius:999px;
+    font-weight:800;
+    color:#111;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .hw-nav__link:hover{
+    background:rgba(0,70,190,.06);
+    color:var(--primary, #0046BE);
+  }
+  .hw-nav__link.is-active{
+    background:var(--primary, #0046BE);
+    color:#fff;
+  }
+  .hw-nav__link.is-active::after{
+    content:"";
+    position:absolute;
+    left:20%;
+    right:20%;
+    bottom:-6px;
+    height:3px;
+    border-radius:2px;
+    background:var(--accent,#FF6B00);
+  }
+
+  /* Burger + Mobile-Menü */
+  .hw-header__burger{
+    margin-left:auto;
+    border:0;
+    background:#fff;
+    border-radius:8px;
+    padding:6px 8px;
+    display:inline-flex;
+    flex-direction:column;
+    gap:4px;
+    cursor:pointer;
+  }
+  .hw-header__burger span{
+    width:18px;
+    height:2px;
+    border-radius:2px;
+    background:#111;
+  }
+
+  .hw-header__mobile-menu{
+    display:none;
+    border-top:1px solid #eee;
+    background:#fff;
+  }
+  .hw-header__mobile-menu.is-open{
+    display:block;
+  }
+  .hw-header__mobile-nav{
     max-width:1200px;
     margin:0 auto;
+    padding:8px 16px 12px;
+    display:flex;
+    gap:8px;
   }
-}
+
+  /* Cart Button (nutzt deine bestehenden Styles weiter) */
+  .cart-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    border-radius:999px;
+    padding:8px 14px;
+    background:var(--primary,#0046BE);
+    color:#fff;
+    border:0;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .cart-badge{
+    min-width:20px;
+    height:20px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:999px;
+    background:#000;
+    color:#fff;
+    font-size:12px;
+    padding:0 6px;
+  }
+  .cart-badge.is-hidden{ display:none; }
+
+  /* --- Desktop Layout --- */
+  @media (min-width: 900px){
+    .hw-header__inner{
+      flex-wrap:nowrap;
+    }
+    .hw-header__search{
+      order:0;
+      flex:1 0 auto;
+      max-width:420px;
+      margin:0 24px;
+    }
+    .hw-header__nav{
+      display:flex;
+      margin-left:16px;
+    }
+    .hw-header__burger,
+    .hw-header__mobile-menu{
+      display:none !important;
+    }
+  }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const burger = document.querySelector('.hw-header__burger');
+    const mobileMenu = document.querySelector('.hw-header__mobile-menu');
+    if (!burger || !mobileMenu) return;
+
+    burger.addEventListener('click', ()=>{
+      mobileMenu.classList.toggle('is-open');
+    });
+  });
+</script>
 
 {% schema %}
 {
   "name": "Header",
   "settings": [
-    { "type": "image_picker", "id": "logo", "label": "Logo" }
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    }
   ]
 }
 {% endschema %}
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  var header = document.querySelector('.hw-header');
-  var burger = document.querySelector('.hw-header__burger');
-  if(!header || !burger) return;
-
-  burger.addEventListener('click', function(){
-    var open = header.classList.toggle('is-open');
-    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
-  });
-});
-</script>
