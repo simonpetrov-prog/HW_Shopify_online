@@ -241,22 +241,21 @@ document.addEventListener('DOMContentLoaded', function(){
   });
   if (tabs.length){ showPanel(tabs[0].dataset.panel); }
 
-  // Produkte sammeln (deine Cards)
+  // Alle Produktkarten
   const cards = Array.from(document.querySelectorAll('.product-card'));
 
-  // Chips (Farbe/Marke/Seltenheit)
-  const chipInputs = Array.from(document.querySelectorAll('.hw-chip input[type="checkbox"]'));
-
-  function getSelectedValues(group){
-    return chipInputs
-      .filter(i => i.dataset.group === group && i.checked)
+  // Hilfsfunktion: Werte aus einem Panel einsammeln (Farbe/Marke/Seltenheit)
+  function getPanelValues(panelName){
+    const panel = document.querySelector('.hw-filter-panel[data-panel="'+panelName+'"]');
+    if (!panel) return [];
+    return Array.from(panel.querySelectorAll('input[type="checkbox"]:checked'))
       .map(i => i.value.toLowerCase());
   }
 
   function applyFilters(){
-    const selectedColors = getSelectedValues('color');
-    const selectedBrands = getSelectedValues('brand');
-    const selectedRares  = getSelectedValues('rare');
+    const selectedColors = getPanelValues('color');
+    const selectedBrands = getPanelValues('brand');
+    const selectedRares  = getPanelValues('rare');
 
     const minInput = document.getElementById('hw-price-min');
     const maxInput = document.getElementById('hw-price-max');
@@ -290,22 +289,27 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Chips: blau/grau UND direkt filtern
-  chipInputs.forEach(input => {
-    const label = input.closest('.hw-chip');
-    if (!label) return;
+  // Chips: blau/grau + direkt filtern
+  const chipLabels = Array.from(document.querySelectorAll('.hw-chip'));
+  chipLabels.forEach(label => {
+    const input = label.querySelector('input[type="checkbox"]');
+    if (!input) return;
 
     const sync = () => label.classList.toggle('is-active', input.checked);
 
-    input.addEventListener('change', () => {
+    label.addEventListener('click', (e) => {
+      // verhindern, dass das Label-Default doppelt triggert
+      if (e.target.tagName !== 'INPUT') {
+        input.checked = !input.checked;
+      }
       sync();
-      applyFilters(); // direkt filtern nach Klick
+      applyFilters();
     });
 
     sync();
   });
 
-  // Preisfelder: bei Änderung direkt filtern
+  // Preisfelder: bei Änderung filtern
   const minField = document.getElementById('hw-price-min');
   const maxField = document.getElementById('hw-price-max');
 
@@ -322,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function(){
   if (applyBtn){
     applyBtn.addEventListener('click', function(e){
       e.preventDefault();
-      applyFilters(); // sicherheitshalber auch hier
+      applyFilters();
     });
   }
 
@@ -330,10 +334,12 @@ document.addEventListener('DOMContentLoaded', function(){
     resetBtn.addEventListener('click', function(e){
       e.preventDefault();
 
-      // Chips zurücksetzen
-      chipInputs.forEach(i => {
-        i.checked = false;
-        i.dispatchEvent(new Event('change'));
+      // alle Checkboxen zurücksetzen
+      chipLabels.forEach(label => {
+        const input = label.querySelector('input[type="checkbox"]');
+        if (!input) return;
+        input.checked = false;
+        label.classList.remove('is-active');
       });
 
       // Preis zurücksetzen
