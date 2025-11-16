@@ -4,7 +4,7 @@ Nutzt die data-Attribute aus product-grid.liquid:
 - data-color="{{ hw_color }}"
 - data-brand="{{ hw_brand }}"
 - data-rare="{{ hw_rare }}"
-- data-price="{{ hw_price_cents }}" (in Cent)
+- data-price="{{ hw_price_cents }}"
 {%- endcomment -%}
 
 <div class="hw-filters-box">
@@ -15,16 +15,16 @@ Nutzt die data-Attribute aus product-grid.liquid:
 
   <!-- Tabs -->
   <div class="hw-filter-tabs">
-    <button type="button" class="hw-filter-tab is-active" data-panel="price">Preis</button>
-    <button type="button" class="hw-filter-tab" data-panel="color">Farbe</button>
-    <button type="button" class="hw-filter-tab" data-panel="brand">Marke</button>
-    <button type="button" class="hw-filter-tab" data-panel="rare">Seltenheit</button>
+    <button type="button" class="hw-filter-tab is-active" data-hw-tab="price">Preis</button>
+    <button type="button" class="hw-filter-tab" data-hw-tab="color">Farbe</button>
+    <button type="button" class="hw-filter-tab" data-hw-tab="brand">Marke</button>
+    <button type="button" class="hw-filter-tab" data-hw-tab="rare">Seltenheit</button>
   </div>
 
   <!-- Panels -->
   <div class="hw-filter-panels">
     <!-- Preis -->
-    <div class="hw-filter-panel" data-panel="price">
+    <div class="hw-filter-panel" data-hw-panel="price">
       <div class="hw-filter-row">
         <label>
           Min (€)
@@ -39,45 +39,44 @@ Nutzt die data-Attribute aus product-grid.liquid:
     </div>
 
     <!-- Farbe -->
-    <div class="hw-filter-panel" data-panel="color" hidden>
+    <div class="hw-filter-panel" data-hw-panel="color" hidden>
       <div class="hw-chip-row">
         {% assign colors = "Rot,Blau,Orange,Schwarz,Weiß,Grau,Grün,Gelb,Lila,Pink" | split: "," %}
         {% for c in colors %}
-          <label class="hw-chip">
-            <input type="checkbox" value="{{ c }}" data-group="color">
-            {{ c }}
+          <label class="hw-chip" data-hw-group="color">
+            <input type="checkbox" value="{{ c }}">
+            <span>{{ c }}</span>
           </label>
         {% endfor %}
       </div>
     </div>
 
     <!-- Marke -->
-    <div class="hw-filter-panel" data-panel="brand" hidden>
+    <div class="hw-filter-panel" data-hw-panel="brand" hidden>
       <div class="hw-chip-row">
         {% assign brands = "Porsche,Ferrari,BMW,Mercedes,Lamborghini,Toyota,Nissan,Audi,McLaren,Koenigsegg" | split: "," %}
         {% for b in brands %}
-          <label class="hw-chip">
-            <input type="checkbox" value="{{ b }}" data-group="brand">
-            {{ b }}
+          <label class="hw-chip" data-hw-group="brand">
+            <input type="checkbox" value="{{ b }}">
+            <span>{{ b }}</span>
           </label>
         {% endfor %}
       </div>
     </div>
 
     <!-- Seltenheit -->
-    <div class="hw-filter-panel" data-panel="rare" hidden>
+    <div class="hw-filter-panel" data-hw-panel="rare" hidden>
       <div class="hw-chip-row">
         {% assign rares = "Mainline,TH,STH" | split: "," %}
         {% for r in rares %}
-          <label class="hw-chip">
-            <input type="checkbox" value="{{ r }}" data-group="rare">
-            {{ r }}
+          <label class="hw-chip" data-hw-group="rare">
+            <input type="checkbox" value="{{ r }}">
+            <span>{{ r }}</span>
           </label>
         {% endfor %}
       </div>
     </div>
   </div>
-
 </div>
 
 <style>
@@ -182,32 +181,13 @@ Nutzt die data-Attribute aus product-grid.liquid:
   font-size:13px;
   font-weight:600;
   cursor:pointer;
+  user-select:none;
 }
 .hw-chip input{ display:none; }
 .hw-chip.is-active{
   background:#0046BE;
   border-color:#0046BE;
   color:#fff;
-}
-
-/* Actions */
-.hw-filter-actions{
-  margin-top:10px;
-  display:flex;
-  justify-content:flex-end;
-}
-.hw-filter-apply{
-  border-radius:999px;
-  border:0;
-  padding:7px 14px;
-  font-size:13px;
-  font-weight:800;
-  background:#FF6B00;
-  color:#fff;
-  cursor:pointer;
-}
-.hw-filter-apply:hover{
-  filter:brightness(.95);
 }
 
 /* Mobile */
@@ -220,31 +200,30 @@ Nutzt die data-Attribute aus product-grid.liquid:
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  // Tabs schalten Panels um
+  // Tabs & Panels
   const tabs   = Array.from(document.querySelectorAll('.hw-filter-tab'));
   const panels = Array.from(document.querySelectorAll('.hw-filter-panel'));
 
   function showPanel(id){
     panels.forEach(p => {
-      p.hidden = p.dataset.panel !== id;
+      p.hidden = p.dataset.hwPanel !== id;
     });
     tabs.forEach(t => {
-      t.classList.toggle('is-active', t.dataset.panel === id);
+      t.classList.toggle('is-active', t.dataset.hwTab === id);
     });
   }
 
   tabs.forEach(t => {
-    t.addEventListener('click', () => showPanel(t.dataset.panel));
+    t.addEventListener('click', () => showPanel(t.dataset.hwTab));
   });
-  if (tabs.length){ showPanel(tabs[0].dataset.panel); }
+  if (tabs.length){ showPanel(tabs[0].dataset.hwTab); }
 
-  // Alle Produktkarten
+  // Produktkarten
   const cards = Array.from(document.querySelectorAll('.product-card'));
 
-  // Alle Chips (Checkboxen in der Filterbox)
+  // Chips
   const chipLabels = Array.from(document.querySelectorAll('.hw-chip'));
 
-  // Robust: Selektionen aus ALLEN Chips einsammeln
   function collectSelections(){
     const selections = { color: [], brand: [], rare: [] };
 
@@ -252,19 +231,11 @@ document.addEventListener('DOMContentLoaded', function(){
       const input = label.querySelector('input[type="checkbox"]');
       if (!input || !input.checked) return;
 
-      // Panel ermitteln (color / brand / rare)
-      let panelName = null;
-      const panel = input.closest('.hw-filter-panel');
-      if (panel && panel.dataset.panel) {
-        panelName = panel.dataset.panel; // "color" / "brand" / "rare"
-      } else if (input.dataset.group) {
-        panelName = input.dataset.group; // Fallback
-      }
-
-      if (!panelName || !selections[panelName]) return;
+      const group = label.dataset.hwGroup; // "color", "brand", "rare"
+      if (!group || !selections[group]) return;
 
       const v = (input.value || '').toLowerCase();
-      selections[panelName].push(v);
+      selections[group].push(v);
     });
 
     return selections;
@@ -308,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Chips: Styling + direkt filtern
+  // Chips klickbar machen (ganze Fläche)
   chipLabels.forEach(label => {
     const input = label.querySelector('input[type="checkbox"]');
     if (!input) return;
@@ -316,10 +287,16 @@ document.addEventListener('DOMContentLoaded', function(){
     const sync = () => label.classList.toggle('is-active', input.checked);
 
     label.addEventListener('click', (e) => {
-      // Verhindert Doppel-Toggle durch Label+Input
+      // Doppeltoggle vermeiden
       if (e.target.tagName !== 'INPUT') {
         input.checked = !input.checked;
       }
+      sync();
+      applyFilters();
+    });
+
+    // Falls über Tastatur / Screenreader geändert
+    input.addEventListener('change', () => {
       sync();
       applyFilters();
     });
@@ -337,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function(){
     field.addEventListener('blur', applyFilters);
   });
 
-  // Buttons unten
+  // Reset
   const resetBtn = document.querySelector('.hw-filter-reset');
 
   if (resetBtn){
@@ -360,4 +337,5 @@ document.addEventListener('DOMContentLoaded', function(){
       cards.forEach(card => { card.style.display = ''; });
     });
   }
+});
 </script>
