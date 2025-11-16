@@ -241,18 +241,11 @@ document.addEventListener('DOMContentLoaded', function(){
   });
   if (tabs.length){ showPanel(tabs[0].dataset.panel); }
 
-  // Chips (blau / grau)
-  const chipInputs = Array.from(document.querySelectorAll('.hw-chip input[type="checkbox"]'));
-  chipInputs.forEach(input => {
-    const label = input.closest('.hw-chip');
-    if (!label) return;
-    const sync = () => label.classList.toggle('is-active', input.checked);
-    input.addEventListener('change', sync);
-    sync();
-  });
-
-  // Produkte sammeln
+  // Produkte sammeln (deine Cards)
   const cards = Array.from(document.querySelectorAll('.product-card'));
+
+  // Chips (Farbe/Marke/Seltenheit)
+  const chipInputs = Array.from(document.querySelectorAll('.hw-chip input[type="checkbox"]'));
 
   function getSelectedValues(group){
     return chipInputs
@@ -297,30 +290,57 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
+  // Chips: blau/grau UND direkt filtern
+  chipInputs.forEach(input => {
+    const label = input.closest('.hw-chip');
+    if (!label) return;
+
+    const sync = () => label.classList.toggle('is-active', input.checked);
+
+    input.addEventListener('change', () => {
+      sync();
+      applyFilters(); // direkt filtern nach Klick
+    });
+
+    sync();
+  });
+
+  // Preisfelder: bei Änderung direkt filtern
+  const minField = document.getElementById('hw-price-min');
+  const maxField = document.getElementById('hw-price-max');
+
+  [minField, maxField].forEach(field => {
+    if (!field) return;
+    field.addEventListener('change', applyFilters);
+    field.addEventListener('blur', applyFilters);
+  });
+
+  // Buttons unten
   const applyBtn = document.querySelector('.hw-filter-apply');
   const resetBtn = document.querySelector('.hw-filter-reset');
 
   if (applyBtn){
     applyBtn.addEventListener('click', function(e){
       e.preventDefault();
-      applyFilters();
+      applyFilters(); // sicherheitshalber auch hier
     });
   }
 
   if (resetBtn){
     resetBtn.addEventListener('click', function(e){
       e.preventDefault();
-      // Chips resetten
+
+      // Chips zurücksetzen
       chipInputs.forEach(i => {
         i.checked = false;
         i.dispatchEvent(new Event('change'));
       });
-      // Preis reset
-      const minInput = document.getElementById('hw-price-min');
-      const maxInput = document.getElementById('hw-price-max');
-      if (minInput) minInput.value = '';
-      if (maxInput) maxInput.value = '';
-      // alles wieder anzeigen
+
+      // Preis zurücksetzen
+      if (minField) minField.value = '';
+      if (maxField) maxField.value = '';
+
+      // wieder alle Produkte zeigen
       cards.forEach(card => { card.style.display = ''; });
     });
   }
