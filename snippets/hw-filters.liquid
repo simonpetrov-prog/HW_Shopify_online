@@ -200,7 +200,7 @@ Nutzt die data-Attribute aus product-grid.liquid:
 
 <script>
 document.addEventListener('DOMContentLoaded', function(){
-  // Tabs & Panels
+  // Tabs & Panels (Preis / Farbe / Marke / Seltenheit)
   const tabs   = Array.from(document.querySelectorAll('.hw-filter-tab'));
   const panels = Array.from(document.querySelectorAll('.hw-filter-panel'));
 
@@ -221,17 +221,18 @@ document.addEventListener('DOMContentLoaded', function(){
   // Produktkarten
   const cards = Array.from(document.querySelectorAll('.product-card'));
 
-  // Chips
-  const chipLabels = Array.from(document.querySelectorAll('.hw-chip'));
+  // Chips (Checkboxen in Farbe/Marke/Seltenheit)
+  const chipInputs = Array.from(document.querySelectorAll('.hw-chip input[type="checkbox"]'));
 
   function collectSelections(){
     const selections = { color: [], brand: [], rare: [] };
 
-    chipLabels.forEach(label => {
-      const input = label.querySelector('input[type="checkbox"]');
-      if (!input || !input.checked) return;
+    chipInputs.forEach(input => {
+      if (!input.checked) return;
 
-      const group = label.dataset.hwGroup; // "color", "brand", "rare"
+      // Chip-Label und Gruppe ermitteln
+      const label = input.closest('.hw-chip');
+      const group = label ? label.dataset.hwGroup : null; // "color", "brand", "rare"
       if (!group || !selections[group]) return;
 
       const v = (input.value || '').toLowerCase();
@@ -279,28 +280,21 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Chips klickbar machen (ganze Fläche)
-  chipLabels.forEach(label => {
-    const input = label.querySelector('input[type="checkbox"]');
-    if (!input) return;
+  // Chips: nur über input.change steuern (Label-Klick handled der Browser)
+  chipInputs.forEach(input => {
+    const label = input.closest('.hw-chip');
+    if (!label) return;
 
-    const sync = () => label.classList.toggle('is-active', input.checked);
+    const sync = () => {
+      label.classList.toggle('is-active', input.checked);
+    };
 
-    label.addEventListener('click', (e) => {
-      // Doppeltoggle vermeiden
-      if (e.target.tagName !== 'INPUT') {
-        input.checked = !input.checked;
-      }
-      sync();
-      applyFilters();
-    });
-
-    // Falls über Tastatur / Screenreader geändert
     input.addEventListener('change', () => {
       sync();
       applyFilters();
     });
 
+    // initialer Zustand
     sync();
   });
 
@@ -322,11 +316,10 @@ document.addEventListener('DOMContentLoaded', function(){
       e.preventDefault();
 
       // alle Checkboxen zurücksetzen
-      chipLabels.forEach(label => {
-        const input = label.querySelector('input[type="checkbox"]');
-        if (!input) return;
+      chipInputs.forEach(input => {
         input.checked = false;
-        label.classList.remove('is-active');
+        const label = input.closest('.hw-chip');
+        if (label) label.classList.remove('is-active');
       });
 
       // Preis zurücksetzen
