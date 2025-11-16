@@ -338,21 +338,13 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 
   // Buttons unten
-  const applyBtn = document.querySelector('.hw-filter-apply');
   const resetBtn = document.querySelector('.hw-filter-reset');
-
-  if (applyBtn){
-    applyBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      applyFilters(); // Sicherheit
-    });
-  }
 
   if (resetBtn){
     resetBtn.addEventListener('click', function(e){
       e.preventDefault();
 
-      // Chips zurücksetzen
+      // alle Checkboxen zurücksetzen
       chipLabels.forEach(label => {
         const input = label.querySelector('input[type="checkbox"]');
         if (!input) return;
@@ -368,5 +360,4 @@ document.addEventListener('DOMContentLoaded', function(){
       cards.forEach(card => { card.style.display = ''; });
     });
   }
-});
 </script>
