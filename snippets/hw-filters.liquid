@@ -244,18 +244,40 @@ document.addEventListener('DOMContentLoaded', function(){
   // Alle Produktkarten
   const cards = Array.from(document.querySelectorAll('.product-card'));
 
-  // Hilfsfunktion: Werte aus einem Panel einsammeln (Farbe/Marke/Seltenheit)
-  function getPanelValues(panelName){
-    const panel = document.querySelector('.hw-filter-panel[data-panel="'+panelName+'"]');
-    if (!panel) return [];
-    return Array.from(panel.querySelectorAll('input[type="checkbox"]:checked'))
-      .map(i => i.value.toLowerCase());
+  // Alle Chips (Checkboxen in der Filterbox)
+  const chipLabels = Array.from(document.querySelectorAll('.hw-chip'));
+
+  // Robust: Selektionen aus ALLEN Chips einsammeln
+  function collectSelections(){
+    const selections = { color: [], brand: [], rare: [] };
+
+    chipLabels.forEach(label => {
+      const input = label.querySelector('input[type="checkbox"]');
+      if (!input || !input.checked) return;
+
+      // Panel ermitteln (color / brand / rare)
+      let panelName = null;
+      const panel = input.closest('.hw-filter-panel');
+      if (panel && panel.dataset.panel) {
+        panelName = panel.dataset.panel; // "color" / "brand" / "rare"
+      } else if (input.dataset.group) {
+        panelName = input.dataset.group; // Fallback
+      }
+
+      if (!panelName || !selections[panelName]) return;
+
+      const v = (input.value || '').toLowerCase();
+      selections[panelName].push(v);
+    });
+
+    return selections;
   }
 
   function applyFilters(){
-    const selectedColors = getPanelValues('color');
-    const selectedBrands = getPanelValues('brand');
-    const selectedRares  = getPanelValues('rare');
+    const sel = collectSelections();
+    const selectedColors = sel.color;
+    const selectedBrands = sel.brand;
+    const selectedRares  = sel.rare;
 
     const minInput = document.getElementById('hw-price-min');
     const maxInput = document.getElementById('hw-price-max');
@@ -289,8 +311,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 
-  // Chips: blau/grau + direkt filtern
-  const chipLabels = Array.from(document.querySelectorAll('.hw-chip'));
+  // Chips: Styling + direkt filtern
   chipLabels.forEach(label => {
     const input = label.querySelector('input[type="checkbox"]');
     if (!input) return;
@@ -298,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const sync = () => label.classList.toggle('is-active', input.checked);
 
     label.addEventListener('click', (e) => {
-      // verhindern, dass das Label-Default doppelt triggert
+      // Verhindert Doppel-Toggle durch Label+Input
       if (e.target.tagName !== 'INPUT') {
         input.checked = !input.checked;
       }
@@ -326,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function(){
   if (applyBtn){
     applyBtn.addEventListener('click', function(e){
       e.preventDefault();
-      applyFilters();
+      applyFilters(); // Sicherheit
     });
   }
 
@@ -334,7 +355,7 @@ document.addEventListener('DOMContentLoaded', function(){
     resetBtn.addEventListener('click', function(e){
       e.preventDefault();
 
-      // alle Checkboxen zurücksetzen
+      // Chips zurücksetzen
       chipLabels.forEach(label => {
         const input = label.querySelector('input[type="checkbox"]');
         if (!input) return;
@@ -346,7 +367,7 @@ document.addEventListener('DOMContentLoaded', function(){
       if (minField) minField.value = '';
       if (maxField) maxField.value = '';
 
-      // wieder alle Produkte zeigen
+      // alle Produkte wieder anzeigen
       cards.forEach(card => { card.style.display = ''; });
     });
   }
