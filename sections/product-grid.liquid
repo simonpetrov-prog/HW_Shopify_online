@@ -24,23 +24,73 @@
   {% else %}
     <div class="hw-grid">
       {% for product in collection.products %}
-        {%- assign hw_color = '' -%}
-        {%- assign hw_brand = '' -%}
-        {%- assign hw_rare  = '' -%}
 
-        {%- for t in product.tags -%}
-          {%- if t contains 'Farbe:' -%}
-            {%- assign hw_color = t | remove: 'Farbe:' | strip -%}
-          {%- endif -%}
-          {%- if t contains 'Marke:' -%}
-            {%- assign hw_brand = t | remove: 'Marke:' | strip -%}
-          {%- endif -%}
-          {%- if t contains 'Seltenheit:' -%}
-            {%- assign hw_rare = t | remove: 'Seltenheit:' | strip -%}
-          {%- endif -%}
-        {%- endfor -%}
+      {%- assign hw_color = '' -%}
+{%- assign hw_brand = '' -%}
+{%- assign hw_rare  = '' -%}
 
-        {%- assign hw_price_cents = product.price | divided_by: 1 -%}
+{%- for t in product.tags -%}
+  {%- assign t_down = t | downcase -%}
+
+  {%- comment -%}
+    FARBE erkennen: egal ob "Farbe: Rot" oder nur "Rot" o.ä.
+  {%- endcomment -%}
+  {%- if t_down contains 'rot' -%}
+    {%- assign hw_color = 'Rot' -%}
+  {%- elsif t_down contains 'blau' -%}
+    {%- assign hw_color = 'Blau' -%}
+  {%- elsif t_down contains 'orange' -%}
+    {%- assign hw_color = 'Orange' -%}
+  {%- elsif t_down contains 'gelb' -%}
+    {%- assign hw_color = 'Gelb' -%}
+  {%- elsif t_down contains 'grün' or t_down contains 'gruen' -%}
+    {%- assign hw_color = 'Grün' -%}
+  {%- elsif t_down contains 'schwarz' -%}
+    {%- assign hw_color = 'Schwarz' -%}
+  {%- elsif t_down contains 'weiß' or t_down contains 'weiss' -%}
+    {%- assign hw_color = 'Weiß' -%}
+  {%- elsif t_down contains 'grau' -%}
+    {%- assign hw_color = 'Grau' -%}
+  {%- endif -%}
+
+  {%- comment -%}
+    MARKE erkennen: z.B. "Marke: Porsche" oder "Porsche" als Tag
+  {%- endcomment -%}
+  {%- if t_down contains 'porsche' -%}
+    {%- assign hw_brand = 'Porsche' -%}
+  {%- elsif t_down contains 'ferrari' -%}
+    {%- assign hw_brand = 'Ferrari' -%}
+  {%- elsif t_down contains 'bmw' -%}
+    {%- assign hw_brand = 'BMW' -%}
+  {%- elsif t_down contains 'mercedes' -%}
+    {%- assign hw_brand = 'Mercedes' -%}
+  {%- elsif t_down contains 'lamborghini' -%}
+    {%- assign hw_brand = 'Lamborghini' -%}
+  {%- elsif t_down contains 'toyota' -%}
+    {%- assign hw_brand = 'Toyota' -%}
+  {%- elsif t_down contains 'nissan' -%}
+    {%- assign hw_brand = 'Nissan' -%}
+  {%- elsif t_down contains 'audi' -%}
+    {%- assign hw_brand = 'Audi' -%}
+  {%- elsif t_down contains 'mclaren' -%}
+    {%- assign hw_brand = 'McLaren' -%}
+  {%- elsif t_down contains 'koenigsegg' or t_down contains 'koenigsegg' -%}
+    {%- assign hw_brand = 'Koenigsegg' -%}
+  {%- endif -%}
+
+  {%- comment -%}
+    SELTENHEIT erkennen: TH / STH / Mainline
+  {%- endcomment -%}
+  {%- if t_down contains 'sth' -%}
+    {%- assign hw_rare = 'STH' -%}
+  {%- elsif t_down contains ' th' or t_down startswith 'th' -%}
+    {%- assign hw_rare = 'TH' -%}
+  {%- elsif t_down contains 'mainline' -%}
+    {%- assign hw_rare = 'Mainline' -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- assign hw_price_cents = product.price | divided_by: 1 -%}
 
         <article
           class="product-card"
