@@ -13,28 +13,7 @@
       {% endif %}
     </a>
 
-    <!-- Burger nur auf Mobile sichtbar -->
-    <button class="hw-header__burger" type="button" aria-label="Menü öffnen">
-      <span></span><span></span><span></span>
-    </button>
-
-    <!-- Hauptnavigation (Desktop, und im Mobile-Slideout wiederverwendet) -->
-    <nav class="hw-header__nav" aria-label="Hauptnavigation">
-      <a
-        href="{{ routes.root_url }}"
-        class="hw-nav__link {% if template.name == 'index' %}is-active{% endif %}"
-      >
-        Startseite
-      </a>
-      <a
-        href="{{ routes.collections_url }}/all"
-        class="hw-nav__link {% if template contains 'collection' %}is-active{% endif %}"
-      >
-        Produkte
-      </a>
-    </nav>
-
-    <!-- Suche (Desktop: in einer Linie, Mobile: eigene Zeile) -->
+    <!-- Suche: Mitte (Mobile & Desktop) -->
     <form
       class="hw-header__search"
       action="/search"
@@ -54,7 +33,28 @@
       </button>
     </form>
 
-    <!-- Warenkorb-Button (öffnet Drawer) -->
+    <!-- Burger (nur Mobile/Tablet) -->
+    <button class="hw-header__burger" type="button" aria-label="Menü öffnen">
+      <span></span><span></span><span></span>
+    </button>
+
+    <!-- Desktop-Navigation -->
+    <nav class="hw-header__nav" aria-label="Hauptnavigation">
+      <a
+        href="{{ routes.root_url }}"
+        class="hw-nav__link {% if template.name == 'index' %}is-active{% endif %}"
+      >
+        Startseite
+      </a>
+      <a
+        href="{{ routes.collections_url }}/all"
+        class="hw-nav__link {% if template contains 'collection' %}is-active{% endif %}"
+      >
+        Produkte
+      </a>
+    </nav>
+
+    <!-- Desktop-Warenkorb-Button (öffnet Drawer) -->
     <button
       class="cart-btn"
       type="button"
@@ -71,7 +71,7 @@
     </button>
   </div>
 
-  <!-- Mobile-Slideout-Menü -->
+  <!-- Mobile-Slideout-Menü (Burger öffnet das) -->
   <div class="hw-header__mobile-menu" aria-label="Mobiles Menü">
     <nav class="hw-header__mobile-nav">
       <a
@@ -86,6 +86,21 @@
       >
         Produkte
       </a>
+
+      <!-- Warenkorb-Eintrag im Burger-Menü (öffnet Drawer) -->
+      <button
+        type="button"
+        class="hw-nav__link hw-nav__link--cart"
+        data-cart-toggle
+      >
+        Warenkorb
+        <span
+          class="cart-badge {% if cart.item_count == 0 %}is-hidden{% endif %}"
+          data-cart-count
+        >
+          {{ cart.item_count }}
+        </span>
+      </button>
     </nav>
   </div>
 </header>
@@ -98,14 +113,18 @@
     background:#fff;
     border-bottom:1px solid var(--border, #e5e5e5);
   }
+
   .hw-header__inner{
     max-width:1200px;
     margin:0 auto;
-    padding:8px 16px;
+    padding:8px 12px;
     display:flex;
-    flex-wrap:wrap;
     align-items:center;
-    gap:10px;
+    gap:8px;
+  }
+
+  .hw-header__logo{
+    flex:0 0 auto;
   }
   .hw-header__logo img{
     display:block;
@@ -113,13 +132,12 @@
     width:auto;
   }
 
-  /* Suche */
+  /* Suche – sitzt immer in der Mitte */
   .hw-header__search{
+    flex:1 1 auto;
     display:flex;
     align-items:center;
-    gap:8px;
-    flex:1 0 100%;
-    order:3;
+    gap:6px;
   }
   .hw-header__search-input{
     flex:1;
@@ -136,11 +154,31 @@
     color:#fff;
     font-weight:700;
     cursor:pointer;
+    white-space:nowrap;
   }
 
-  /* Nav links */
+  /* Burger (Mobile) */
+  .hw-header__burger{
+    flex:0 0 auto;
+    border:0;
+    background:#fff;
+    border-radius:8px;
+    padding:6px 8px;
+    display:inline-flex;
+    flex-direction:column;
+    gap:4px;
+    cursor:pointer;
+  }
+  .hw-header__burger span{
+    width:18px;
+    height:2px;
+    border-radius:2px;
+    background:#111;
+  }
+
+  /* Desktop-Navigation ist standardmäßig versteckt (Mobile) */
   .hw-header__nav{
-    display:none; /* Desktop: sichtbar, Mobile: im Slideout */
+    display:none;
     gap:8px;
     align-items:center;
   }
@@ -151,7 +189,12 @@
     font-weight:800;
     color:#111;
     text-decoration:none;
-    white-space:nowrap;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
   }
   .hw-nav__link:hover{
     background:rgba(0,70,190,.06);
@@ -172,44 +215,9 @@
     background:var(--accent,#FF6B00);
   }
 
-  /* Burger + Mobile-Menü */
-  .hw-header__burger{
-    margin-left:auto;
-    border:0;
-    background:#fff;
-    border-radius:8px;
-    padding:6px 8px;
-    display:inline-flex;
-    flex-direction:column;
-    gap:4px;
-    cursor:pointer;
-  }
-  .hw-header__burger span{
-    width:18px;
-    height:2px;
-    border-radius:2px;
-    background:#111;
-  }
-
-  .hw-header__mobile-menu{
-    display:none;
-    border-top:1px solid #eee;
-    background:#fff;
-  }
-  .hw-header__mobile-menu.is-open{
-    display:block;
-  }
-  .hw-header__mobile-nav{
-    max-width:1200px;
-    margin:0 auto;
-    padding:8px 16px 12px;
-    display:flex;
-    gap:8px;
-  }
-
-  /* Cart Button (nutzt deine bestehenden Styles weiter) */
+  /* Warenkorb-Badge */
   .cart-btn{
-    display:inline-flex;
+    display:none; /* Mobile: ausgeblendet, Desktop: an */
     align-items:center;
     gap:8px;
     border-radius:999px;
@@ -234,21 +242,47 @@
   }
   .cart-badge.is-hidden{ display:none; }
 
-  /* --- Desktop Layout --- */
+  /* Mobile-Slideout-Menü */
+  .hw-header__mobile-menu{
+    display:none;
+    border-top:1px solid #eee;
+    background:#fff;
+  }
+  .hw-header__mobile-menu.is-open{
+    display:block;
+  }
+  .hw-header__mobile-nav{
+    max-width:1200px;
+    margin:0 auto;
+    padding:8px 12px 12px;
+    display:flex;
+    gap:8px;
+  }
+  .hw-nav__link--cart{
+    background:#f3f4ff;
+  }
+
+  /* Desktop Layout */
   @media (min-width: 900px){
     .hw-header__inner{
-      flex-wrap:nowrap;
+      padding:8px 16px;
     }
+
+    .hw-header__nav{
+      display:flex;
+      margin-left:24px;
+    }
+
     .hw-header__search{
-      order:0;
-      flex:1 0 auto;
       max-width:420px;
       margin:0 24px;
     }
-    .hw-header__nav{
-      display:flex;
-      margin-left:16px;
+
+    .cart-btn{
+      display:inline-flex;
+      margin-left:auto;
     }
+
     .hw-header__burger,
     .hw-header__mobile-menu{
       display:none !important;
