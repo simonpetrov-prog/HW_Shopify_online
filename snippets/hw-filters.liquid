@@ -204,6 +204,24 @@ Nutzt die data-Attribute aus product-grid.liquid:
     flex-direction:column;
   }
 }
+
+/* Fix gegen Überbreite im Preisfeld */
+.hw-filter-row label {
+  min-width: 0 !important;
+}
+
+.hw-filter-row {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.hw-filter-panel input[type="number"] {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+
 </style>
 
 <script>
