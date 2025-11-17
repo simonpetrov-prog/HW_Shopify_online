@@ -1,112 +1,188 @@
 <footer class="hw-footer">
   <div class="hw-footer__inner container">
-    <!-- Spalte 1: Branding / Text (wie vorher) -->
-    <div class="hw-footer__col">
-      <h3>HW Business</h3>
-      <p>Königsblau. Orange. Hot Wheels Liebe.</p>
+    <!-- Linke Spalte: Brand / Text -->
+    <div class="hw-footer__col hw-footer__col--brand">
+      <h3 class="hw-footer__title">
+        {{ section.settings.brand_title | default: "HW Business" }}
+      </h3>
+      <p class="hw-footer__text">
+        {{ section.settings.brand_text | default: "Königsblau. Orange. Hot Wheels Liebe." }}
+      </p>
     </div>
 
-    <!-- Spalte 2: Rechtliches – dynamisches Menü -->
-    <div class="hw-footer__col">
-      <h3>Rechtliches</h3>
-      {% if section.settings.menu_legal != blank and linklists[section.settings.menu_legal] %}
-        <ul>
-          {% for link in linklists[section.settings.menu_legal].links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+    <!-- Mitte: Rechtliches -->
+    <nav class="hw-footer__col">
+      <h4 class="hw-footer__heading">Rechtliches</h4>
+      {% if section.settings.legal_menu != blank %}
+        <ul class="hw-footer__list">
+          {% for link in section.settings.legal_menu.links %}
+            <li>
+              <a href="{{ link.url }}" class="hw-footer__link">
+                {{ link.title }}
+              </a>
+            </li>
           {% endfor %}
         </ul>
+      {% else %}
+        <p class="hw-footer__hint">Bitte im Theme-Editor ein Menü auswählen.</p>
       {% endif %}
-    </div>
+    </nav>
 
-    <!-- Spalte 3: Kontakt – dynamisches Menü -->
-    <div class="hw-footer__col">
-      <h3>Kontakt</h3>
-      {% if section.settings.menu_contact != blank and linklists[section.settings.menu_contact] %}
-        <ul>
-          {% for link in linklists[section.settings.menu_contact].links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+    <!-- Rechts: Kontakt -->
+    <nav class="hw-footer__col">
+      <h4 class="hw-footer__heading">Kontakt</h4>
+      {% if section.settings.contact_menu != blank %}
+        <ul class="hw-footer__list">
+          {% for link in section.settings.contact_menu.links %}
+            <li>
+              <a href="{{ link.url }}" class="hw-footer__link">
+                {{ link.title }}
+              </a>
+            </li>
           {% endfor %}
         </ul>
+      {% else %}
+        <p class="hw-footer__hint">Bitte im Theme-Editor ein Menü auswählen.</p>
       {% endif %}
-    </div>
+    </nav>
   </div>
 
   <div class="hw-footer__bottom">
-    <p>© {{ 'now' | date: '%Y' }} HW_Central_seller — Alle Rechte vorbehalten</p>
+    <div class="container hw-footer__bottom-inner">
+      <span class="hw-footer__copy">
+        © {{ "now" | date: "%Y" }} {{ shop.name }} — Alle Rechte vorbehalten
+      </span>
+    </div>
   </div>
-
-  <style>
-    .hw-footer{
-      background:#ffffff;
-      border-top:1px solid #e5e5e5;
-      margin-top:40px;
-      font-size:14px;
-      color:#111827;
-    }
-    .hw-footer__inner{
-      max-width:1200px;
-      margin:0 auto;
-      padding:32px 20px 16px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:40px;
-    }
-    .hw-footer__col h3{
-      margin:0 0 8px;
-      font-size:16px;
-      font-weight:700;
-      color:#0046BE;
-    }
-    .hw-footer__col p{
-      margin:0;
-      max-width:260px;
-      line-height:1.5;
-    }
-    .hw-footer__col ul{
-      list-style:none;
-      padding:0;
-      margin:0;
-    }
-    .hw-footer__col li{
-      margin:4px 0;
-    }
-    .hw-footer__col a{
-      color:#111827;
-      text-decoration:none;
-    }
-    .hw-footer__col a:hover{
-      color:#FF6B00;
-    }
-    .hw-footer__bottom{
-      border-top:1px solid #e5e5e5;
-      text-align:center;
-      padding:10px 16px 18px;
-      font-size:12px;
-      color:#6b7280;
-    }
-    @media (max-width:768px){
-      .hw-footer__inner{
-        flex-direction:column;
-        gap:24px;
-      }
-    }
-  </style>
-
-  {% schema %}
-  {
-    "name": "Footer",
-    "settings": [
-      {
-        "type": "link_list",
-        "id": "menu_legal",
-        "label": "Rechtliches Menü"
-      },
-      {
-        "type": "link_list",
-        "id": "menu_contact",
-        "label": "Kontakt Menü"
-      }
-    ]
-  }
-  {% endschema %}
 </footer>
+
+<style>
+.hw-footer{
+  margin-top:32px;
+  background:#0b1020;
+  color:#f9fafb;
+  padding-top:28px;
+  border-top:4px solid #0046BE;
+}
+
+/* Grundlayout */
+.hw-footer__inner{
+  display:flex;
+  gap:32px;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+
+/* Spalten */
+.hw-footer__col{
+  min-width:180px;
+  flex:1 1 0;
+}
+.hw-footer__col--brand{
+  max-width:320px;
+}
+
+/* Typo */
+.hw-footer__title{
+  margin:0 0 8px;
+  font-size:18px;
+  font-weight:900;
+  color:#ffffff;
+}
+.hw-footer__text{
+  margin:0;
+  font-size:14px;
+  line-height:1.5;
+  color:#e5e7eb;
+}
+
+.hw-footer__heading{
+  margin:0 0 10px;
+  font-size:15px;
+  font-weight:800;
+  color:#F97316; /* Orange Akzent */
+}
+
+.hw-footer__list{
+  list-style:none;
+  margin:0;
+  padding:0;
+}
+.hw-footer__link{
+  display:inline-block;
+  padding:3px 0;
+  font-size:14px;
+  color:#e5e7eb;
+  text-decoration:none;
+}
+.hw-footer__link:hover{
+  color:#ffffff;
+  text-decoration:underline;
+}
+
+.hw-footer__hint{
+  margin:0;
+  font-size:13px;
+  color:#9ca3af;
+}
+
+/* Bottom Line */
+.hw-footer__bottom{
+  margin-top:24px;
+  border-top:1px solid rgba(148,163,184,.35);
+  padding:10px 0 14px;
+}
+.hw-footer__bottom-inner{
+  display:flex;
+  justify-content:center;
+}
+.hw-footer__copy{
+  font-size:12px;
+  color:#9ca3af;
+}
+
+/* Mobile */
+@media (max-width: 768px){
+  .hw-footer{
+    padding-top:22px;
+  }
+  .hw-footer__inner{
+    flex-direction:column;
+    gap:20px;
+  }
+  .hw-footer__col{
+    width:100%;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    {
+      "type": "text",
+      "id": "brand_title",
+      "label": "Titel linke Spalte",
+      "default": "HW Business"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_text",
+      "label": "Kurztext linke Spalte",
+      "default": "Königsblau. Orange. Hot Wheels Liebe."
+    },
+    {
+      "type": "link_list",
+      "id": "legal_menu",
+      "label": "Rechtliches Menü"
+    },
+    {
+      "type": "link_list",
+      "id": "contact_menu",
+      "label": "Kontakt Menü"
+    }
+  ]
+}
+{% endschema %}
