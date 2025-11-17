@@ -23,8 +23,10 @@
       "footer": {
         "type": "footer",
         "settings": {
-          "menu_legal": "footer",
-          "menu_contact": "customer-account-main-menu"
+          "brand_title": "HW Business",
+          "brand_text": "Königsblau. Orange. Hot Wheels Liebe.",
+          "legal_menu": "footer",
+          "contact_menu": ""
         }
       },
       "hero-banner": {
