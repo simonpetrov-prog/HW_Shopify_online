@@ -1,0 +1,41 @@
+{% comment %}
+Standard-Seitenvorlage für HW Central Seller
+Wird für Impressum, AGB, Über uns, Versand & Rückgabe usw. benutzt.
+Nutzt das globale Layout (layout/theme.liquid) mit Header & Footer.
+{% endcomment %}
+
+{% section 'header' %}
+
+<main class="container hw-page">
+  <div class="hw-page__inner">
+    <h1 class="hw-page__title">
+      {{ page.title }}
+    </h1>
+
+    <div class="hw-page__content rte">
+      {{ page.content }}
+    </div>
+  </div>
+</main>
+
+{% section 'cart-drawer' %}
+{% section 'footer' %}
+
+<style>
+  .hw-page{
+    margin:20px auto 32px;
+  }
+  .hw-page__inner{
+    max-width:800px;
+    margin:0 auto;
+  }
+  .hw-page__title{
+    font-size:24px;
+    font-weight:900;
+    margin:0 0 12px;
+  }
+  .hw-page__content{
+    font-size:15px;
+    line-height:1.6;
+  }
+</style>
