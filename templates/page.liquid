@@ -1,13 +1,17 @@
 {% comment %}
 Standard-Seitenvorlage für HW Central Seller
 Wird für Impressum, AGB, Über uns, Versand & Rückgabe usw. benutzt.
-Nutzt das globale Layout (layout/theme.liquid) mit Header & Footer.
+Nutzen das globale Layout + ein Card-Layout mit HW-Branding.
 {% endcomment %}
 
 {% section 'header' %}
 
-<main class="container hw-page">
+<main class="container hw-page hw-page--{{ page.handle }}">
   <div class="hw-page__inner">
+    <div class="hw-page__badge">
+      <span>{{ page.title }}</span>
+    </div>
+
     <h1 class="hw-page__title">
       {{ page.title }}
     </h1>
@@ -25,17 +29,129 @@ Nutzt das globale Layout (layout/theme.liquid) mit Header & Footer.
   .hw-page{
     margin:20px auto 32px;
   }
+
   .hw-page__inner{
-    max-width:800px;
+    max-width:860px;
     margin:0 auto;
+    background:#ffffff;
+    border-radius:18px;
+    border:1px solid #e5e7eb;
+    padding:20px 18px 22px;
+    box-shadow:0 10px 30px rgba(15,23,42,.10);
   }
+
+  /* kleines Label oben */
+  .hw-page__badge{
+    display:inline-flex;
+    align-items:center;
+    padding:3px 10px;
+    border-radius:999px;
+    background:rgba(0,70,190,.06);
+    border:1px solid rgba(0,70,190,.25);
+    margin-bottom:8px;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:#0046BE;
+  }
+
   .hw-page__title{
     font-size:24px;
     font-weight:900;
-    margin:0 0 12px;
+    margin:0 0 14px;
+    color:#111827;
   }
+
   .hw-page__content{
     font-size:15px;
-    line-height:1.6;
+    line-height:1.7;
+    color:#111827;
+  }
+
+  /* Überschriften im Text */
+  .hw-page__content h2{
+    margin-top:18px;
+    margin-bottom:8px;
+    font-size:18px;
+    font-weight:800;
+    color:#0046BE;
+    padding-left:10px;
+    border-left:3px solid #FF6B00;
+  }
+  .hw-page__content h3{
+    margin-top:14px;
+    margin-bottom:6px;
+    font-size:16px;
+    font-weight:700;
+    color:#111827;
+  }
+
+  /* Listen */
+  .hw-page__content ul,
+  .hw-page__content ol{
+    padding-left:20px;
+    margin:4px 0 10px;
+  }
+  .hw-page__content li{
+    margin-bottom:3px;
+  }
+
+  /* Links */
+  .hw-page__content a{
+    color:#0046BE;
+    text-decoration:underline;
+  }
+  .hw-page__content a:hover{
+    color:#FF6B00;
+  }
+
+  /* Tabellen (z. B. Versandkosten) */
+  .hw-page__content table{
+    width:100%;
+    border-collapse:collapse;
+    margin:10px 0 14px;
+    font-size:14px;
+  }
+  .hw-page__content th,
+  .hw-page__content td{
+    border:1px solid #e5e7eb;
+    padding:8px 10px;
+  }
+  .hw-page__content th{
+    background:#f3f4ff;
+    font-weight:700;
+  }
+
+  /* Speziell für "versand-rueckgabe" etwas Info-Box-Style */
+  .hw-page--versand-rueckgabe .hw-page__content p:first-of-type{
+    padding:10px 12px;
+    border-radius:12px;
+    background:rgba(0,70,190,.04);
+    border:1px solid rgba(0,70,190,.25);
+    font-weight:500;
+  }
+
+  /* Speziell für "impressum" / rechtliches */
+  .hw-page--impressum .hw-page__inner,
+  .hw-page--agb .hw-page__inner,
+  .hw-page--datenschutz .hw-page__inner{
+    border-top:3px solid #0046BE;
+  }
+
+  @media (max-width: 768px){
+    .hw-page{
+      margin:16px auto 24px;
+    }
+    .hw-page__inner{
+      padding:16px 14px 18px;
+      border-radius:14px;
+    }
+    .hw-page__title{
+      font-size:20px;
+    }
+    .hw-page__content{
+      font-size:14px;
+    }
   }
 </style>
