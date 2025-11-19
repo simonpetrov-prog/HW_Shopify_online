@@ -894,7 +894,22 @@ window.showToast = function(msg, type='ok', ms=2200){
 };
 </script>
 
+<style>
+  html, body{
+    height:100%;
+  }
 
+  .hw-page-shell{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Letztes Kind (Footer-Section) nach unten schieben */
+  .hw-page-shell > *:last-child{
+    margin-top:auto;
+  }
+</style>
 
 </head>
 
