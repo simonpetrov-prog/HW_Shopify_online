@@ -568,6 +568,31 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+<script>
+document.addEventListener('click', function(e){
+  const tab = e.target.closest('.pdp-tab');
+  if (!tab) return;
+
+  // Wir suchen nur im gleichen Block (pdp-info) nach Panels/Tabs
+  const info = tab.closest('.pdp-info') || document;
+  const key  = tab.dataset.tab;
+
+  const tabs   = info.querySelectorAll('.pdp-tab');
+  const panels = info.querySelectorAll('.pdp-panel');
+
+  // Aktive Klasse resetten
+  tabs.forEach(t => t.classList.remove('is-active'));
+  panels.forEach(p => p.classList.remove('is-active'));
+
+  // Aktiven Tab + Panel setzen
+  tab.classList.add('is-active');
+  const target = info.querySelector('.pdp-panel[data-panel="' + key + '"]');
+  if (target) {
+    target.classList.add('is-active');
+  }
+});
+</script>
+
 {% schema %}
 {
   "name": "Produkt – HW Central Seller",
