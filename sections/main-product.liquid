@@ -1,17 +1,29 @@
-{% assign product = product | default: all_products[request.path] %}
+{% comment %}
+  HW Central Seller – Produktseite (Main Product Section)
+  - Galerie links
+  - Infos + Buy-Box rechts
+  - Tabs inkl. Preisentwicklung
+{% endcomment %}
 
 <section class="container pdp">
   <div class="pdp-grid">
-    <!-- GALLERY -->
+    {%- comment -%} BILD-GALERIE {%- endcomment -%}
     <div class="pdp-media">
       {% if product.images.size > 0 %}
         <div class="pdp-media__main">
-          <img id="pdp-main-img" src="{{ product.featured_image | image_url: width: 1200 }}" alt="{{ product.title }}" loading="eager">
-          {% assign save = product.compare_at_price | minus: product.price %}
+          <img
+            id="pdp-main-img"
+            src="{{ product.featured_image | image_url: width: 1200 }}"
+            alt="{{ product.title | escape }}"
+            loading="eager"
+          >
+
+          {%- assign save = product.compare_at_price | minus: product.price -%}
           {% if product.compare_at_price > product.price and save > 0 %}
             {% assign pct = save | times: 100.0 | divided_by: product.compare_at_price | round %}
             <span class="pdp-badge pct">-{{ pct }}%</span>
           {% endif %}
+
           {% if product.tags contains 'Neu' %}
             <span class="pdp-badge new">Neu</span>
           {% endif %}
@@ -19,47 +31,74 @@
             <span class="pdp-badge limited">Limited</span>
           {% endif %}
         </div>
+
         {% if product.images.size > 1 %}
-        <div class="pdp-thumbs">
-          {% for image in product.images %}
-            <button class="thumb" data-src="{{ image | image_url: width: 1200 }}">
-              <img src="{{ image | image_url: width: 220 }}" alt="{{ product.title }} {{ forloop.index }}">
-            </button>
-          {% endfor %}
-        </div>
+          <div class="pdp-thumbs">
+            {% for image in product.images %}
+              <button class="thumb" type="button" data-src="{{ image | image_url: width: 1200 }}">
+                <img
+                  src="{{ image | image_url: width: 220 }}"
+                  alt="{{ product.title | escape }} {{ forloop.index }}"
+                >
+              </button>
+            {% endfor %}
+          </div>
         {% endif %}
       {% endif %}
     </div>
 
-    <!-- INFO -->
+    {%- comment -%} INFO / BUY-BOX {%- endcomment -%}
     <div class="pdp-info">
       <h1 class="pdp-title">{{ product.title }}</h1>
+
       <div class="pdp-pricing">
         {% if product.compare_at_price > product.price %}
           <span class="compare">{{ product.compare_at_price | money }}</span>
         {% endif %}
         <span class="price">{{ product.price | money }}</span>
-        {% unless product.available %}<span class="soldout">Ausverkauft</span>{% endunless %}
+        {% unless product.available %}
+          <span class="soldout">Ausverkauft</span>
+        {% endunless %}
       </div>
 
-      <button class="qty-plus"
-  onclick="showToast('Menge aktualisiert','info')">+</button>
-
-<button class="qty-minus"
-  onclick="showToast('Menge aktualisiert','info')">−</button>
-
-<button class="remove"
-  onclick="showToast('🗑️ Aus dem Warenkorb entfernt','err')">x</button>
-
+      {%- comment -%} Menge + ATC {%- endcomment -%}
       <form class="pdp-actions" method="post" action="/cart/add" data-ajax-add>
         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-        <input type="hidden" name="quantity" value="1">
-        <button class="btn add" type="submit" {% unless product.available %}disabled{% endunless %}>In den Warenkorb</button>
-        <a class="btn-outline buy" href="/checkout" {% unless product.available %}aria-disabled="true" tabindex="-1"{% endunless %}>Direkt kaufen</a>
+        <div class="pdp-qty">
+          <label for="pdp-qty">Menge</label>
+          <div class="qty">
+            <button type="button" class="qty-btn" data-d="-1">−</button>
+            <input id="pdp-qty" type="number" value="1" min="1">
+            <button type="button" class="qty-btn" data-d="1">+</button>
+          </div>
+          <input type="hidden" name="quantity" value="1">
+        </div>
+
+        <div class="pdp-actions__buttons">
+          <button
+            class="btn add"
+            type="submit"
+            {% unless product.available %}disabled{% endunless %}
+          >
+            In den Warenkorb
+          </button>
+
+          <a
+            class="btn-outline buy"
+            href="/checkout"
+            {% unless product.available %}aria-disabled="true" tabindex="-1"{% endunless %}
+          >
+            Direkt kaufen
+          </a>
+        </div>
       </form>
 
-      {% if product.inventory_policy == 'deny' and product.selected_or_first_available_variant.inventory_quantity <= 5 and product.selected_or_first_available_variant.inventory_management %}
-        <p class="lowstock">Nur noch {{ product.selected_or_first_available_variant.inventory_quantity }} auf Lager – schnell sichern!</p>
+      {% if product.inventory_policy == 'deny'
+        and product.selected_or_first_available_variant.inventory_quantity <= 5
+        and product.selected_or_first_available_variant.inventory_management %}
+        <p class="lowstock">
+          Nur noch {{ product.selected_or_first_available_variant.inventory_quantity }} auf Lager – schnell sichern!
+        </p>
       {% endif %}
 
       <ul class="pdp-meta">
@@ -68,155 +107,59 @@
         <li>✅ Sichere Zahlung</li>
       </ul>
 
-<div class="pdp-tabs">
-  <button class="pdp-tab is-active" data-tab="beschreibung">Beschreibung</button>
-  <button class="pdp-tab" data-tab="details">Details</button>
-  <button class="pdp-tab" data-tab="shipping">Versand & Rückgabe</button>
-  <button class="pdp-tab" data-tab="price-history">Preisentwicklung</button>
-</div>
+      {%- comment -%} TABS {%- endcomment -%}
+      <div class="pdp-tabs" id="pdp-tabs">
+        <button class="pdp-tab is-active" data-tab="beschreibung">Beschreibung</button>
+        <button class="pdp-tab" data-tab="details">Details</button>
+        <button class="pdp-tab" data-tab="shipping">Versand & Rückgabe</button>
+        <button class="pdp-tab" data-tab="price-history">Preisentwicklung</button>
+      </div>
 
-<div class="pdp-panels">
-  <section class="pdp-panel is-active" data-panel="details">
-    {{ product.description }}
-  </section>
+      <div class="pdp-panels">
+        <!-- Beschreibung -->
+        <section class="pdp-panel is-active" data-panel="beschreibung">
+          {{ product.description }}
+        </section>
 
-  <div class="pdp-panel" data-tab-panel="price-history">
-    <h3>Preisentwicklung</h3>
+        <!-- Details – kannst du anpassen -->
+        <section class="pdp-panel" data-panel="details">
+          <ul>
+            <li>Serie: Mainline</li>
+            <li>Maßstab: 1:64</li>
+            <li>Zustand: Neu & ungeöffnet (Blister)</li>
+          </ul>
+        </section>
 
-    <div class="price-history-wrapper">
-      <canvas id="priceHistoryChart"></canvas>
-      <p class="price-history-empty" style="display:none;">
-        Für dieses Modell sind aktuell keine Preisdaten hinterlegt.
-      </p>
+        <!-- Versand & Rückgabe -->
+        <section class="pdp-panel" data-panel="shipping">
+          <ul>
+            <li>Versand: 2–4 Werktage (DE)</li>
+            <li>Versanddienstleister: Deutsche Post / DHL</li>
+            <li>Rückgabe: 14 Tage</li>
+          </ul>
+        </section>
+
+        <!-- Preisentwicklung -->
+        <section class="pdp-panel" data-panel="price-history">
+          <h3>Preisentwicklung</h3>
+          <p class="pdp-panel-hint">
+            Interner Verlauf, basierend auf deinen eingetragenen Preisdaten.
+          </p>
+
+          <div class="price-history-wrapper">
+            <canvas id="priceHistoryChart"></canvas>
+            <p class="price-history-empty" style="display:none;">
+              Für dieses Modell sind aktuell keine Preisdaten hinterlegt.
+            </p>
+          </div>
+        </section>
+      </div>
     </div>
   </div>
-</div><!-- Ende .pdp-panels -->
+</section>
 
-
-  <section class="pdp-panel" data-panel="specs">
-    {%- comment -%} Deine Produkt-Details hier (Liste, Tabelle, Icons …) {%- endcomment -%}
-    <ul>
-      <li>Zustand: Sehr gut</li>
-      <li>Serie: Mainline</li>
-      <li>Farbe: Türkis</li>
-    </ul>
-  </section>
-
-  <section class="pdp-panel" data-panel="shipping">
-    <ul>
-      <li>Versand: 2–4 Werktage (DE)</li>
-      <li>14 Tage Rückgabe</li>
-      <li>Sichere Zahlung</li>
-    </ul>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  </section>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function(){
-  const ctx = document.getElementById('priceHistoryChart');
-  if (!ctx) return;
-
-  // Metafeld aus Shopify ziehen (als JS-Objekt)
-  const rawData = {{ product.metafields.custom.preischart | default: 'null' | json }};
-
-  if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
-    // Fallback: Hinweistext zeigen
-    const emptyMsg = document.querySelector('.price-history-empty');
-    if (emptyMsg) emptyMsg.style.display = 'block';
-    return;
-  }
-
-  // Daten vorbereiten: Datum & Preis
-  const labels = [];
-  const values = [];
-
-  rawData.forEach(entry => {
-    if (!entry || !entry.date || entry.price == null) return;
-
-    labels.push(entry.date);          // z. B. "2024-01-01"
-    values.push(Number(entry.price)); // z. B. 3.99
-  });
-
-  if (!labels.length) {
-    const emptyMsg = document.querySelector('.price-history-empty');
-    if (emptyMsg) emptyMsg.style.display = 'block';
-    return;
-  }
-
-  // Chart erstellen
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Preis (€)',
-        data: values,
-        tension: 0.25,
-        fill: false,
-        borderColor: '#0046BE',
-        backgroundColor: '#FF6B00',
-        pointRadius: 3,
-        pointHoverRadius: 5
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          ticks: {
-            maxRotation: 0,
-            autoSkip: true
-          }
-        },
-        y: {
-          beginAtZero: false,
-          ticks: {
-            callback: function(value) {
-              return value.toFixed(2) + ' €';
-            }
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          display: false
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context){
-              const v = context.parsed.y;
-              return 'Preis: ' + v.toFixed(2) + ' €';
-            }
-          }
-        }
-      }
-    }
-  });
-});
-</script>
-
-<script>
-  (function(){
-    const tabs   = document.querySelectorAll('#pdp-tabs .pdp-tab');
-    const panels = document.querySelectorAll('.pdp-panel');
-    tabs.forEach(tab=>{
-      tab.addEventListener('click', ()=>{
-        const key = tab.getAttribute('data-tab');
-        tabs.forEach(t=>t.classList.remove('is-active'));
-        panels.forEach(p=>p.classList.remove('is-active'));
-        tab.classList.add('is-active');
-        const target = document.querySelector('.pdp-panel[data-panel="'+key+'"]');
-        if(target) target.classList.add('is-active');
-      });
-    });
-  })();
-</script>
-
-<!-- Sticky CTA (nur mobil) -->
-<div class="pdp-sticky">
+{%- comment -%} MOBILE STICKY BAR {%- endcomment -%}
+<div class="pdp-sticky" id="pdp-sticky">
   <div class="pdp-sticky__inner container">
     <div class="title">{{ product.title }}</div>
     <div class="right">
@@ -229,161 +172,405 @@ document.addEventListener('DOMContentLoaded', function(){
       <form method="post" action="/cart/add" data-ajax-add>
         <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
         <input type="hidden" name="quantity" value="1">
-        <button class="btn small" {% unless product.available %}disabled{% endunless %}>In den Warenkorb</button>
+        <button class="btn small" {% unless product.available %}disabled{% endunless %}>
+          In den Warenkorb
+        </button>
       </form>
     </div>
   </div>
 </div>
 
 <style>
-.pdp{ padding:20px 0 50px; }
-.pdp-grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap:28px; }
-@media(max-width: 900px){ .pdp-grid{ grid-template-columns: 1fr; } }
+.pdp{ padding:20px 0 60px; }
+.pdp-grid{
+  display:grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap:28px;
+}
+@media(max-width: 900px){
+  .pdp-grid{ grid-template-columns:1fr; }
+}
 
-.pdp-media__main{ position:relative; border:1px solid var(--border); border-radius:12px; overflow:hidden; background:#fff; }
-.pdp-media__main img{ width:100%; height:520px; object-fit:contain; background:#fff; }
-.pdp-thumbs{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
-.pdp-thumbs .thumb{ border:1px solid var(--border); background:#fff; border-radius:10px; padding:4px; cursor:pointer; }
-.pdp-thumbs img{ width:90px; height:90px; object-fit:contain; display:block; }
+/* MEDIA */
+.pdp-media__main{
+  position:relative;
+  border:1px solid var(--border);
+  border-radius:12px;
+  overflow:hidden;
+  background:#fff;
+}
+.pdp-media__main img{
+  width:100%;
+  height:520px;
+  object-fit:contain;
+  background:#fff;
+}
+.pdp-thumbs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.pdp-thumbs .thumb{
+  border:1px solid var(--border);
+  background:#fff;
+  border-radius:10px;
+  padding:4px;
+  cursor:pointer;
+}
+.pdp-thumbs img{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+  display:block;
+}
 
-.pdp-badge{ position:absolute; top:12px; left:12px; padding:5px 9px; border-radius:999px; font-weight:800; color:#fff; font-size:12px; }
+/* BADGES */
+.pdp-badge{
+  position:absolute;
+  top:12px;
+  left:12px;
+  padding:5px 9px;
+  border-radius:999px;
+  font-weight:800;
+  color:#fff;
+  font-size:12px;
+}
 .pdp-badge.pct{ background:var(--accent,#FF6B00); }
 .pdp-badge.new{ background:#2ecc71; left:auto; right:12px; }
 .pdp-badge.limited{ background:#8e44ad; top:auto; bottom:12px; left:12px; }
 
-.pdp-title{ margin:0 0 6px; font-size: clamp(22px, 3.2vw, 34px); }
-.pdp-pricing{ display:flex; align-items:baseline; gap:10px; margin:6px 0 14px; }
-.pdp-pricing .compare{ text-decoration:line-through; color:#999; }
-.pdp-pricing .soldout{ background:#eee; color:#666; padding:4px 8px; border-radius:6px; font-weight:700; }
+/* INFO */
+.pdp-title{
+  margin:0 0 6px;
+  font-size:clamp(22px, 3.2vw, 34px);
+}
+.pdp-pricing{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  margin:6px 0 14px;
+}
+.pdp-pricing .compare{
+  text-decoration:line-through;
+  color:#999;
+}
+.pdp-pricing .soldout{
+  background:#eee;
+  color:#666;
+  padding:4px 8px;
+  border-radius:6px;
+  font-weight:700;
+}
 
-.pdp-variants label, .pdp-qty label{ font-weight:700; display:block; margin-bottom:6px; }
-.pdp-variants select{ width:100%; padding:10px; border-radius:10px; border:1px solid var(--border); }
-.qty{ display:inline-flex; align-items:center; gap:6px; border:1px solid var(--border); border-radius:10px; padding:6px; }
-.qty-btn{ background:#f5f5f5; border:0; border-radius:8px; width:34px; height:34px; font-weight:900; }
-#pdp-qty{ width:56px; text-align:center; border:0; outline:0; font-weight:800; }
+/* QTY + BUTTONS */
+.pdp-qty{
+  margin-top:6px;
+}
+.pdp-qty label{
+  font-weight:700;
+  display:block;
+  margin-bottom:6px;
+}
+.qty{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:6px;
+}
+.qty-btn{
+  background:#f5f5f5;
+  border:0;
+  border-radius:8px;
+  width:34px;
+  height:34px;
+  font-weight:900;
+  cursor:pointer;
+}
+#pdp-qty{
+  width:56px;
+  text-align:center;
+  border:0;
+  outline:0;
+  font-weight:800;
+}
 
-.pdp-actions{ display:flex; gap:10px; margin:16px 0 8px; }
-.pdp-actions .btn.add{ background:var(--primary,#0046BE); }
-.pdp-actions .buy{ display:inline-flex; align-items:center; }
+.pdp-actions__buttons{
+  display:flex;
+  gap:10px;
+  margin:16px 0 8px;
+}
+.pdp-actions__buttons .btn.add{
+  background:var(--primary,#0046BE);
+}
+.pdp-actions__buttons .buy{
+  display:inline-flex;
+  align-items:center;
+}
 
-.lowstock{ color:#C0392B; font-weight:700; }
+.lowstock{
+  color:#C0392B;
+  font-weight:700;
+}
 
-.pdp-meta{ list-style:none; padding:0; margin:14px 0; display:grid; gap:6px; color:#444; }
+.pdp-meta{
+  list-style:none;
+  padding:0;
+  margin:14px 0;
+  display:grid;
+  gap:6px;
+  color:#444;
+}
 
-/* TABS – bessere Lesbarkeit */
-.pdp-tabs{ margin-top:14px; }
-.pdp-tabs .tab{
+/* TABS */
+.pdp-tabs{
+  margin-top:14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.pdp-tabs .pdp-tab{
   border:1px solid var(--border);
   background:#fff;
-  color:#111;                 /* immer gut lesbar */
+  color:#111;
   border-radius:999px;
   padding:8px 12px;
-  margin-right:8px;
   font-weight:800;
+  font-size:14px;
+  cursor:pointer;
   transition:background .12s,color .12s,border-color .12s;
 }
-.pdp-tabs .tab:hover{
-  border-color: var(--primary);
-  color: var(--primary);
-  background: rgba(0,70,190,.06);
+.pdp-tabs .pdp-tab:hover{
+  border-color:var(--primary);
+  color:var(--primary);
+  background:rgba(0,70,190,.06);
 }
-.pdp-tabs .tab.is-active{
-  background: var(--primary);
+.pdp-tabs .pdp-tab.is-active{
+  background:var(--primary);
   color:#fff;
-  border-color: var(--primary);
+  border-color:var(--primary);
 }
-.tab-panels{ margin-top:12px; }
-.panel{
+
+.pdp-panels{ margin-top:12px; }
+.pdp-panel{
   display:none;
   border:1px solid var(--border);
   border-radius:12px;
   padding:14px;
   background:#fff;
 }
-.panel.is-active{ display:block; }
+.pdp-panel.is-active{ display:block; }
+.pdp-panel-hint{
+  font-size:12px;
+  color:#6b7280;
+  margin-top:0;
+}
 
-/* Sticky CTA (mobile) */
-.pdp-sticky{ position:sticky; bottom:0; background:rgba(255,255,255,.98); border-top:1px solid var(--border); display:none; }
-.pdp-sticky__inner{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 0; }
-.pdp-sticky .title{ font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:60vw; }
-.s-price .compare{ text-decoration:line-through; color:#999; margin-right:6px; }
-@media(max-width: 900px){ .pdp-sticky{ display:block; } }
-.btn.small{ padding:8px 12px; border-radius:10px; font-weight:800; }
+/* PRICE HISTORY */
+.price-history-wrapper{
+  position:relative;
+  height:260px;
+  margin-top:10px;
+}
+.price-history-empty{
+  font-size:14px;
+  color:#6b7280;
+}
+
+/* STICKY CTA (mobil) */
+.pdp-sticky{
+  position:sticky;
+  bottom:0;
+  background:rgba(255,255,255,.98);
+  border-top:1px solid var(--border);
+  display:none;
+}
+.pdp-sticky__inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 0;
+}
+.pdp-sticky .title{
+  font-weight:800;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:60vw;
+}
+.s-price .compare{
+  text-decoration:line-through;
+  color:#999;
+  margin-right:6px;
+}
+.btn.small{
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:800;
+}
+@media(max-width: 900px){
+  .pdp-sticky{ display:block; }
+}
 </style>
 
+{%- comment -%} Chart.js für Preisentwicklung {%- endcomment -%}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 <script>
-/* Thumbnails -> Main image */
-document.addEventListener('click', e=>{
-  const t=e.target.closest('.thumb');
-  if(!t) return;
-  const img=document.getElementById('pdp-main-img');
-  if(img) img.src=t.dataset.src;
-});
-
-/* Qty stepper + form sync */
-(function(){
-  const qtyInput=document.getElementById('pdp-qty');
-  const form=document.querySelector('.pdp-actions');
-  if(!qtyInput||!form) return;
-  const hiddenQty=form.querySelector('input[name="quantity"]');
-  const update=(d)=>{ const v=Math.max(1, parseInt(qtyInput.value||'1') + d); qtyInput.value=v; hiddenQty.value=v; };
-  document.querySelectorAll('.qty-btn').forEach(b=>{
-    b.addEventListener('click', ()=>update(parseInt(b.dataset.d,10)));
+document.addEventListener('DOMContentLoaded', function(){
+  /* Thumbnails -> Main Image */
+  document.addEventListener('click', function(e){
+    const t = e.target.closest('.thumb');
+    if(!t) return;
+    const img = document.getElementById('pdp-main-img');
+    if(img) img.src = t.dataset.src;
   });
-  qtyInput.addEventListener('input', ()=>{ hiddenQty.value = Math.max(1, parseInt(qtyInput.value||'1')); });
-})();
 
-/* Tabs */
-document.addEventListener('click', e=>{
-  const btn=e.target.closest('.pdp-tabs .tab');
-  if(!btn) return;
-  const wrap=btn.closest('.pdp-tabs');
-  wrap.querySelectorAll('.tab').forEach(t=>t.classList.remove('is-active'));
-  btn.classList.add('is-active');
-  const id=btn.dataset.tab;
-  wrap.querySelectorAll('.panel').forEach(p=>p.classList.remove('is-active'));
-  wrap.querySelector('#tab-'+id)?.classList.add('is-active');
+  /* Menge-Buttons + versteckte Quantity im Form syncen */
+  (function(){
+    const qtyInput = document.getElementById('pdp-qty');
+    const form     = document.querySelector('.pdp-actions');
+    if(!qtyInput || !form) return;
+
+    const hiddenQty = form.querySelector('input[name="quantity"]');
+    const update = function(delta){
+      const current = parseInt(qtyInput.value || '1', 10);
+      const next = Math.max(1, current + delta);
+      qtyInput.value = next;
+      hiddenQty.value = next;
+    };
+
+    document.querySelectorAll('.qty-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        update(parseInt(btn.dataset.d, 10));
+      });
+    });
+
+    qtyInput.addEventListener('input', function(){
+      const v = Math.max(1, parseInt(qtyInput.value || '1', 10));
+      qtyInput.value = v;
+      hiddenQty.value = v;
+    });
+  })();
+
+  /* Tabs */
+  (function(){
+    const tabs   = document.querySelectorAll('#pdp-tabs .pdp-tab');
+    const panels = document.querySelectorAll('.pdp-panels .pdp-panel');
+
+    if(!tabs.length || !panels.length) return;
+
+    tabs.forEach(function(tab){
+      tab.addEventListener('click', function(){
+        const key = tab.getAttribute('data-tab');
+
+        tabs.forEach(t => t.classList.remove('is-active'));
+        panels.forEach(p => p.classList.remove('is-active'));
+
+        tab.classList.add('is-active');
+        const target = document.querySelector('.pdp-panel[data-panel="'+ key +'"]');
+        if(target) target.classList.add('is-active');
+      });
+    });
+  })();
+
+  /* Sticky CTA: sobald man etwas scrollt, anzeigen */
+  (function(){
+    const sticky = document.getElementById('pdp-sticky');
+    if(!sticky) return;
+    let lastY = window.scrollY;
+
+    window.addEventListener('scroll', function(){
+      const y = window.scrollY;
+      if(y > 350){
+        sticky.classList.add('is-visible');
+      } else {
+        sticky.classList.remove('is-visible');
+      }
+      lastY = y;
+    });
+  })();
+
+  /* Preis-Chart */
+  (function(){
+    const canvas = document.getElementById('priceHistoryChart');
+    if(!canvas || !window.Chart) return;
+
+    const rawData = {{ product.metafields.custom.preischart | default: 'null' | json }};
+
+    if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+      const emptyMsg = document.querySelector('.price-history-empty');
+      if (emptyMsg) emptyMsg.style.display = 'block';
+      return;
+    }
+
+    const labels = [];
+    const values = [];
+
+    rawData.forEach(function(entry){
+      if (!entry || !entry.date || entry.price == null) return;
+      labels.push(entry.date);
+      values.push(Number(entry.price));
+    });
+
+    if (!labels.length) {
+      const emptyMsg = document.querySelector('.price-history-empty');
+      if (emptyMsg) emptyMsg.style.display = 'block';
+      return;
+    }
+
+    new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Preis (€)',
+          data: values,
+          tension: 0.25,
+          fill: false,
+          borderColor: '#0046BE',
+          backgroundColor: '#FF6B00',
+          pointRadius: 3,
+          pointHoverRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            ticks: { maxRotation: 0, autoSkip: true }
+          },
+          y: {
+            beginAtZero: false,
+            ticks: {
+              callback: function(value){ return value.toFixed(2) + ' €'; }
+            }
+          }
+        },
+        plugins: {
+          legend: { display:false },
+          tooltip: {
+            callbacks: {
+              label: function(context){
+                const v = context.parsed.y;
+                return 'Preis: ' + v.toFixed(2) + ' €';
+              }
+            }
+          }
+        }
+      }
+    });
+  })();
 });
-
-/* Variant -> hidden input in forms aktualisieren */
-(function(){
-  const select=document.getElementById('pdp-variant');
-  if(!select) return;
-  const mainForm=document.querySelector('.pdp-actions');
-  const stickyForm=document.querySelector('.pdp-sticky form');
-  const update=(id)=>{
-    mainForm?.querySelector('input[name="id"]').setAttribute('value', id);
-    stickyForm?.querySelector('input[name="id"]').setAttribute('value', id);
-  };
-  select.addEventListener('change', ()=> update(select.value));
-})();
 </script>
 
 {% schema %}
 {
-  "name": "Produkt – HW",
+  "name": "Produkt – HW Central Seller",
   "settings": []
 }
 {% endschema %}
-
-<!-- HW Sticky ATC -->
-<div class="hw-sticky-atc" id="hw-sticky-atc" hidden>
-  <div class="hw-sticky-atc__inner">
-    {% if product.featured_image %}
-      <img src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ product.title | escape }}">
-    {% endif %}
-    <div class="hw-sticky-atc__info">
-      <p class="title">{{ product.title }}</p>
-      <p class="price">
-        {% if product.compare_at_price > product.price %}
-          <span class="old">{{ product.compare_at_price | money }}</span>
-        {% endif %}
-        <span class="now">{{ product.price | money }}</span>
-      </p>
-    </div>
-    <form method="post" action="/cart/add" class="hw-sticky-atc__form">
-      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-      <button type="submit" class="btn btn--primary">In den Warenkorb</button>
-    </form>
-  </div>
-</div>
