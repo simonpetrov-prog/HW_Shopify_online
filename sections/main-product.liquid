@@ -80,6 +80,19 @@
     {{ product.description }}
   </section>
 
+  <div class="pdp-panel" data-tab-panel="price-history">
+    <h3>Preisentwicklung</h3>
+
+    <div class="price-history-wrapper">
+      <canvas id="priceHistoryChart"></canvas>
+      <p class="price-history-empty" style="display:none;">
+        Für dieses Modell sind aktuell keine Preisdaten hinterlegt.
+      </p>
+    </div>
+  </div>
+</div><!-- Ende .pdp-panels -->
+
+
   <section class="pdp-panel" data-panel="specs">
     {%- comment -%} Deine Produkt-Details hier (Liste, Tabelle, Icons …) {%- endcomment -%}
     <ul>
