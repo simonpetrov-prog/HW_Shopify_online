@@ -108,8 +108,95 @@
       <li>14 Tage Rückgabe</li>
       <li>Sichere Zahlung</li>
     </ul>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   </section>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  const ctx = document.getElementById('priceHistoryChart');
+  if (!ctx) return;
+
+  // Metafeld aus Shopify ziehen (als JS-Objekt)
+  const rawData = {{ product.metafields.custom.preischart | default: 'null' | json }};
+
+  if (!rawData || !Array.isArray(rawData) || rawData.length === 0) {
+    // Fallback: Hinweistext zeigen
+    const emptyMsg = document.querySelector('.price-history-empty');
+    if (emptyMsg) emptyMsg.style.display = 'block';
+    return;
+  }
+
+  // Daten vorbereiten: Datum & Preis
+  const labels = [];
+  const values = [];
+
+  rawData.forEach(entry => {
+    if (!entry || !entry.date || entry.price == null) return;
+
+    labels.push(entry.date);          // z. B. "2024-01-01"
+    values.push(Number(entry.price)); // z. B. 3.99
+  });
+
+  if (!labels.length) {
+    const emptyMsg = document.querySelector('.price-history-empty');
+    if (emptyMsg) emptyMsg.style.display = 'block';
+    return;
+  }
+
+  // Chart erstellen
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Preis (€)',
+        data: values,
+        tension: 0.25,
+        fill: false,
+        borderColor: '#0046BE',
+        backgroundColor: '#FF6B00',
+        pointRadius: 3,
+        pointHoverRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          ticks: {
+            maxRotation: 0,
+            autoSkip: true
+          }
+        },
+        y: {
+          beginAtZero: false,
+          ticks: {
+            callback: function(value) {
+              return value.toFixed(2) + ' €';
+            }
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context){
+              const v = context.parsed.y;
+              return 'Preis: ' + v.toFixed(2) + ' €';
+            }
+          }
+        }
+      }
+    }
+  });
+});
+</script>
 
 <script>
   (function(){
