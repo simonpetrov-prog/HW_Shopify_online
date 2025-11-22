@@ -155,6 +155,9 @@
         </section>
       </div>
       {%- comment -%} TABS ENDE {%- endcomment -%}
+    </div> <!-- Ende .pdp-info -->
+  </div> <!-- Ende .pdp-grid -->
+</section>
 
 {%- comment -%} MOBILE STICKY BAR {%- endcomment -%}
 <div class="pdp-sticky" id="pdp-sticky">
@@ -187,17 +190,6 @@
 }
 @media(max-width: 900px){
   .pdp-grid{ grid-template-columns:1fr; }
-}
-
-.pdp-panel{
-  display:none;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
-  background:#fff;
-}
-.pdp-panel.is-active{
-  display:block;
 }
 
 /* MEDIA */
@@ -465,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   })();
 
-  /* Tabs */
+  /* Tabs – EINZIGES Tab-Script */
   (function(){
     const tabs   = document.querySelectorAll('#pdp-tabs .pdp-tab');
     const panels = document.querySelectorAll('.pdp-panels .pdp-panel');
@@ -490,7 +482,6 @@ document.addEventListener('DOMContentLoaded', function(){
   (function(){
     const sticky = document.getElementById('pdp-sticky');
     if(!sticky) return;
-    let lastY = window.scrollY;
 
     window.addEventListener('scroll', function(){
       const y = window.scrollY;
@@ -499,7 +490,6 @@ document.addEventListener('DOMContentLoaded', function(){
       } else {
         sticky.classList.remove('is-visible');
       }
-      lastY = y;
     });
   })();
 
@@ -574,31 +564,6 @@ document.addEventListener('DOMContentLoaded', function(){
       }
     });
   })();
-});
-</script>
-
-<script>
-document.addEventListener('click', function(e){
-  const tab = e.target.closest('.pdp-tab');
-  if (!tab) return;
-
-  // Wir suchen nur im gleichen Block (pdp-info) nach Panels/Tabs
-  const info = tab.closest('.pdp-info') || document;
-  const key  = tab.dataset.tab;
-
-  const tabs   = info.querySelectorAll('.pdp-tab');
-  const panels = info.querySelectorAll('.pdp-panel');
-
-  // Aktive Klasse resetten
-  tabs.forEach(t => t.classList.remove('is-active'));
-  panels.forEach(p => p.classList.remove('is-active'));
-
-  // Aktiven Tab + Panel setzen
-  tab.classList.add('is-active');
-  const target = info.querySelector('.pdp-panel[data-panel="' + key + '"]');
-  if (target) {
-    target.classList.add('is-active');
-  }
 });
 </script>
 
