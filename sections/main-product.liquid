@@ -2,7 +2,7 @@
   HW Central Seller – Produktseite (Main Product Section)
   - Galerie links
   - Infos + Buy-Box rechts
-  - Tabs inkl. Preisentwicklung
+  - Tabs inkl. Preisentwicklung (CSS-basiert, kein JS nötig)
 {% endcomment %}
 
 <section class="container pdp">
@@ -14,7 +14,7 @@
           <img
             id="pdp-main-img"
             src="{{ product.featured_image | image_url: width: 1200 }}"
-            alt="{{ product.title | escape }}"
+            alt="{{ product.title | escape }}
             loading="eager"
           >
 
@@ -107,52 +107,62 @@
         <li>✅ Sichere Zahlung</li>
       </ul>
 
-      {%- comment -%} TABS START {%- endcomment -%}
-      <div class="pdp-tabs" id="pdp-tabs">
-        <button class="pdp-tab is-active" data-tab="beschreibung">Beschreibung</button>
-        <button class="pdp-tab" data-tab="details">Details</button>
-        <button class="pdp-tab" data-tab="shipping">Versand & Rückgabe</button>
-        <button class="pdp-tab" data-tab="price-history">Preisentwicklung</button>
-      </div>
+      {%- comment -%} TABS – CSS-RADIO-VARIANTE {%- endcomment -%}
+      <div class="pdp-tabs-wrap">
+        <!-- Unsichtbare Radio-Inputs -->
+        <input type="radio" name="pdp-tab" id="pdp-tab-beschreibung" class="pdp-tab-input" checked>
+        <input type="radio" name="pdp-tab" id="pdp-tab-details" class="pdp-tab-input">
+        <input type="radio" name="pdp-tab" id="pdp-tab-shipping" class="pdp-tab-input">
+        <input type="radio" name="pdp-tab" id="pdp-tab-price" class="pdp-tab-input">
 
-      <div class="pdp-panels">
-        <!-- Beschreibung -->
-        <section class="pdp-panel is-active" data-panel="beschreibung">
-          {{ product.description }}
-        </section>
+        <!-- Tab-Labels -->
+        <div class="pdp-tabs">
+          <label class="pdp-tab-label" for="pdp-tab-beschreibung">Beschreibung</label>
+          <label class="pdp-tab-label" for="pdp-tab-details">Details</label>
+          <label class="pdp-tab-label" for="pdp-tab-shipping">Versand & Rückgabe</label>
+          <label class="pdp-tab-label" for="pdp-tab-price">Preisentwicklung</label>
+        </div>
 
-        <!-- Details – Beispielinhalt -->
-        <section class="pdp-panel" data-panel="details">
-          <ul>
-            <li>Serie: Mainline</li>
-            <li>Maßstab: 1:64</li>
-            <li>Zustand: Neu & ungeöffnet (Blister)</li>
-          </ul>
-        </section>
+        <!-- Panels -->
+        <div class="pdp-panels">
+          <!-- Beschreibung -->
+          <section class="pdp-panel" data-panel="beschreibung">
+            {{ product.description }}
+          </section>
 
-        <!-- Versand & Rückgabe -->
-        <section class="pdp-panel" data-panel="shipping">
-          <ul>
-            <li>Versand: 2–4 Werktage (DE)</li>
-            <li>Versanddienstleister: Deutsche Post / DHL</li>
-            <li>Rückgabe: 14 Tage</li>
-          </ul>
-        </section>
+          <!-- Details – Beispielinhalt -->
+          <section class="pdp-panel" data-panel="details">
+            <ul>
+              <li>Serie: Mainline</li>
+              <li>Maßstab: 1:64</li>
+              <li>Zustand: Neu & ungeöffnet (Blister)</li>
+            </ul>
+          </section>
 
-        <!-- Preisentwicklung -->
-        <section class="pdp-panel" data-panel="price-history">
-          <h3>Preisentwicklung</h3>
-          <p class="pdp-panel-hint">
-            Interner Verlauf, basierend auf deinen eingetragenen Preisdaten.
-          </p>
+          <!-- Versand & Rückgabe -->
+          <section class="pdp-panel" data-panel="shipping">
+            <ul>
+              <li>Versand: 2–4 Werktage (DE)</li>
+              <li>Versanddienstleister: Deutsche Post / DHL</li>
+              <li>Rückgabe: 14 Tage</li>
+            </ul>
+          </section>
 
-          <div class="price-history-wrapper">
-            <canvas id="priceHistoryChart"></canvas>
-            <p class="price-history-empty" style="display:none;">
-              Für dieses Modell sind aktuell keine Preisdaten hinterlegt.
+          <!-- Preisentwicklung -->
+          <section class="pdp-panel" data-panel="price-history">
+            <h3>Preisentwicklung</h3>
+            <p class="pdp-panel-hint">
+              Interner Verlauf, basierend auf deinen eingetragenen Preisdaten.
             </p>
-          </div>
-        </section>
+
+            <div class="price-history-wrapper">
+              <canvas id="priceHistoryChart"></canvas>
+              <p class="price-history-empty" style="display:none;">
+                Für dieses Modell sind aktuell keine Preisdaten hinterlegt.
+              </p>
+            </div>
+          </section>
+        </div>
       </div>
       {%- comment -%} TABS ENDE {%- endcomment -%}
     </div> <!-- Ende .pdp-info -->
@@ -325,14 +335,25 @@
   color:#444;
 }
 
-/* TABS */
-.pdp-tabs{
+/* TABS – CSS Variante */
+.pdp-tabs-wrap{
   margin-top:14px;
+}
+
+/* Inputs verstecken */
+.pdp-tab-input{
+  display:none;
+}
+
+/* Tab-Leiste */
+.pdp-tabs{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
 }
-.pdp-tabs .pdp-tab{
+
+/* Basis-Style der Labels */
+.pdp-tab-label{
   border:1px solid var(--border);
   background:#fff;
   color:#111;
@@ -343,17 +364,13 @@
   cursor:pointer;
   transition:background .12s,color .12s,border-color .12s;
 }
-.pdp-tabs .pdp-tab:hover{
+.pdp-tab-label:hover{
   border-color:var(--primary);
   color:var(--primary);
   background:rgba(0,70,190,.06);
 }
-.pdp-tabs .pdp-tab.is-active{
-  background:var(--primary);
-  color:#fff;
-  border-color:var(--primary);
-}
 
+/* Panels */
 .pdp-panels{ margin-top:12px; }
 .pdp-panel{
   display:none;
@@ -362,11 +379,52 @@
   padding:14px;
   background:#fff;
 }
-.pdp-panel.is-active{ display:block; }
 .pdp-panel-hint{
   font-size:12px;
   color:#6b7280;
   margin-top:0;
+}
+
+/* Aktive Tabs + Panel via :checked */
+
+/* 1 = Beschreibung */
+#pdp-tab-beschreibung:checked ~ .pdp-tabs .pdp-tab-label:nth-child(1){
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+#pdp-tab-beschreibung:checked ~ .pdp-panels [data-panel="beschreibung"]{
+  display:block;
+}
+
+/* 2 = Details */
+#pdp-tab-details:checked ~ .pdp-tabs .pdp-tab-label:nth-child(2){
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+#pdp-tab-details:checked ~ .pdp-panels [data-panel="details"]{
+  display:block;
+}
+
+/* 3 = Versand */
+#pdp-tab-shipping:checked ~ .pdp-tabs .pdp-tab-label:nth-child(3){
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+#pdp-tab-shipping:checked ~ .pdp-panels [data-panel="shipping"]{
+  display:block;
+}
+
+/* 4 = Preisentwicklung */
+#pdp-tab-price:checked ~ .pdp-tabs .pdp-tab-label:nth-child(4){
+  background:var(--primary);
+  color:#fff;
+  border-color:var(--primary);
+}
+#pdp-tab-price:checked ~ .pdp-panels [data-panel="price-history"]{
+  display:block;
 }
 
 /* PRICE HISTORY */
@@ -454,27 +512,6 @@ document.addEventListener('DOMContentLoaded', function(){
       const v = Math.max(1, parseInt(qtyInput.value || '1', 10));
       qtyInput.value = v;
       hiddenQty.value = v;
-    });
-  })();
-
-  /* Tabs – EINZIGES Tab-Script */
-  (function(){
-    const tabs   = document.querySelectorAll('#pdp-tabs .pdp-tab');
-    const panels = document.querySelectorAll('.pdp-panels .pdp-panel');
-
-    if(!tabs.length || !panels.length) return;
-
-    tabs.forEach(function(tab){
-      tab.addEventListener('click', function(){
-        const key = tab.getAttribute('data-tab');
-
-        tabs.forEach(t => t.classList.remove('is-active'));
-        panels.forEach(p => p.classList.remove('is-active'));
-
-        tab.classList.add('is-active');
-        const target = document.querySelector('.pdp-panel[data-panel="'+ key +'"]');
-        if(target) target.classList.add('is-active');
-      });
     });
   })();
 
