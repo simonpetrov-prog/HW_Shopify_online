@@ -11,13 +11,12 @@
     <div class="pdp-media">
       {% if product.images.size > 0 %}
         <div class="pdp-media__main">
-          <img
-            id="pdp-main-img"
-            src="{{ product.featured_image | image_url: width: 1200 }}"
-            alt="{{ product.title | escape }}
-            loading="eager"
-          >
-
+<img
+  id="pdp-main-img"
+  src="{{ product.featured_image | image_url: width: 1200 }}"
+  alt="{{ product.title | escape }}"
+  loading="eager"
+>
           {%- assign save = product.compare_at_price | minus: product.price -%}
           {% if product.compare_at_price > product.price and save > 0 %}
             {% assign pct = save | times: 100.0 | divided_by: product.compare_at_price | round %}
