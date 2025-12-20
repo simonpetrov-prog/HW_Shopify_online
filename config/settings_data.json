@@ -54,6 +54,20 @@
       "cart-drawer": {
         "type": "cart-drawer",
         "settings": {}
+      },
+      "info-faktenzeile": {
+        "type": "info-faktenzeile",
+        "settings": {
+          "heading": "HW Central Seller — Warum wir?",
+          "subheading": "Premium Look. Echte Modelle. Sammler-Safe.",
+          "columns": 3,
+          "max_width": 1200,
+          "bg1": "#071526",
+          "bg2": "#0b1b2b",
+          "text": "#ffffff",
+          "muted": "#cbd5e1",
+          "accent": "#e85a00"
+        }
       }
     },
     "content_for_index": []
