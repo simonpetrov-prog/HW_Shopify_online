@@ -58,15 +58,29 @@
       "info-faktenzeile": {
         "type": "info-faktenzeile",
         "settings": {
-          "heading": "HW Central Seller — Warum wir?",
-          "subheading": "Premium Look. Echte Modelle. Sammler-Safe.",
-          "columns": 2,
           "max_width": 1200,
-          "bg1": "#071526",
-          "bg2": "#0b1b2b",
+          "section_bg": "#f5f7fb",
+          "aside_bg": "#0b1b2b",
           "text": "#ffffff",
           "muted": "#cbd5e1",
-          "accent": "#e85a00"
+          "card_bg": "#ffffff",
+          "border": "#e5e7eb",
+          "accent": "#e85a00",
+          "badge": "HW Central Seller",
+          "heading": "HW Central Seller — Warum wir?",
+          "subheading": "Premium Look. Echte Modelle. Sammler-Safe.",
+          "cta_label": "Alle Produkte",
+          "cta_link": "",
+          "meta": "Echte Modelle, echte Leidenschaft – Hot Wheels direkt für dich.",
+          "columns": 2,
+          "c1_title": "Plastikfrei verpackt",
+          "c1_text": "Stabiler Karton + Zeitung als Füllmaterial – sicher & umweltfreundlich.",
+          "c2_title": "Sammler-sicher",
+          "c2_text": "Blister geschützt verpackt, damit dein Modell sauber ankommt.",
+          "c3_title": "Real Cars Fokus",
+          "c3_text": "Street-Modelle & bekannte Marken – perfekt für Sammler und Auto-Fans.",
+          "c4_title": "Gezielt kaufen statt Zufall",
+          "c4_text": "Du suchst ein bestimmtes Modell? Bei uns findest du es gezielt im Shop."
         }
       }
     },
