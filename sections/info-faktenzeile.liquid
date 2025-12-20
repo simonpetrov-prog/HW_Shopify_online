@@ -17,10 +17,85 @@
     </div>
 
     <div class="hw-facts-grid" style="--cols: {{ section.settings.columns }};">
-      {% for block in section.blocks %}
-        <article class="hw-fact-card" {{ block.shopify_attributes }}>
-          <div class="hw-fact-card__icon">
-            {% if block.settings.image != blank %}
+      {% if section.blocks.size > 0 %}
+  {% for block in section.blocks %}
+    <article class="hw-fact-card" {{ block.shopify_attributes }}>
+      <div class="hw-fact-card__icon">
+        {% if block.settings.image != blank %}
+          <img
+            src="{{ block.settings.image | image_url: width: 160 }}"
+            alt="{{ block.settings.title | escape }}"
+            loading="lazy"
+            width="44"
+            height="44"
+          >
+        {% else %}
+          {% case block.settings.icon %}
+            {% when 'leaf' %}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5c-6.2 1-10.8 4.3-13 9.3-.8 1.9-1 3.8-.7 5.7 1.8.3 3.8.1 5.7-.7 5-2.2 8.3-6.8 9.3-13zM7.8 18.2c1.5-4.7 5.2-8.4 9.9-9.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            {% when 'shield' %}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+            {% when 'car' %}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13l2-6h14l2 6v6h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-6zM7 7l1.2-2h7.6L17 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            {% when 'target' %}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v3M12 19v3M2 12h3M19 12h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7a5 5 0 1 0 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 10a2 2 0 1 0 2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            {% else %}
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 5-9 5-9-5 9-5zM3 7v10l9 5 9-5V7" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          {% endcase %}
+        {% endif %}
+      </div>
+
+      <div class="hw-fact-card__content">
+        <h3 class="hw-fact-card__title">{{ block.settings.title }}</h3>
+        <p class="hw-fact-card__text">{{ block.settings.text }}</p>
+        {% if block.settings.link != blank and block.settings.link_label != blank %}
+          <a class="hw-fact-card__link" href="{{ block.settings.link }}">{{ block.settings.link_label }}</a>
+        {% endif %}
+      </div>
+    </article>
+  {% endfor %}
+{% else %}
+  {%- assign fallback = '' -%}
+  <article class="hw-fact-card">
+    <div class="hw-fact-card__icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5c-6.2 1-10.8 4.3-13 9.3-.8 1.9-1 3.8-.7 5.7 1.8.3 3.8.1 5.7-.7 5-2.2 8.3-6.8 9.3-13zM7.8 18.2c1.5-4.7 5.2-8.4 9.9-9.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="hw-fact-card__content">
+      <h3 class="hw-fact-card__title">Plastikfrei verpackt</h3>
+      <p class="hw-fact-card__text">Stabiler Karton + Zeitung als Füllmaterial – sicher & umweltfreundlich.</p>
+    </div>
+  </article>
+
+  <article class="hw-fact-card">
+    <div class="hw-fact-card__icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="hw-fact-card__content">
+      <h3 class="hw-fact-card__title">Sammler-sicher</h3>
+      <p class="hw-fact-card__text">Blister geschützt verpackt, damit dein Modell sauber ankommt.</p>
+    </div>
+  </article>
+
+  <article class="hw-fact-card">
+    <div class="hw-fact-card__icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13l2-6h14l2 6v6h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-6zM7 7l1.2-2h7.6L17 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="hw-fact-card__content">
+      <h3 class="hw-fact-card__title">Real Cars Fokus</h3>
+      <p class="hw-fact-card__text">Street-Modelle & bekannte Marken – perfekt für Sammler und Auto-Fans.</p>
+    </div>
+  </article>
+
+  <article class="hw-fact-card">
+    <div class="hw-fact-card__icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v3M12 19v3M2 12h3M19 12h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7a5 5 0 1 0 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 10a2 2 0 1 0 2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div class="hw-fact-card__content">
+      <h3 class="hw-fact-card__title">Gezielt kaufen statt Zufall</h3>
+      <p class="hw-fact-card__text">Du suchst ein bestimmtes Modell? Bei uns findest du es gezielt im Shop.</p>
+    </div>
+  </article>
+{% endif %}
               <img
                 src="{{ block.settings.image | image_url: width: 160 }}"
                 alt="{{ block.settings.title | escape }}"
