@@ -1,227 +1,325 @@
-<section class="hw-feature-panel" style="
-  --hw-max: {{ section.settings.max_width }}px;
-  --hw-bg: {{ section.settings.section_bg }};
-  --hw-aside: {{ section.settings.aside_bg }};
-  --hw-text: {{ section.settings.text }};
-  --hw-muted: {{ section.settings.muted }};
-  --hw-card: {{ section.settings.card_bg }};
-  --hw-border: {{ section.settings.border }};
-  --hw-accent: {{ section.settings.accent }};
+<section class="hw-overlay-hero" style="
+  --max: {{ section.settings.max_width }}px;
+  --accent: {{ section.settings.accent }};
+  --panel: {{ section.settings.panel_bg }};
+  --text: {{ section.settings.text }};
+  --muted: {{ section.settings.muted }};
+  --overlay: {{ section.settings.overlay_opacity | times: 0.01 }};
 ">
-  <div class="hw-feature-panel__inner">
-    <div class="hw-feature-panel__layout">
-      <!-- LEFT: DARK INFO PANEL -->
-      <aside class="hw-feature-panel__aside">
-        <div class="hw-feature-panel__badge">{{ section.settings.badge }}</div>
-
-        <h2 class="hw-feature-panel__title">{{ section.settings.heading }}</h2>
-        <p class="hw-feature-panel__sub">{{ section.settings.subheading }}</p>
-
-        {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
-          <a class="hw-feature-panel__cta" href="{{ section.settings.cta_link }}">
-            {{ section.settings.cta_label }}
-          </a>
+  <div class="hw-overlay-hero__inner">
+    <div class="hw-overlay-hero__frame">
+      <div class="hw-overlay-hero__bg">
+        {% if section.settings.bg_image != blank %}
+          <img
+            src="{{ section.settings.bg_image | image_url: width: 2000 }}"
+            alt=""
+            loading="lazy"
+            width="2000"
+            height="1200"
+          >
         {% endif %}
+        <div class="hw-overlay-hero__veil"></div>
+      </div>
 
-        <div class="hw-feature-panel__meta">
-          <span class="hw-dot"></span>
-          <span>{{ section.settings.meta }}</span>
+      <div class="hw-overlay-hero__content">
+        <div class="hw-overlay-hero__top">
+          <div class="hw-overlay-hero__brand">{{ section.settings.brand_small }}</div>
+
+          {% if section.settings.top_links != blank %}
+            <div class="hw-overlay-hero__links">
+              {{ section.settings.top_links }}
+            </div>
+          {% endif %}
         </div>
-      </aside>
 
-      <!-- RIGHT: FEATURE CARDS -->
-      <div class="hw-feature-panel__cards" style="--cols: {{ section.settings.columns }};">
-        {% assign items = 4 %}
-        {% for i in (1..items) %}
-          {% assign t = 'c' | append: i | append: '_title' %}
-          {% assign x = 'c' | append: i | append: '_text' %}
-          {% assign img = 'c' | append: i | append: '_image' %}
+        <div class="hw-overlay-hero__grid">
+          <!-- Left: Big title like Pinterest -->
+          <div class="hw-overlay-hero__left">
+            <div class="hw-overlay-hero__kicker">{{ section.settings.kicker }}</div>
+            <div class="hw-overlay-hero__title">
+              <span class="hw-overlay-hero__titleBig">{{ section.settings.title_big }}</span>
+            </div>
 
-          <article class="hw-feature-card">
-            <div class="hw-feature-card__icon">
-              {% if section.settings[img] != blank %}
-                <img
-                  src="{{ section.settings[img] | image_url: width: 180 }}"
-                  alt=""
-                  loading="lazy"
-                  width="44"
-                  height="44"
-                >
-              {% else %}
-                {% case i %}
-                  {% when 1 %}
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 3.5c-6.2 1-10.8 4.3-13 9.3-.8 1.9-1 3.8-.7 5.7 1.8.3 3.8.1 5.7-.7 5-2.2 8.3-6.8 9.3-13zM7.8 18.2c1.5-4.7 5.2-8.4 9.9-9.9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                  {% when 2 %}
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.4 9.4-8 10-4.6-.6-8-5-8-10V6l8-4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
-                  {% when 3 %}
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13l2-6h14l2 6v6h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-6zM7 7l1.2-2h7.6L17 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  {% else %}
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v3M12 19v3M2 12h3M19 12h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 7a5 5 0 1 0 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 10a2 2 0 1 0 2 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                {% endcase %}
+            <p class="hw-overlay-hero__desc">{{ section.settings.desc }}</p>
+
+            <div class="hw-overlay-hero__actions">
+              {% if section.settings.cta_label != blank and section.settings.cta_link != blank %}
+                <a class="hw-btn hw-btn--primary" href="{{ section.settings.cta_link }}">
+                  {{ section.settings.cta_label }}
+                </a>
+              {% endif %}
+
+              {% if section.settings.cta2_label != blank and section.settings.cta2_link != blank %}
+                <a class="hw-btn hw-btn--ghost" href="{{ section.settings.cta2_link }}">
+                  {{ section.settings.cta2_label }}
+                </a>
               {% endif %}
             </div>
 
-            <div class="hw-feature-card__content">
-              <h3 class="hw-feature-card__title">{{ section.settings[t] }}</h3>
-              <p class="hw-feature-card__text">{{ section.settings[x] }}</p>
+            {% if section.settings.slogan != blank %}
+              <div class="hw-overlay-hero__slogan">
+                <span class="hw-dot"></span>
+                <span>{{ section.settings.slogan }}</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Right: Small info panel -->
+          <div class="hw-overlay-hero__right">
+            <div class="hw-mini-panel">
+              <div class="hw-mini-panel__title">{{ section.settings.panel_title }}</div>
+              <div class="hw-mini-panel__text">{{ section.settings.panel_text }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom: Facts on top of image -->
+        <div class="hw-facts-row">
+          <article class="hw-fact">
+            <div class="hw-fact__num">01</div>
+            <div class="hw-fact__body">
+              <div class="hw-fact__title">{{ section.settings.c1_title }}</div>
+              <div class="hw-fact__text">{{ section.settings.c1_text }}</div>
             </div>
           </article>
-        {% endfor %}
+
+          <article class="hw-fact">
+            <div class="hw-fact__num">02</div>
+            <div class="hw-fact__body">
+              <div class="hw-fact__title">{{ section.settings.c2_title }}</div>
+              <div class="hw-fact__text">{{ section.settings.c2_text }}</div>
+            </div>
+          </article>
+
+          <article class="hw-fact">
+            <div class="hw-fact__num">03</div>
+            <div class="hw-fact__body">
+              <div class="hw-fact__title">{{ section.settings.c3_title }}</div>
+              <div class="hw-fact__text">{{ section.settings.c3_text }}</div>
+            </div>
+          </article>
+
+          <article class="hw-fact">
+            <div class="hw-fact__num">04</div>
+            <div class="hw-fact__body">
+              <div class="hw-fact__title">{{ section.settings.c4_title }}</div>
+              <div class="hw-fact__text">{{ section.settings.c4_text }}</div>
+            </div>
+          </article>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .hw-feature-panel{
-    background: var(--hw-bg);
-    padding: 26px 0;
-  }
-  .hw-feature-panel__inner{
-    width: min(var(--hw-max), 92%);
-    margin: 0 auto;
-  }
-  .hw-feature-panel__layout{
-    display: grid;
-    grid-template-columns: 420px 1fr;
-    gap: 16px;
-    align-items: stretch;
+  .hw-overlay-hero{ padding: 24px 0; }
+  .hw-overlay-hero__inner{ width: min(var(--max), 92%); margin: 0 auto; }
+
+  .hw-overlay-hero__frame{
+    position: relative;
+    border-radius: 26px;
+    overflow: hidden;
+    box-shadow: 0 18px 55px rgba(0,0,0,.18);
+    border: 1px solid rgba(0,0,0,.06);
+    min-height: 420px;
   }
 
-  /* Left panel */
-  .hw-feature-panel__aside{
-    background: radial-gradient(900px 420px at 10% 0%, rgba(255,255,255,.10), transparent 55%),
-                linear-gradient(180deg, var(--hw-aside), color-mix(in srgb, var(--hw-aside) 86%, #000));
-    color: var(--hw-text);
-    border-radius: 22px;
-    padding: 22px;
-    border: 1px solid rgba(255,255,255,.08);
-    box-shadow: 0 16px 40px rgba(0,0,0,.18);
-    position: relative;
-    overflow: hidden;
+  .hw-overlay-hero__bg{
+    position:absolute; inset:0;
+    background: #0B1B2B;
   }
-  .hw-feature-panel__badge{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 10px;
-    border-radius: 999px;
+  .hw-overlay-hero__bg img{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+    filter: saturate(1.05) contrast(1.02);
+    transform: scale(1.02);
+  }
+  .hw-overlay-hero__veil{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(1000px 520px at 20% 10%, rgba(0,0,0,.15), transparent 55%),
+      linear-gradient(90deg, rgba(11,27,43, var(--overlay)) 0%, rgba(11,27,43, calc(var(--overlay) - .10)) 55%, rgba(11,27,43, .20) 100%);
+    pointer-events:none;
+  }
+
+  .hw-overlay-hero__content{
+    position: relative;
+    padding: 22px;
+    color: var(--text);
+  }
+
+  .hw-overlay-hero__top{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .hw-overlay-hero__brand{
+    font-weight: 900;
+    letter-spacing: .25px;
+    font-size: 13px;
     background: rgba(255,255,255,.10);
     border: 1px solid rgba(255,255,255,.14);
-    font-size: 12px;
-    font-weight: 800;
-    letter-spacing: .2px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(6px);
   }
-  .hw-feature-panel__badge::before{
-    content:"";
-    width: 8px; height: 8px;
-    border-radius: 99px;
-    background: var(--hw-accent);
-    box-shadow: 0 0 0 4px rgba(255,107,0,.18);
+  .hw-overlay-hero__links{
+    font-size: 12.5px;
+    color: rgba(255,255,255,.78);
+    display:flex; gap: 14px;
+    flex-wrap: wrap;
+    justify-content:flex-end;
   }
-  .hw-feature-panel__title{
-    margin: 14px 0 0;
-    font-size: 22px;
+
+  .hw-overlay-hero__grid{
+    display:grid;
+    grid-template-columns: 1.35fr .65fr;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .hw-overlay-hero__kicker{
+    font-size: 14px;
+    color: rgba(255,255,255,.85);
+    margin-top: 2px;
+  }
+
+  .hw-overlay-hero__titleBig{
+    display:block;
+    font-size: clamp(44px, 6vw, 72px);
     font-weight: 950;
-    letter-spacing: .2px;
-    line-height: 1.1;
+    letter-spacing: .5px;
+    line-height: .95;
+    text-transform: uppercase;
+    text-shadow: 0 18px 45px rgba(0,0,0,.45);
   }
-  .hw-feature-panel__sub{
-    margin: 10px 0 0;
+
+  .hw-overlay-hero__desc{
+    margin: 14px 0 0;
+    max-width: 520px;
     font-size: 13.5px;
-    color: var(--hw-muted);
-    line-height: 1.35;
+    line-height: 1.45;
+    color: rgba(255,255,255,.82);
   }
-  .hw-feature-panel__cta{
-    display: inline-flex;
+
+  .hw-overlay-hero__actions{
     margin-top: 14px;
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .hw-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
     padding: 10px 14px;
     border-radius: 12px;
-    background: var(--hw-accent);
-    color: #0B1B2B;
     font-weight: 900;
-    text-decoration: none;
-    box-shadow: 0 12px 26px rgba(0,0,0,.18);
+    text-decoration:none;
+    transition: transform .16s ease, filter .16s ease, background .16s ease;
   }
-  .hw-feature-panel__cta:hover{ filter: brightness(1.03); }
-  .hw-feature-panel__meta{
+  .hw-btn:hover{ transform: translateY(-1px); }
+
+  .hw-btn--primary{
+    background: var(--accent);
+    color: #0B1B2B;
+    box-shadow: 0 14px 28px rgba(0,0,0,.24);
+  }
+  .hw-btn--ghost{
+    background: rgba(255,255,255,.10);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    backdrop-filter: blur(6px);
+  }
+
+  .hw-overlay-hero__slogan{
     margin-top: 14px;
-    display: flex;
-    align-items: center;
+    display:flex;
+    align-items:center;
     gap: 10px;
-    color: color-mix(in srgb, var(--hw-muted) 88%, #fff);
-    font-size: 12.5px;
+    font-size: 12.8px;
+    color: rgba(255,255,255,.80);
   }
   .hw-dot{
-    width: 6px; height: 6px;
+    width: 7px; height: 7px;
     border-radius: 99px;
     background: rgba(255,255,255,.35);
   }
 
-  /* Right cards */
-  .hw-feature-panel__cards{
-    background: transparent;
-    display: grid;
-    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
-    gap: 14px;
-  }
-
-  .hw-feature-card{
-    background: var(--hw-card);
-    border: 1px solid var(--hw-border);
-    border-radius: 20px;
-    padding: 18px;
-    box-shadow: 0 14px 34px rgba(0,0,0,.08);
-    display: flex;
-    gap: 14px;
-    align-items: flex-start;
-    min-height: 120px;
-    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-  }
-  .hw-feature-card:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 18px 42px rgba(0,0,0,.10);
-    border-color: color-mix(in srgb, var(--hw-border) 50%, var(--hw-accent));
-  }
-
-  .hw-feature-card__icon{
-    width: 56px;
-    height: 56px;
+  .hw-mini-panel{
+    background: color-mix(in srgb, var(--panel) 82%, transparent);
+    border: 1px solid rgba(255,255,255,.14);
     border-radius: 18px;
-    background: color-mix(in srgb, var(--hw-accent) 18%, #ffffff);
-    border: 1px solid color-mix(in srgb, var(--hw-accent) 40%, #e5e7eb);
-    display: grid;
-    place-items: center;
-    flex: 0 0 auto;
+    padding: 14px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
-  .hw-feature-card__icon img{ width: 34px; height: 34px; object-fit: contain; display:block; }
-  .hw-feature-card__icon svg{ width: 26px; height: 26px; color: #0B1B2B; opacity: .9; }
-
-  .hw-feature-card__title{
-    margin: 2px 0 0;
-    font-size: 15.5px;
+  .hw-mini-panel__title{
     font-weight: 950;
-    color: #0B1B2B;
+    font-size: 13.5px;
+    letter-spacing: .2px;
   }
-  .hw-feature-card__text{
-    margin: 6px 0 0;
-    font-size: 13.6px;
+  .hw-mini-panel__text{
+    margin-top: 8px;
+    font-size: 12.6px;
+    line-height: 1.4;
+    color: rgba(255,255,255,.78);
+  }
+
+  .hw-facts-row{
+    margin-top: 18px;
+    display:grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 10px;
+  }
+  .hw-fact{
+    background: rgba(0,0,0,.28);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 16px;
+    padding: 12px 12px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display:flex;
+    gap: 12px;
+    align-items:flex-start;
+    min-height: 92px;
+  }
+  .hw-fact__num{
+    font-weight: 950;
+    font-size: 12px;
+    color: rgba(255,255,255,.85);
+    width: 34px; height: 34px;
+    border-radius: 12px;
+    display:grid;
+    place-items:center;
+    background: color-mix(in srgb, var(--accent) 28%, rgba(255,255,255,.10));
+    border: 1px solid color-mix(in srgb, var(--accent) 55%, rgba(255,255,255,.10));
+    color: #fff;
+  }
+  .hw-fact__title{
+    font-weight: 950;
+    font-size: 13px;
+  }
+  .hw-fact__text{
+    margin-top: 5px;
+    font-size: 12.2px;
     line-height: 1.35;
-    color: #4b5563;
+    color: rgba(255,255,255,.78);
   }
 
   @media (max-width: 980px){
-    .hw-feature-panel__layout{
-      grid-template-columns: 1fr;
-    }
-    .hw-feature-panel__cards{
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    .hw-overlay-hero__grid{ grid-template-columns: 1fr; }
+    .hw-facts-row{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .hw-overlay-hero__top{ gap: 10px; }
   }
   @media (max-width: 520px){
-    .hw-feature-panel__cards{
-      grid-template-columns: 1fr;
-    }
+    .hw-facts-row{ grid-template-columns: 1fr; }
+    .hw-overlay-hero__content{ padding: 16px; }
   }
 </style>
 
@@ -231,45 +329,43 @@
   "settings": [
     { "type": "range", "id": "max_width", "label": "Max. Breite (px)", "min": 900, "max": 1400, "step": 50, "default": 1200 },
 
-    { "type": "color", "id": "section_bg", "label": "Section Hintergrund", "default": "#F5F7FB" },
-    { "type": "color", "id": "aside_bg", "label": "Linkes Panel (Dunkel)", "default": "#0B1B2B" },
-    { "type": "color", "id": "text", "label": "Textfarbe (links)", "default": "#FFFFFF" },
-    { "type": "color", "id": "muted", "label": "Sekundärtext (links)", "default": "#CBD5E1" },
-
-    { "type": "color", "id": "card_bg", "label": "Card Hintergrund (rechts)", "default": "#FFFFFF" },
-    { "type": "color", "id": "border", "label": "Card Border", "default": "#E5E7EB" },
+    { "type": "image_picker", "id": "bg_image", "label": "Background Bild" },
+    { "type": "range", "id": "overlay_opacity", "label": "Overlay Stärke (%)", "min": 20, "max": 85, "step": 1, "default": 60 },
 
     { "type": "color", "id": "accent", "label": "Akzent (helleres Orange)", "default": "#FF6B00" },
+    { "type": "color", "id": "panel_bg", "label": "Panel-Farbton (Glas)", "default": "#0B1B2B" },
+    { "type": "color", "id": "text", "label": "Textfarbe", "default": "#FFFFFF" },
+    { "type": "color", "id": "muted", "label": "Sekundärtext", "default": "#CBD5E1" },
 
-    { "type": "text", "id": "badge", "label": "Badge Text", "default": "HW Central Seller" },
-    { "type": "text", "id": "heading", "label": "Überschrift", "default": "Warum wir?" },
-    { "type": "text", "id": "subheading", "label": "Untertitel", "default": "Premium Look. Echte Modelle. Sammler-Safe." },
+    { "type": "text", "id": "brand_small", "label": "Badge", "default": "HW Central Seller" },
+    { "type": "text", "id": "top_links", "label": "Obere Links (optional, z.B. „About • Deals • Kontakt“)", "default": "About • Deals • Kontakt" },
 
-    { "type": "text", "id": "cta_label", "label": "Button Text (optional)", "default": "Alle Produkte" },
-    { "type": "url", "id": "cta_link", "label": "Button Link (optional)" },
-    { "type": "text", "id": "meta", "label": "Kleine Zeile unten (optional)", "default": "Königsblau. Orange. Hot Wheels Liebe." },
+    { "type": "text", "id": "kicker", "label": "Kicker klein", "default": "Hot Wheels Shop" },
+    { "type": "text", "id": "title_big", "label": "Großer Titel", "default": "MODELS" },
+    { "type": "text", "id": "desc", "label": "Beschreibung", "default": "Gezielt echte Straßen-Modelle finden, sammler-sicher verpackt und schnell bei dir." },
 
-    { "type": "range", "id": "columns", "label": "Cards Spalten (Desktop)", "min": 2, "max": 2, "step": 1, "default": 2 },
+    { "type": "text", "id": "cta_label", "label": "Button 1 Text", "default": "Alle Produkte" },
+    { "type": "url", "id": "cta_link", "label": "Button 1 Link" },
+    { "type": "text", "id": "cta2_label", "label": "Button 2 Text", "default": "Top Deals" },
+    { "type": "url", "id": "cta2_link", "label": "Button 2 Link" },
 
-    { "type": "header", "content": "Card 1" },
-    { "type": "image_picker", "id": "c1_image", "label": "Icon/Bild (optional)" },
-    { "type": "text", "id": "c1_title", "label": "Titel", "default": "Plastikfrei verpackt" },
-    { "type": "text", "id": "c1_text", "label": "Text", "default": "Stabiler Karton + Zeitung als Füllmaterial – sicher & umweltfreundlich." },
+    { "type": "text", "id": "slogan", "label": "Slogan unten", "default": "Echte Modelle, echte Leidenschaft – Hot Wheels direkt für dich." },
 
-    { "type": "header", "content": "Card 2" },
-    { "type": "image_picker", "id": "c2_image", "label": "Icon/Bild (optional)" },
-    { "type": "text", "id": "c2_title", "label": "Titel", "default": "Sammler-sicher" },
-    { "type": "text", "id": "c2_text", "label": "Text", "default": "Blister geschützt verpackt, damit dein Modell sauber ankommt." },
+    { "type": "text", "id": "panel_title", "label": "Rechtes Panel Titel", "default": "Kurz & klar" },
+    { "type": "text", "id": "panel_text", "label": "Rechtes Panel Text", "default": "Real Cars Fokus, plastikfrei verpackt und Sammler-safe." },
 
-    { "type": "header", "content": "Card 3" },
-    { "type": "image_picker", "id": "c3_image", "label": "Icon/Bild (optional)" },
-    { "type": "text", "id": "c3_title", "label": "Titel", "default": "Real Cars Fokus" },
-    { "type": "text", "id": "c3_text", "label": "Text", "default": "Street-Modelle & bekannte Marken – perfekt für Sammler und Auto-Fans." },
+    { "type": "header", "content": "Facts (unten im Bild)" },
+    { "type": "text", "id": "c1_title", "label": "01 Titel", "default": "Plastikfrei verpackt" },
+    { "type": "text", "id": "c1_text", "label": "01 Text", "default": "Stabiler Karton + Zeitung als Füllmaterial – sicher & umweltfreundlich." },
 
-    { "type": "header", "content": "Card 4" },
-    { "type": "image_picker", "id": "c4_image", "label": "Icon/Bild (optional)" },
-    { "type": "text", "id": "c4_title", "label": "Titel", "default": "Gezielt kaufen statt Zufall" },
-    { "type": "text", "id": "c4_text", "label": "Text", "default": "Du suchst ein bestimmtes Modell? Bei uns findest du es gezielt im Shop." }
+    { "type": "text", "id": "c2_title", "label": "02 Titel", "default": "Sammler-sicher" },
+    { "type": "text", "id": "c2_text", "label": "02 Text", "default": "Blister geschützt verpackt, damit dein Modell sauber ankommt." },
+
+    { "type": "text", "id": "c3_title", "label": "03 Titel", "default": "Real Cars Fokus" },
+    { "type": "text", "id": "c3_text", "label": "03 Text", "default": "Street-Modelle & bekannte Marken – perfekt für Sammler und Auto-Fans." },
+
+    { "type": "text", "id": "c4_title", "label": "04 Titel", "default": "Gezielt kaufen statt Zufall" },
+    { "type": "text", "id": "c4_text", "label": "04 Text", "default": "Du suchst ein bestimmtes Modell? Bei uns findest du es gezielt im Shop." }
   ],
   "presets": [{ "name": "Info Faktenzeile" }]
 }
