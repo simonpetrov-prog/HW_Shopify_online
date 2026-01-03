@@ -1,0 +1,36 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "shopify": {
+    "checkout": {
+      "shipping": {
+        "address_form": {
+          "max_address": "The maximum number of {{max_addresses}} addresses has been reached. You must remove an address to add a new one."
+        }
+      },
+      "payment": {
+        "saved_addresses": "Saved addresses",
+        "save_this_address": "Save this address"
+      },
+      "shipping_errors": {
+        "must_use_address_banner": {
+          "one": "Your order can only be sent to the address of %{name}.",
+          "other": "Your order can only be sent to one of these addresses."
+        }
+      },
+      "billing": {
+        "update_address_banner": "Update this address to view delivery options."
+      },
+      "address_management": {
+        "confirm_address_deletion": "Are you sure you want to delete the address {{address}} ?"
+      }
+    }
+  }
+}
